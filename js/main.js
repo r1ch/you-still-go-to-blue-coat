@@ -49,7 +49,7 @@ Vue.component('ysgtb-container',{
 	</div>
 	`,
 	computed:{
-		go: ()=>this.attendee==="You"?"go":"goes"
+		go: ()=>this.attendee.name==="You"?"go":"goes"
 	},
 	mounted: function(){
 		this.getAttendee()
