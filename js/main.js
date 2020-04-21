@@ -19,8 +19,8 @@ Vue.component('google-login', {
 		authenticated: false,
 	}),
 	template: `
-		<div class = "row">
-			<div v-if = "!authenticated" class="g-signin2 d-flex justify-content-center" data-width="200" data-height="50" data-onsuccess="authenticate" data-theme="dark"></div>
+		<div class = "d-flex flex-row">
+			<div v-if = "!authenticated" class="g-signin2 justify-content-center" data-width="200" data-height="50" data-onsuccess="authenticate" data-theme="dark"></div>
 		</div>
 	`,
 	mounted: function() {
