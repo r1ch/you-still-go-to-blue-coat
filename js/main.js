@@ -44,7 +44,7 @@ Vue.component('ysgtb-container',{
 	template:`
 	<div class = "row" v-if = "profile.ready">
 		<h2 class = "offset-1 col-10">
-			{{attendee.name}} still {{go}} to Blue Coat
+			<input @change = "newAttendee" class="form-control form-control-lg" type="text" :model = "{{attendee.name}}"> still {{go}} to Blue Coat
 		</h2>
 	</div>
 	`,
@@ -57,6 +57,9 @@ Vue.component('ysgtb-container',{
 	methods: {
 		getAttendee(){
 			this.API("GET","/attendees/latest",false,attendee=>this.attendee=attendee)
+		},
+		newAttendee(){
+			this.API("POST","/attendees",this.attendee,console.log)
 		}
 	}
 })
