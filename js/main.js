@@ -36,7 +36,7 @@ Vue.component('ysgtb-container',{
 	inject:['profile'],
 	template:`
 	<div class = "row" v-if = "profile.ready">
-		<h2 "offset-1 col-10">
+		<h2 class = "offset-1 col-10">
 			<pre>{{profile.name}}</pre> still goes to Blue Coat
 		</h2>
 	</div>
