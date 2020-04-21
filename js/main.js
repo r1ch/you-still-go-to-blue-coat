@@ -50,7 +50,7 @@ Vue.component('ysgtb-container',{
 	`,
 	watch:{
 		"attendee"(){
-			console.log(JSON.stringify(attendee))
+			console.log(JSON.stringify(this.attendee))
 		}
 	},
 	computed:{
