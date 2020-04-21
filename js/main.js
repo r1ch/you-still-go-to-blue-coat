@@ -44,7 +44,7 @@ Vue.component('ysgtb-container',{
 	template:`
 	<div class = "row" v-if = "profile.ready">
 		<h2 class = "col-12">
-			<input @change = "newAttendee" class="form-control form-control-lg" type="text" :model = "attendee.name"> still {{go}} to Blue Coat
+			<input @change = "newAttendee" class="form-control form-control-lg" type="text" v-model="attendee.name"> still {{go}} to Blue Coat
 		</h2>
 	</div>
 	`,
