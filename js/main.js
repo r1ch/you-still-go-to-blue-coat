@@ -46,7 +46,7 @@ Vue.component('ysgtb-container',{
 			<div class="container">
 				<input @change = "newAttendee" class="form-control form-control-lg col-12" type="text" v-model="attendee.name">
 				<span class = "display-4">still {{go}} to Blue Coat</span>
-				<br>
+				<br><br>
 				<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
 				<small v-if = "time">and it's been over {{time.duration}} {{time.measure}} now</small>
 			</div>
