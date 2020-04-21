@@ -45,7 +45,7 @@ Vue.component('ysgtb-container',{
 		<div class="jumbotron jumbotron-fluid">
 			<div class="container">
 				<input @change = "newAttendee" class="form-control form-control-lg col-4" type="text" v-model="attendee.name">
-				<h4 class = "display-4">still {{go}} to Blue Coat</h4>
+				<span class = "display-4">still {{go}} to Blue Coat</span>
 				<br>
 				<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
 			</div>
