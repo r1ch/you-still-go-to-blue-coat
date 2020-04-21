@@ -65,7 +65,7 @@ Vue.component('ysgtb-container',{
 			if(!this.attendee.identifier) return false
 			else{
 				let bands = [
-					{limit:0,"measure":"second"},
+					{limit:1,"measure":"second"},
 					{limit:60,"measure":"minute"},
 					{limit:60*60,"measure":"hour"},
 					{limit:60*60*24,"measure":"day"},
@@ -73,7 +73,7 @@ Vue.component('ysgtb-container',{
 					{limit:60*60*24*30,"measure":"month"},
 					{limit:60*60*24*365,"measure":"year"}
 				]
-				let duration = ((new Date()).getTime() - this.attendee.identifier)/1000 | 0
+				let duration = Math.max(1,((new Date()).getTime() - this.attendee.identifier)/1000) | 0
 				let band = bands.reverse().find(band=>band.limit<duration)
 				let count = Math.max(1,duration/band.limit | 0)
 				return {
