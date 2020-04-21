@@ -62,10 +62,7 @@ var app = new Vue({
 	template: `
 		<div class = "container">
 			<google-login @userReady = "userReady"></google-login>
-			<witb-container>{{profile}}</witb-container>
-			<span class = "badge badge-pill badge-info">
-				{{revision}}:{{version}}		
-			</span>
+			<ysgtb-container>{{profile}}</ysgtb-container>
 		</div>
 	`
 })	
