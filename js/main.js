@@ -44,7 +44,7 @@ Vue.component('ysgtb-container',{
 	template:`
 	<div class = "row" v-if = "profile.ready">
 		<h2 class = "offset-1 col-10">
-			<ysgtb-name :attendee="attendee"></ysgtb-name> still {{go}} to Blue Coat
+			{{attendee.name}} still {{go}} to Blue Coat
 		</h2>
 	</div>
 	`,
