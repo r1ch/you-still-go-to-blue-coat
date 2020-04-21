@@ -61,7 +61,7 @@ Vue.component('ysgtb-container',{
 })
 
 Vue.component('ysgtb-name',{
-	props:['attendee']
+	props:['attendee'],
 	data: ()=>{},
 	template:`
 	<input type = "text" :model="attendee.name"></input>
