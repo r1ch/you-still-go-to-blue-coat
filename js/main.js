@@ -44,10 +44,11 @@ Vue.component('ysgtb-container',{
 	template:`
 		<div class="jumbotron jumbotron-fluid">
 			<div class="container">
-				<input @change = "newAttendee" class="form-control form-control-lg col-4" type="text" v-model="attendee.name">
+				<input @change = "newAttendee" class="form-control form-control-lg col-12" type="text" v-model="attendee.name">
 				<span class = "display-4">still {{go}} to Blue Coat</span>
 				<br>
 				<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
+				<small v-if = "time">It's been {{time.duration}} {{time.measure}} now</small>
 			</div>
 		</div>
 	`,
@@ -59,6 +60,28 @@ Vue.component('ysgtb-container',{
 	computed:{
 		go: function(){
 			return this.attendee.name==="You"?"go":"goes"
+		},
+		time: function(){
+			if(!this.attendee.identifier) return false
+			else{
+				let measures = [
+					{limit:0,"measure":"second"},
+					{limit:60,"measure":"minute"},
+					{limit:60*60,"measure":"hour"},
+					{limit:60*60*24,"measure":"day"},
+					{limit:60*60*24*7,"measure":"week"},
+					{limit:60*60*24*30,"measure":"month"},
+					{limit:60*60*24*365,"measure":"year"}
+				]
+				let duration = ((new Date()).getTime() - this.attendee.identifier)/1000 | 0
+				let measure = measures.reverse().find(measure=>measure.limit<duration)
+				let count = duration/measure.limit | 0
+				return {
+					duration: count,
+					measure: measure.measure + count > 1 ? 's' : ''
+				}
+			}
+			
 		}
 	},
 	mounted: function(){
