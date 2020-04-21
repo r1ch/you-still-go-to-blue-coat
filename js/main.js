@@ -19,8 +19,8 @@ Vue.component('google-login', {
 		authenticated: false,
 	}),
 	template: `
-		<div class = "d-flex flex-row">
-			<div v-if = "!authenticated" class="g-signin2 justify-content-center" data-width="200" data-height="50" data-onsuccess="authenticate" data-theme="dark"></div>
+		<div class = "row">
+			<div v-if = "!authenticated" class="g-signin2 col" data-width="200" data-height="50" data-onsuccess="authenticate" data-theme="dark"></div>
 		</div>
 	`,
 	mounted: function() {
@@ -42,11 +42,13 @@ Vue.component('ysgtb-container',{
 		}
 	},
 	template:`
-	<div class = "row" v-if = "profile.ready">
-		<h2 class = "col-12">
-			<input @change = "newAttendee" class="form-control form-control-lg" type="text" v-model="attendee.name"> still {{go}} to Blue Coat
-		</h2>
-	</div>
+		<div class = "row h-100" v-if = "profile.ready">
+			<div class="col-sm-12" style = "margin-top: auto;margin-bottom: auto;">
+				<div class="card card-block w-25">
+					<input @change = "newAttendee" class="form-control form-control-lg" type="text" v-model="attendee.name"> still {{go}} to Blue Coat
+				</div>
+			</div>
+		</div>
 	`,
 	watch:{
 		"attendee"(){
@@ -66,7 +68,10 @@ Vue.component('ysgtb-container',{
 			this.API("GET","/attendees/latest",false,attendee=>this.attendee=attendee)
 		},
 		newAttendee(){
-			this.API("POST","/attendees",this.attendee,attendee=>this.attendee=attendee)
+			this.API("POST","/attendees",{
+				attendee:this.attendee,
+				reporter:this.profile
+			},attendee=>this.attendee=attendee)
 		}
 	}
 })
