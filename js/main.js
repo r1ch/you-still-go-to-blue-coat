@@ -48,7 +48,7 @@ Vue.component('ysgtb-container',{
 				<span class = "display-4">still {{go}} to Blue Coat</span>
 				<br>
 				<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
-				<small v-if = "time">It's been {{time.duration}} {{time.measure}} now</small>
+				<small v-if = "time">and it's been over {{time.duration}} {{time.measure}} now</small>
 			</div>
 		</div>
 	`,
@@ -77,7 +77,7 @@ Vue.component('ysgtb-container',{
 				let band = bands.reverse().find(band=>band.limit<duration) | bands[0]
 				let count = Math.max(1,duration/band.limit | 0)
 				return {
-					duration: count,
+					duration: count == 1 ? 'a' : count,
 					measure: `${band.measure}${count != 1 ? 's' : ''}`
 				}
 			}
