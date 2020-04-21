@@ -34,6 +34,13 @@ Vue.component('google-login', {
 Vue.component('ysgtb-container',{
 	mixins:[APIMixin],
 	inject:['profile'],
+	template:`
+	<div class = "row" v-if = "profile.ready">
+		<h2 "offset-1 col-10">
+			<pre>{{profile.name}}</pre> still goes to Blue Coat
+		</h2>
+	</div>
+	`
 })
 
 var app = new Vue({
