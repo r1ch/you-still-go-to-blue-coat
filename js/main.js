@@ -48,6 +48,11 @@ Vue.component('ysgtb-container',{
 		</h2>
 	</div>
 	`,
+	watch:{
+		"attendee"(){
+			console.log(JSON.stringify(attendee))
+		}
+	},
 	computed:{
 		go: function(){
 			return this.attendee.name==="You"?"go":"goes"
@@ -61,7 +66,7 @@ Vue.component('ysgtb-container',{
 			this.API("GET","/attendees/latest",false,attendee=>this.attendee=attendee)
 		},
 		newAttendee(){
-			this.API("POST","/attendees",this.attendee,console.log)
+			this.API("POST","/attendees",this.attendee,attendee=>this.attendee=attendee)
 		}
 	}
 })
