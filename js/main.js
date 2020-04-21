@@ -55,7 +55,7 @@ Vue.component('ysgtb-container',{
 	},
 	methods: {
 		getAttendee(){
-			API("GET","/attendee/latest",false,attendee=>this.attendee=attendee)
+			this.API("GET","/attendee/latest",false,attendee=>this.attendee=attendee)
 		}
 	}
 })
