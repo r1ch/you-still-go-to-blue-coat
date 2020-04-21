@@ -31,9 +31,9 @@ Vue.component('google-login', {
 	}
 })
 
-Vue.component('witb-container',{
+Vue.component('ysgtb-container',{
 	mixins:[APIMixin],
-	inject:['profile']
+	inject:['profile'],
 })
 
 var app = new Vue({
