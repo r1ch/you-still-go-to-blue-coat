@@ -78,7 +78,7 @@ Vue.component('ysgtb-container',{
 				let count = Math.max(1,duration/band.limit | 0)
 				return {
 					duration: count == 1 ? (band.measure == "hour" ? 'an' : 'a') : count,
-					measure: band.measure
+					measure: `${band.measure}${count!=1?'s':''}`
 				}
 			}
 			
