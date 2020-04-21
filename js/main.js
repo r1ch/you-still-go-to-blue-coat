@@ -33,7 +33,7 @@ Vue.component('google-login', {
 
 Vue.component('ysgtb-container',{
 	mixins:[APIMixin],
-	inject['profile'],
+	inject:['profile'],
 	data: function(){
 		return {
 			attendee : {
