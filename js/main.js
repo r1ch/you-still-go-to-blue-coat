@@ -33,10 +33,11 @@ Vue.component('google-login', {
 
 Vue.component('ysgtb-container',{
 	mixins:[APIMixin],
-	inject:['profile'],
 	data: function(){
 		return {
-			attendee : "You",
+			attendee : {
+				name: "You"
+			}
 		}
 	},
 	template:`
@@ -49,7 +50,7 @@ Vue.component('ysgtb-container',{
 	computed:{
 		go: ()=>this.attendee==="You"?"go":"goes"
 	},
-	mounted:{
+	mounted: function(){
 		this.getAttendee()
 	},
 	methods: {
@@ -57,6 +58,14 @@ Vue.component('ysgtb-container',{
 			API("GET","/attendee/latest",false,attendee=>this.attendee=attendee)
 		}
 	}
+})
+
+Vue.component('ysgtb-name',{
+	props:['attendee']
+	data: ()=>{},
+	template:`
+	<input type = "text" :model="attendee.name"></input>
+	`
 })
 
 var app = new Vue({
