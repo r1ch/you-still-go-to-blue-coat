@@ -1,0 +1,21 @@
+{
+  "name": "witb",
+  "version": "2.1.1",
+  "config": {
+    "s3BucketName": "witb-deploy",
+    "region": "eu-west-1",
+    "cloudFormationStackName": "WITBStack"
+  },
+  "scripts": {
+    "create-bucket": "aws s3 mb s3://$npm_package_config_s3BucketName --region $npm_package_config_region",
+    "delete-bucket": "aws s3 rb s3://$npm_package_config_s3BucketName --region $npm_package_config_region",
+    "package": "aws cloudformation package --template ./cloudformation.yaml --s3-bucket $npm_package_config_s3BucketName --output-template packaged-sam.yaml --region $npm_package_config_region",
+    "deploy": "aws cloudformation deploy --template-file packaged-sam.yaml --stack-name $npm_package_config_cloudFormationStackName --capabilities CAPABILITY_NAMED_IAM --region $npm_package_config_region",
+    "package-deploy": "npm run package && npm run deploy",
+    "win-create-bucket": "aws s3 mb s3://%npm_package_config_s3BucketName% --region %npm_package_config_region%",
+    "win-delete-bucket": "aws s3 rb s3://%npm_package_config_s3BucketName% --region %npm_package_config_region%",
+    "win-package": "aws cloudformation package --template ./cloudformation.yaml --s3-bucket %npm_package_config_s3BucketName% --output-template packaged-sam.yaml --region %npm_package_config_region%",
+    "win-deploy": "aws cloudformation deploy --template-file packaged-sam.yaml --stack-name %npm_package_config_cloudFormationStackName% --capabilities CAPABILITY_NAMED_IAM --region %npm_package_config_region%",
+    "win-package-deploy": "npm run win-package && npm run win-deploy"
+  }
+}

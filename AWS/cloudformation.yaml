@@ -1,0 +1,213 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Serverless Express Application/API powered by API Gateway and Lambda
+Resources:
+
+  BlueCoatGoogleOAuthRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action: execute-api:Invoke
+            Resource: !Join
+              - ''
+              - - 'arn:aws:execute-api:'
+                - !Ref AWS::Region
+                - ":"
+                - !Ref AWS::AccountId
+                - ":"
+                - !Ref RestApi
+                - "/*/*"
+      AssumeRolePolicyDocument: 
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Federated: accounts.google.com
+          Action: sts:AssumeRoleWithWebIdentity
+          Condition:
+            StringEquals:
+              accounts.google.com:aud: 956371621839-rm5951rfgnjolb1p2rqo8pu7k5mpmlma.apps.googleusercontent.com
+      RoleName: "BlueCoatGoogleOAuthRole"
+
+
+
+
+  BlueCoatTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: "bluecoat"
+      AttributeDefinitions: 
+        - 
+          AttributeName: "recordType"
+          AttributeType: "S"
+        - 
+          AttributeName: "identifier"
+          AttributeType: "S"
+        - 
+          AttributeName: "association"
+          AttributeType: "S"
+      KeySchema: 
+        - 
+          AttributeName: "recordType"
+          KeyType: "HASH"
+        - 
+          AttributeName: "identifier"
+          KeyType: "RANGE"
+      ProvisionedThroughput: 
+        ReadCapacityUnits: "1"
+        WriteCapacityUnits: "1"
+      GlobalSecondaryIndexes: 
+        - 
+          IndexName: "index"
+          KeySchema: 
+            - 
+              AttributeName: "recordType"
+              KeyType: "HASH"
+            - 
+              AttributeName: "association"
+              KeyType: "RANGE"
+          Projection: 
+            ProjectionType: "ALL"
+          ProvisionedThroughput: 
+            ReadCapacityUnits: "1"
+            WriteCapacityUnits: "1"
+
+  BlueCoatRestApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: "BlueCoatRestApi"
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: ./simple-proxy-api.yaml
+      StageName: prod
+
+  BlueCoatRestApiRestAPIExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource: arn:aws:logs:*:*:*
+          - Effect: Allow
+            Action:
+            - dynamodb:PutItem
+            - dynamodb:DeleteItem
+            - dynamodb:GetItem
+            - dynamodb:Query
+            - dynamodb:UpdateItem
+            Resource: !Join
+              - '' 
+              - - 'arn:aws:dynamodb:'
+                - !Ref AWS::Region
+                - ":"
+                - !Ref AWS::AccountId
+                - ":"
+                - "table/bluecoat"
+          - Effect: Allow
+            Action:
+            - dynamodb:Query
+            Resource: !Join
+              - '' 
+              - - 'arn:aws:dynamodb:'
+                - !Ref AWS::Region
+                - ":"
+                - !Ref AWS::AccountId
+                - ":"
+                - "table/bluecoat/index/index"
+
+  BlueCoatRestApiGatewayExecutionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt RestAPIHandler.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:aws:execute-api:'
+          - !Ref AWS::Region
+          - ":"
+          - !Ref AWS::AccountId
+          - ":"
+          - !Ref RestApi
+          - "/*/*"
+
+  RestAPIHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: restHandler/
+      Handler: lambda.handler
+      MemorySize: 1024
+      Role: !GetAtt BlueCoatRestApiRestAPIExecutionRole.Arn
+      Runtime: nodejs12.x
+      Timeout: 30
+      Events:
+        ProxyApiRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BlueCoatRestApi
+            Path: /
+            Method: ANY
+        ProxyApiGreedy:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BlueCoatRestApi
+            Path: /{proxy+}
+            Method: ANY
+
+Outputs:
+  LambdaFunctionConsoleUrl:
+    Description: Console URL for the Lambda Function.
+    Value: !Join
+      - ''
+      - - https://
+        - !Ref AWS::Region
+        - ".console.aws.amazon.com/lambda/home?region="
+        - !Ref AWS::Region
+        - "#/functions/"
+        - !Ref RestAPIHandler
+
+  ApiGatewayApiConsoleUrl:
+    Description: Console URL for the API Gateway API's Stage.
+    Value: !Join
+      - ''
+      - - https://
+        - !Ref AWS::Region
+        - ".console.aws.amazon.com/apigateway/home?region="
+        - !Ref AWS::Region
+        - "#/apis/"
+        - !Ref BlueCoatRestApi
+        - "/stages/prod"
+
+  ApiUrl:
+    Description: Invoke URL for your API. Clicking this link will perform a GET request
+      on the root resource of your API.
+    Value: !Join
+      - ''
+      - - https://
+        - !Ref RestApi
+        - ".execute-api."
+        - !Ref AWS::Region
+        - ".amazonaws.com/prod/"
