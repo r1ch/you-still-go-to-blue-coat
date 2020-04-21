@@ -38,7 +38,8 @@ Vue.component('ysgtb-container',{
 		return {
 			attendee : {
 				name: "You"
-			}
+			},
+			now : (new Date()).getTime()
 		}
 	},
 	template:`
@@ -73,7 +74,7 @@ Vue.component('ysgtb-container',{
 					{limit:60*60*24*30,measure:"month"},
 					{limit:60*60*24*365,measure:"year"}
 				].reverse()
-				let duration = Math.max(1,((new Date()).getTime() - this.attendee.identifier)/1000) | 0
+				let duration = Math.max(1,(this.now - this.attendee.identifier)/1000) | 0
 				let band = bands.find(band=>band.limit<duration) || bands[bands.length-1]
 				let count = Math.max(1,duration/band.limit | 0)
 				return {
@@ -86,6 +87,7 @@ Vue.component('ysgtb-container',{
 	},
 	mounted: function(){
 		this.getAttendee()
+		setInterval(()=>{this.now = (new Date().getTime())},1000)
 	},
 	methods: {
 		getAttendee(){
