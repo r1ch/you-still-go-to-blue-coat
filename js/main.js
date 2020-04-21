@@ -28,19 +28,35 @@ Vue.component('google-login', {
 			this.authenticated = true;
 			this.$emit("userReady",user)
 		})
-	}
+	},
 })
 
 Vue.component('ysgtb-container',{
 	mixins:[APIMixin],
 	inject:['profile'],
+	data: function(){
+		return {
+			attendee : "You",
+		}
+	},
 	template:`
 	<div class = "row" v-if = "profile.ready">
 		<h2 class = "offset-1 col-10">
-			<pre>{{profile.name}}</pre> still goes to Blue Coat
+			<ysgtb-name :attendee="attendee"></ysgtb-name> still {{go}} to Blue Coat
 		</h2>
 	</div>
-	`
+	`,
+	computed:{
+		go: ()=>this.attendee==="You"?"go":"goes"
+	},
+	mounted:{
+		this.getAttendee()
+	},
+	methods: {
+		getAttendee(){
+			API("GET","/attendee/latest",false,attendee=>this.attendee=attendee)
+		}
+	}
 })
 
 var app = new Vue({
