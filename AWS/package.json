@@ -1,10 +1,10 @@
 {
-  "name": "witb",
+  "name": "YouStillGoToBlueCoat",
   "version": "2.1.1",
   "config": {
     "s3BucketName": "witb-deploy",
     "region": "eu-west-1",
-    "cloudFormationStackName": "WITBStack"
+    "cloudFormationStackName": "YouStillGoToBlueCoatStack"
   },
   "scripts": {
     "create-bucket": "aws s3 mb s3://$npm_package_config_s3BucketName --region $npm_package_config_region",

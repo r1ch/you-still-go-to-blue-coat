@@ -2,6 +2,13 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Serverless Express Application/API powered by API Gateway and Lambda
+
+
+Parameters: 
+  CORS: 
+    Type: String
+    Default: youstillgotobluecoat.bradi.sh
+
 Resources:
 
   BlueCoatGoogleOAuthRole:
@@ -21,7 +28,7 @@ Resources:
                 - ":"
                 - !Ref AWS::AccountId
                 - ":"
-                - !Ref RestApi
+                - !Ref BlueCoatRestApi
                 - "/*/*"
       AssumeRolePolicyDocument: 
         Version: '2012-10-17'
@@ -151,7 +158,7 @@ Resources:
           - ":"
           - !Ref AWS::AccountId
           - ":"
-          - !Ref RestApi
+          - !Ref BlueCoatRestApi
           - "/*/*"
 
   RestAPIHandler:
@@ -207,7 +214,7 @@ Outputs:
     Value: !Join
       - ''
       - - https://
-        - !Ref RestApi
+        - !Ref BlueCoatRestApi
         - ".execute-api."
         - !Ref AWS::Region
         - ".amazonaws.com/prod/"

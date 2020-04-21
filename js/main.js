@@ -20,7 +20,7 @@ Vue.component('google-login', {
 	}),
 	template: `
 		<div class = "row">
-			<div v-if = "!authenticated" class="g-signin2 col-4 offset-4" data-width="200" data-height="50" data-onsuccess="authenticate" data-theme="dark"></div>
+			<div v-if = "!authenticated" class="g-signin2 col-2 offset-6" data-width="200" data-height="50" data-onsuccess="authenticate" data-theme="dark"></div>
 		</div>
 	`,
 	mounted: function() {
