@@ -42,11 +42,12 @@ Vue.component('ysgtb-container',{
 		}
 	},
 	template:`
-		<div class = "row h-100" v-if = "profile.ready">
-			<div class="col-sm-12" style = "margin-top: auto;margin-bottom: auto;">
-				<div class="card card-block w-25">
-					<input @change = "newAttendee" class="form-control form-control-lg" type="text" v-model="attendee.name"> still {{go}} to Blue Coat
-				</div>
+		<div class="jumbotron jumbotron-fluid">
+			<div class="container">
+				<h1 class="display-4">
+					<input @change = "newAttendee" class="form-control form-control-lg" type="text" v-model="attendee.name"> still {{go}} to Blue Coa
+				</h1>
+				<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
 			</div>
 		</div>
 	`,
