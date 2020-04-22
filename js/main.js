@@ -99,7 +99,7 @@ Vue.component('ysgtb-container',{
 				attendee:this.attendee,
 				reporter:this.profile
 			},attendee=>this.attendee=attendee)
-		},750)
+		},1000)
 	}
 })
 
