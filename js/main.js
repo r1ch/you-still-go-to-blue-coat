@@ -49,7 +49,7 @@ Vue.component('ysgtb-container',{
 				<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
 				<br><br>
 				<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
-				<small v-if = "time">and it's been over {{time.duration}} {{time.measure}} now</small>
+				<small v-if = "time">{{attendee.name}} {{has}} been going to Blue Coat for over {{time.duration}} {{time.measure}} now</small>
 			</div>
 		</div>
 	`,
@@ -62,6 +62,9 @@ Vue.component('ysgtb-container',{
 	computed:{
 		go: function(){
 			return this.attendee.name==="You"?"go":"goes"
+		},
+		have: function(){
+			return this.attendee.name==="You"?"have":"has"
 		},
 		time: function(){
 			if(!this.attendee.identifier) return false
