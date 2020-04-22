@@ -49,7 +49,7 @@ Vue.component('ysgtb-container',{
 				<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
 				<br><br>
 				<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
-				<small v-if = "time">{{attendee.name}} {{has}} been going to Blue Coat for over {{time.duration}} {{time.measure}} now</small>
+				<small v-if = "time">{{attendee.name}} {{have}} been going to Blue Coat for over {{time.duration}} {{time.measure}} now</small>
 			</div>
 		</div>
 	`,
