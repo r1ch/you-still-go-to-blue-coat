@@ -43,10 +43,18 @@ Vue.component('ysgtb-container',{
 		}
 	},
 	template:`
-		<div class="jumbotron jumbotron-fluid" v-if = "profile.ready">
+		<div class="jumbotron" v-if = "profile.ready">
 			<div class="container">
-				<input @change = "newAttendee" class="form-control form-control-lg col-12" type="text" v-model="attendee.name">
-				<span class = "display-4">still {{go}} to Blue Coat</span>
+				<form>
+					<div class="form-row">
+						<div class="col">
+							<input @change = "newAttendee" class="form-control form-control-lg col-12" type="text" v-model="attendee.name">
+						</div>
+						<div class="col">
+							<span class = "display-4">still {{go}} to Blue Coat</span>
+						</div>
+					</div>
+				</form>
 				<br><br>
 				<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
 				<small v-if = "time">and it's been over {{time.duration}} {{time.measure}} now</small>
@@ -134,7 +142,7 @@ var app = new Vue({
 		}
 	},
 	template: `
-		<div class = "container">
+		<div>
 			<google-login @userReady = "userReady"></google-login>
 			<ysgtb-container>{{profile}}</ysgtb-container>
 		</div>
