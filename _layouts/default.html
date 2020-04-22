@@ -14,6 +14,7 @@
         <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
         <script src="js/config.js?{{site.github.build_revision}}"></script>
         <script src="js/authentication.js?{{site.github.build_revision}}"></script>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="css/main.css?{{site.github.build_revision}}">
         <script>{% assign min = 0 %}{% assign max = 10000 %}{% assign diff = max | minus: min %}{% assign randomNumber = "now" | date: "%N" | modulo: diff | plus: min %}
