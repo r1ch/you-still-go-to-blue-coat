@@ -55,6 +55,7 @@ Vue.component('ysgtb-container',{
 	`,
 	watch:{
 		"attendee"(){
+			if(!this.attendee.name || !this.attendee.name.length || !this.attendee.name.length>1) this.attendee.name = "You"
 			console.log(JSON.stringify(this.attendee))
 		}
 	},
@@ -91,10 +92,7 @@ Vue.component('ysgtb-container',{
 	},
 	methods: {
 		getAttendee(){
-			this.API("GET","/attendees/latest",false,attendee=>{
-				if(!attendee.name || !attendee.name.length || !attendee.name.length>1) attendee.name = "You"
-				this.attendee = attendee
-			})
+			this.API("GET","/attendees/latest",false,attendee=>this.attendee=attendee)
 		},
 		newAttendee: _.debounce(function(){
 			this.API("POST","/attendees",{
