@@ -90,6 +90,7 @@ Vue.component('ysgtb-container',{
 		setInterval(()=>{this.now = (new Date().getTime())},1000)
 	},
 	methods: {
+		debounceAttendee:_.debounce(this.newAttendee,750),
 		getAttendee(){
 			this.API("GET","/attendees/latest",false,attendee=>this.attendee=attendee)
 		},
