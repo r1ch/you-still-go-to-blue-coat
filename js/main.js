@@ -93,12 +93,12 @@ Vue.component('ysgtb-container',{
 		getAttendee(){
 			this.API("GET","/attendees/latest",false,attendee=>this.attendee=attendee)
 		},
-		newAttendee: _.debounce(()=>{
+		newAttendee(){
 			this.API("POST","/attendees",{
 				attendee:this.attendee,
 				reporter:this.profile
 			},attendee=>this.attendee=attendee)
-		},750)
+		},
 	}
 })
 
