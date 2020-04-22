@@ -92,7 +92,7 @@ Vue.component('ysgtb-container',{
 	methods: {
 		getAttendee(){
 			this.API("GET","/attendees/latest",false,attendee=>{
-				attendee.name = attendee.name || "You"
+				if(!attendee.name || !attendee.name.length || !attendee.name.length>1) attendee.name = "You"
 				this.attendee = attendee
 			})
 		},
