@@ -4,6 +4,7 @@ var APIMixin = {
 	},
 	methods: {
 		API(method,URL,body,handler){
+			body = body ? body : undefined;
 			signHttpRequest(method, URL, body)
 			.then(axios)
 			.then(({data}) => {
