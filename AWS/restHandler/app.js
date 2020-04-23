@@ -33,95 +33,34 @@ router.use(bodyParser.urlencoded({ extended: true }))
 router.use(awsServerlessExpressMiddleware.eventContext())
 
 
-//List all games
+//Get the latest attendee
 router.get('/attendees/latest', asyncHandler(async (req, res) => {
-    let games = []
-    for await (const game of mapper.query(Game, {recordType: 'GAME'})) {
-        games.push(game)
+    let attendees = []
+    for await (const attendee of mapper.query(Attendee, {recordType: 'ATTENDEE'}, {scanIndexForward:false, limit:1})){
+        attendees.push(attendee)
     }
-    res.json(games)
+    res.json(attendees[0])
 }))
 
-//Get a specific game
-router.get('/attendee', (req, res) => {
-    mapper.get(Object.assign(new Game, {identifier: req.params.game}))
-    .then(res.json.bind(res))
-    .catch(err => {
-        console.log(err)
-        res.status(404).send(`No game found for ID: ${req.params.game}`)
-    })
-})
 
-//Join a player to a game (upsert a player association)
-router.put('/games/:game/players', (req, res)=>{
-    let player = new Player();
-    player.identifier = req.body.id
-    player.url = req.body.url
-    player.name = req.body.name
-    player.association = req.params.game;
-    mapper.update(player,{onMissing: 'skip'}).then(res.json.bind(res))
-})
-
-//Get all players in a game
-router.get('/games/:game/players', asyncHandler(async (req, res) => {
-    let players = []
-    for await (const player of mapper.query(Player, {recordType: 'PLAYER', association: req.params.game}, {indexName: 'index'})) {
-        players.push(simple(player))
+//Get the recent attendees
+router.get('/attendees/latest/:count', asyncHandler(async (req, res) => {
+    let countParam = req.params.count
+    countParam = isNaN(countParam) ? 1 : Math.max(6,countParam|0)
+    let attendees = []
+    for await (const attendee of mapper.query(Attendee, {recordType: 'ATTENDEE'}, {scanIndexForward:false, limit:countParam})){
+        attendees.push(attendee)
     }
-    res.json(players)
+    res.json(attendees)
 }))
 
-//Get a player
-router.get('/players/:player', (req, res) => {
-    mapper.get(Object.assign(new Player, {identifier: req.params.player}))
-    .then(res.json.bind(res))
-    .catch(err => {
-        console.log(err)
-        res.status(404).send(`No player found for ID: ${req.params.player}`)
-    })
-})
-
-//Update a player's names
-router.put('/players/:player/names', (req, res)=>{
-    let player = new Player();
-    player.identifier = req.params.player
-    player.names = req.body.names
-    mapper.update(player,{onMissing: 'skip'}).then(res.json.bind(res))
-})
-
-//Get a player's names
-router.get('/players/:player/names', (req, res) => {
-    mapper.get(Object.assign(new Player, {identifier: req.params.player}))
-    .then(player=>{
-        res.json(namesOf(player))
-    })
-    .catch(err => {
-        console.log(err)
-        res.status(404).send(`No game found for ID: ${req.params.player}`)
-    })
-})
-
-//Update a player's team
-router.put('/players/:player/team', (req, res)=>{
-    let player = new Player();
-    player.identifier = req.params.player
-    player.team = req.body.team
-    mapper.update(player,{onMissing: 'skip'}).then(res.json.bind(res))
-})
-
-//Get a player's team
-router.get('/players/:player/team', (req, res) => {
-    mapper.get(Object.assign(new Player, {identifier: req.params.player}))
-    .then(player=>{
-        res.json(teamOf(player))
-    })
-    .catch(err => {
-        console.log(err)
-        res.status(404).send(`No player found for ID: ${req.params.player}`)
-    })
-})
-
-
+router.post('/attendees', asyncHandler(async (req, res) => {
+    let attendee = new Attendee();
+    attendee.identifier = (new Date()).getTime()
+    attendee.name = req.body.attendee.name
+    attendee.reporter = req.body.reporter.name
+    mapper.update(attendee,{onMissing: 'skip'}).then(res.json.bind(res))
+}))
 
 app.use('/', router)
 
@@ -150,6 +89,8 @@ Object.defineProperties(Attendee.prototype, {
                   keyType: 'RANGE',
                   defaultProvider: v4
             },
+            name: {type: 'String'},
+            reporter: {type: 'String'}
         },
     },
 });
