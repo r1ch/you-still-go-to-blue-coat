@@ -68,6 +68,7 @@ function signHttpRequest(method,path,data) {
 	    request.body = JSON.stringify(data);
 	    var signer = new AWS.Signers.V4(request, 'execute-api');
 	    signer.addAuthorization(AWS.config.credentials, AWS.util.date.getDate());
+	    console.log(JSON.stringify(request))
 	    let r = signer.request
 	    delete r.headers.Host
 	    return {
