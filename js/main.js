@@ -55,13 +55,6 @@ Vue.component('ysgtb-jumbotron',{
 					<small v-if = "time">{{attendee.name}} {{have}} been going to Blue Coat for over {{time.duration}}{{time.before?time.andAHalf:" "}}{{time.measure}}{{time.after?time.andAHalf:" "}}now</small>
 				</div>
 			</div>
-			<div class = "container">
-				<div class = "row">
-					<div class="progress">
-						<div class="progress-bar" style = "width:100%">Going to Blue Coat</div>
-					</div>
-				</div>
-			</div>
 		</div>
 	`,
 	watch:{
@@ -157,7 +150,7 @@ var app = new Vue({
 	template: `
 		<div>
 			<google-login @userReady = "userReady"></google-login>
-			<ysgtb-jumbotron>{{profile}}</ysgtb-jumbotron>
+			<ysgtb-jumbotron></ysgtb-jumbotron>
 		</div>
 	`
 })	
