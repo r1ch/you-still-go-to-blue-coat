@@ -49,7 +49,7 @@ Vue.component('ysgtb-container',{
 				<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
 				<br><br>
 				<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
-				<small v-if = "time">{{attendee.name}} {{have}} been going to Blue Coat for over {{time.duration}} {{time.measure}} now</small>
+				<small v-if = "time">{{attendee.name}} {{have}} been going to Blue Coat for over {{time.duration}}{{before?andAHalf:" "}}{{time.measure}}{{after?andAHalf:" "}}now</small>
 			</div>
 		</div>
 	`,
@@ -80,10 +80,14 @@ Vue.component('ysgtb-container',{
 				].reverse()
 				let duration = Math.max(1,(this.now - this.attendee.identifier)/1000) | 0
 				let band = bands.find(band=>band.limit<duration) || bands[bands.length-1]
-				let count = Math.max(1,duration/band.limit | 0)
+				let rawCount = Math.max(1,duration/band.limit)
+				let count = rawCount | 0
 				return {
 					duration: count == 1 ? (band.measure == "hour" ? 'an' : 'a') : count,
-					measure: `${band.measure}${count!=1?'s':''}`
+					measure: `${band.measure}${count!=1?'s':''}`,
+					before: count > 1,
+					after: count == 1,
+					andAHalf: band.measure != "second" && (rawCount - count > 0.5) ? " and a half " : ""
 				}
 			}
 			
