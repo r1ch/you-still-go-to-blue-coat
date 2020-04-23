@@ -87,7 +87,7 @@ Vue.component('ysgtb-container',{
 					measure: `${band.measure}${count!=1?'s':''}`,
 					before: count > 1,
 					after: count == 1,
-					andAHalf: band.measure != "second" && (rawCount - count > 0.5) ? " and a half " : ""
+					andAHalf: band.measure != "second" && (rawCount - count >= 0.5) ? " and a half " : ""
 				}
 			}
 			
