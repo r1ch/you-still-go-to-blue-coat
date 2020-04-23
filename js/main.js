@@ -48,7 +48,7 @@ Vue.component('ysgtb-jumbotron',{
 		<div>
 			<div class="jumbotron" v-if = "profile.ready">
 				<div class="container">
-					<input ref="input" @keyup = "newAttendee" class="form-control form-control-lg col-6 col-md-3 attendee-name" type="text" v-model="attendee.name">
+					<input @keyup = "newAttendee" class="form-control form-control-lg col-6 col-md-3 attendee-name" type="text" v-model="attendee.name">
 					<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
 					<br><br>
 					<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
@@ -107,7 +107,6 @@ Vue.component('ysgtb-jumbotron',{
 	},
 	mounted: function(){
 		this.getAttendee()
-		this.$refs.input.focus()
 	},
 	methods: {
 		getAttendee(){
