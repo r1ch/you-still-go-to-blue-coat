@@ -88,7 +88,7 @@ Vue.component('ysgtb-container',{
 					measure: `${band.measure}${count!=1?'s':''}`,
 					before: count > 1,
 					after: count == 1,
-					andAHalf: band.measure != "second" && (rawCount - count >= 0.5) ? " and a half " : "",
+					andAHalf: band.measure != "second" && (rawCount - count >= 0.5) ? " and a half " : " ",
 					interval: band.limit/2
 				}
 			}
@@ -102,7 +102,7 @@ Vue.component('ysgtb-container',{
 		getAttendee(){
 			this.API("GET","/attendees/latest",false,attendee=>this.attendee=attendee)
 			this.timer && clearInterval(this.timer)
-			this.setInterval(()=>{this.now = (new Date().getTime())},this.time.interval)
+			this.timer = setInterval(()=>{this.now = (new Date().getTime())},this.time.interval)
 		},
 		newAttendee: _.debounce(function(){
 			this.API("POST","/attendees",{
