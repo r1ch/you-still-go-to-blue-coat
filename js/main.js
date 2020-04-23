@@ -32,7 +32,7 @@ Vue.component('google-login', {
 	},
 })
 
-Vue.component('ysgtb-container',{
+Vue.component('ysgtb-jumbotron',{
 	mixins:[APIMixin],
 	inject:['profile'],
 	data: function(){
@@ -52,6 +52,13 @@ Vue.component('ysgtb-container',{
 				<br><br>
 				<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
 				<small v-if = "time">{{attendee.name}} {{have}} been going to Blue Coat for over {{time.duration}}{{time.before?time.andAHalf:" "}}{{time.measure}}{{time.after?time.andAHalf:" "}}now</small>
+			</div>
+			<div class = "container">
+				<div class = "row">
+					<div class="progress">
+						<div class="progress-bar" style:"width:100%">Going to Blue Coat</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	`,
@@ -149,7 +156,7 @@ var app = new Vue({
 	template: `
 		<div>
 			<google-login @userReady = "userReady"></google-login>
-			<ysgtb-container>{{profile}}</ysgtb-container>
+			<ysgtb-jumbotron>{{profile}}</ysgtb-jumbotron>
 		</div>
 	`
 })	
