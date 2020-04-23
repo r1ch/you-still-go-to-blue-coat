@@ -56,7 +56,7 @@ Vue.component('ysgtb-jumbotron',{
 			<div class = "container">
 				<div class = "row">
 					<div class="progress">
-						<div class="progress-bar" style:"width:100%">Going to Blue Coat</div>
+						<div class="progress-bar" style = "width:100%">Going to Blue Coat</div>
 					</div>
 				</div>
 			</div>
