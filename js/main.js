@@ -89,7 +89,7 @@ Vue.component('ysgtb-container',{
 					before: count > 1,
 					after: count == 1,
 					andAHalf: band.measure != "second" && (rawCount - count >= 0.5) ? " and a half " : " ",
-					interval: band.limit/2
+					interval: Math.min(band.limit/2,1000*30)
 				}
 			}
 			
