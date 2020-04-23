@@ -36,6 +36,7 @@ Vue.component('ysgtb-container',{
 	inject:['profile'],
 	data: function(){
 		return {
+			timer: false,
 			attendee : {
 				name: "You"
 			},
@@ -49,7 +50,7 @@ Vue.component('ysgtb-container',{
 				<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
 				<br><br>
 				<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
-				<small v-if = "time">{{attendee.name}} {{have}} been going to Blue Coat for over {{time.duration}}{{before?andAHalf:" "}}{{time.measure}}{{after?andAHalf:" "}}now</small>
+				<small v-if = "time">{{attendee.name}} {{have}} been going to Blue Coat for over {{time.duration}}{{time.before?time.andAHalf:" "}}{{time.measure}}{{time.after?time.andAHalf:" "}}now</small>
 			</div>
 		</div>
 	`,
@@ -70,15 +71,15 @@ Vue.component('ysgtb-container',{
 			if(!this.attendee.identifier) return false
 			else{
 				let bands = [
-					{limit:1,measure:"second"},
-					{limit:60,measure:"minute"},
-					{limit:60*60,measure:"hour"},
-					{limit:60*60*24,measure:"day"},
-					{limit:60*60*24*7,measure:"week"},
-					{limit:60*60*24*30,measure:"month"},
-					{limit:60*60*24*365,measure:"year"}
+					{limit:1000*1,measure:"second"},
+					{limit:1000*60,measure:"minute"},
+					{limit:1000*60*60,measure:"hour"},
+					{limit:1000*60*60*24,measure:"day"},
+					{limit:1000*60*60*24*7,measure:"week"},
+					{limit:1000*60*60*24*30,measure:"month"},
+					{limit:1000*60*60*24*365,measure:"year"}
 				].reverse()
-				let duration = Math.max(1,(this.now - this.attendee.identifier)/1000) | 0
+				let duration = Math.max(1,this.now - this.attendee.identifier) | 0
 				let band = bands.find(band=>band.limit<duration) || bands[bands.length-1]
 				let rawCount = Math.max(1,duration/band.limit)
 				let count = rawCount | 0
@@ -87,7 +88,8 @@ Vue.component('ysgtb-container',{
 					measure: `${band.measure}${count!=1?'s':''}`,
 					before: count > 1,
 					after: count == 1,
-					andAHalf: band.measure != "second" && (rawCount - count >= 0.5) ? " and a half " : ""
+					andAHalf: band.measure != "second" && (rawCount - count >= 0.5) ? " and a half " : "",
+					interval: band.limit/2;
 				}
 			}
 			
@@ -95,11 +97,12 @@ Vue.component('ysgtb-container',{
 	},
 	mounted: function(){
 		this.getAttendee()
-		setInterval(()=>{this.now = (new Date().getTime())},1000)
 	},
 	methods: {
 		getAttendee(){
 			this.API("GET","/attendees/latest",false,attendee=>this.attendee=attendee)
+			this.timer && clearInterval(this.timer)
+			this.setInterval(()=>{this.now = (new Date().getTime())},this.time.interval)
 		},
 		newAttendee: _.debounce(function(){
 			this.API("POST","/attendees",{
