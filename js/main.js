@@ -45,13 +45,15 @@ Vue.component('ysgtb-jumbotron',{
 		}
 	},
 	template:`
-		<div class="jumbotron" v-if = "profile.ready">
-			<div class="container">
-				<input ref="input" @keyup = "newAttendee" class="form-control form-control-lg col-6 col-md-3 attendee-name" type="text" v-model="attendee.name">
-				<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
-				<br><br>
-				<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
-				<small v-if = "time">{{attendee.name}} {{have}} been going to Blue Coat for over {{time.duration}}{{time.before?time.andAHalf:" "}}{{time.measure}}{{time.after?time.andAHalf:" "}}now</small>
+		<div>
+			<div class="jumbotron" v-if = "profile.ready">
+				<div class="container">
+					<input ref="input" @keyup = "newAttendee" class="form-control form-control-lg col-6 col-md-3 attendee-name" type="text" v-model="attendee.name">
+					<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
+					<br><br>
+					<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
+					<small v-if = "time">{{attendee.name}} {{have}} been going to Blue Coat for over {{time.duration}}{{time.before?time.andAHalf:" "}}{{time.measure}}{{time.after?time.andAHalf:" "}}now</small>
+				</div>
 			</div>
 			<div class = "container">
 				<div class = "row">
