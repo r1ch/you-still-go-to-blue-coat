@@ -39,7 +39,7 @@ Vue.component('ysgtb-jumbotron',{
 		return {
 			timer: false,
 			attendee : {
-				name: "You"
+				association: "You"
 			},
 			now : (new Date()).getTime()
 		}
@@ -48,27 +48,27 @@ Vue.component('ysgtb-jumbotron',{
 		<div>
 			<div class="jumbotron" v-if = "profile.ready">
 				<div class="container">
-					<input @keyup = "newAttendee" class="form-control form-control-lg col-6 col-md-3 attendee-name" type="text" v-model="attendee.name">
+					<input @keyup = "newAttendee" class="form-control form-control-lg col-6 col-md-3 attendee-name" type="text" v-model="attendee.association">
 					<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
 					<br><br>
 					<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
-					<small v-if = "time">{{attendee.name}} {{have}} been going to Blue Coat for over {{time.duration}}{{time.before?time.andAHalf:" "}}{{time.measure}}{{time.after?time.andAHalf:" "}}now</small>
+					<small v-if = "time">{{attendee.association}} {{have}} been going to Blue Coat for over {{time.duration}}{{time.before?time.andAHalf:" "}}{{time.measure}}{{time.after?time.andAHalf:" "}}now</small>
 				</div>
 			</div>
 		</div>
 	`,
 	watch:{
 		"attendee"(){
-			if(!this.attendee.name || !this.attendee.name.length || !this.attendee.name.length>1) this.attendee.name = "You"
+			if(!this.attendee.association || !this.attendee.association.length || !this.attendee.association.length>1) this.attendee.association = "You"
 			console.log(JSON.stringify(this.attendee))
 		}
 	},
 	computed:{
 		go: function(){
-			return this.attendee.name==="You"?"go":"goes"
+			return this.attendee.association==="You"?"go":"goes"
 		},
 		have: function(){
-			return this.attendee.name==="You"?"have":"has"
+			return this.attendee.association==="You"?"have":"has"
 		},
 		time: function(){
 			if(!this.attendee.identifier) return false
@@ -114,14 +114,6 @@ Vue.component('ysgtb-jumbotron',{
 			},attendee=>this.attendee=attendee)
 		},1000)
 	}
-})
-
-Vue.component('ysgtb-name',{
-	props:['attendee'],
-	data: ()=>({}),
-	template:`
-	<input type = "text" :model="attendee.name"></input>
-	`
 })
 
 var app = new Vue({
