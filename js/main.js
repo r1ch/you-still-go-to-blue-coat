@@ -59,7 +59,7 @@ Vue.component('ysgtb-jumbotron',{
 	`,
 	watch:{
 		"attendee"(){
-			if(!this.attendee.association || !this.attendee.association.length || !this.attendee.association.length>1) this.attendee.name = "You"
+			if(!this.attendee.name || !this.attendee.name.length || !this.attendee.name.length>1) this.attendee.name = "You"
 			console.log(JSON.stringify(this.attendee))
 		}
 	},
