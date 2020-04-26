@@ -59,7 +59,7 @@ Vue.component('ysgtb-jumbotron',{
 			<div class = "container" v-if = "profile.ready">
 				<h4>Grew in grace</h4>
 				<ul class="list-group">
-					<li class="list-group-item" v-for = "attendance in attendances"><h5>{{attendance.identifier}}</h5> {{attendance | grace}}</li>
+					<li class="list-group-item" v-for = "attendance in attendances"><h5>{{attendance.identifier}}</h5> {{attendee.name = attendance.identifier ? time.running :  attendance.record | grace}}</li>
 				</ul>
 			</div>
 		</div>
@@ -94,7 +94,7 @@ Vue.component('ysgtb-jumbotron',{
 				let rawCount = Math.max(1,duration/band.limit)
 				let count = rawCount | 0
 				let runningAttendance = this.attendances.find(attendance=>attendance.identifier==this.attendee.name)
-				let runningSeconds = runningAttendance ? runningAttendance.record + duration : 0
+				let running = runningAttendance ? runningAttendance.record + duration : 0
 				return {
 					duration: count == 1 ? (band.measure == "hour" ? 'an' : 'a') : count,
 					measure: `${band.measure}${count!=1?'s':''}`,
@@ -102,15 +102,15 @@ Vue.component('ysgtb-jumbotron',{
 					after: count == 1,
 					andAHalf: band.measure != "second" && (rawCount - count >= 0.5) ? " and a half " : " ",
 					interval: Math.min(band.limit/2,1000*30),
-					runningSeconds : runningSeconds
+					running : running
 				}
 			}
 			
 		}
 	},
 	filters: {
-		grace: function (attendance) {
-			let seconds = Number(attendance.record/1000);
+		grace: function (record) {
+			let seconds = Number(record/1000);
 			let d = Math.floor(seconds / (3600*24));
 			let h = Math.floor(seconds % (3600*24) / 3600);
 			let m = Math.floor(seconds % 3600 / 60);
