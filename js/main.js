@@ -56,7 +56,7 @@ Vue.component('ysgtb-jumbotron',{
 					<small v-if = "time">{{attendee.name}} {{have}} been going to Blue Coat for over {{time.duration}}{{time.before?time.andAHalf:" "}}{{time.measure}}{{time.after?time.andAHalf:" "}}now</small>
 				</div>
 			</div>
-			<div class = "container">
+			<div class = "container" v-if = "profile.ready">
 				<h4>Grew in grace</h4>
 				<ul class="list-group">
 					<li class="list-group-item" v-for = "attendance in attendances"><h5>{{attendance.identifier}}</h5> {{attendance | grace}}</li>
