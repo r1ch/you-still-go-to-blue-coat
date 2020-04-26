@@ -93,13 +93,16 @@ Vue.component('ysgtb-jumbotron',{
 				let band = bands.find(band=>band.limit<duration) || bands[bands.length-1]
 				let rawCount = Math.max(1,duration/band.limit)
 				let count = rawCount | 0
+				let runningAttendance = this.attendances.find(attendance=>attendance.identifier==this.attendee.name)
+				let runningSeconds = runningAttendance ? runningAttendance.record + duration : 0
 				return {
 					duration: count == 1 ? (band.measure == "hour" ? 'an' : 'a') : count,
 					measure: `${band.measure}${count!=1?'s':''}`,
 					before: count > 1,
 					after: count == 1,
 					andAHalf: band.measure != "second" && (rawCount - count >= 0.5) ? " and a half " : " ",
-					interval: Math.min(band.limit/2,1000*30)
+					interval: Math.min(band.limit/2,1000*30),
+					runningSeconds : 0
 				}
 			}
 			
