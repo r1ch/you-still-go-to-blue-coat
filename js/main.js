@@ -105,7 +105,7 @@ Vue.component('ysgtb-jumbotron',{
 	},
 	filters: {
 		grace: function (attendance) {
-			let seconds = Number(attendance.record);
+			let seconds = Number(attendance.record/1000);
 			let d = Math.floor(seconds / (3600*24));
 			let h = Math.floor(seconds % (3600*24) / 3600);
 			let m = Math.floor(seconds % 3600 / 60);
