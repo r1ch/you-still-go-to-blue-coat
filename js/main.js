@@ -138,7 +138,7 @@ Vue.component('ysgtb-jumbotron',{
 				reporter:this.profile
 			},attendee=>{
 				this.attendee=attendee
-				setTimeout(this.getAttendances,1000)
+				setTimeout(this.getAttendances,2000)
 			})
 		},1000)
 	}
