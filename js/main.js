@@ -41,6 +41,7 @@ Vue.component('ysgtb-jumbotron',{
 			attendee : {
 				name: "You"
 			},
+			attendance : [],
 			now : (new Date()).getTime()
 		}
 	},
@@ -55,6 +56,8 @@ Vue.component('ysgtb-jumbotron',{
 					<small v-if = "time">{{attendee.name}} {{have}} been going to Blue Coat for over {{time.duration}}{{time.before?time.andAHalf:" "}}{{time.measure}}{{time.after?time.andAHalf:" "}}now</small>
 				</div>
 			</div>
+			<ul>
+				<li v-for = "attendance in attendances">{{attendance.name}} {{attendance.record}}</li>
 		</div>
 	`,
 	watch:{
@@ -100,12 +103,19 @@ Vue.component('ysgtb-jumbotron',{
 	},
 	mounted: function(){
 		this.getAttendee()
+		this.getAttendance()
 	},
 	methods: {
 		getAttendee(){
 			this.API("GET","/attendees/latest",false,attendee=>this.attendee=attendee)
 			this.timer && clearInterval(this.timer)
 			this.timer = setInterval(()=>{this.now = (new Date().getTime())},this.time.interval)
+		},
+		getAttendance(){
+			this.API("GET","/attendance",false,attendance=>{
+				let a = attendance
+				.sort((a,b)=>a.record>b.record)
+			})
 		},
 		newAttendee: _.debounce(function(){
 			this.API("POST","/attendees",{
