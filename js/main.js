@@ -56,8 +56,9 @@ Vue.component('ysgtb-jumbotron',{
 					<small v-if = "time">{{attendee.name}} {{have}} been going to Blue Coat for over {{time.duration}}{{time.before?time.andAHalf:" "}}{{time.measure}}{{time.after?time.andAHalf:" "}}now</small>
 				</div>
 			</div>
-			<ul>
-				<li v-for = "attendance in attendances">{{attendance.name}} {{attendance.record}}</li>
+			<ul class="list-group">
+  				<li class="list-group-item">v-for = "attendance in attendances">{{attendance.identifier}} {{attendance.record + attendance.identifier == attendee.name ? time.rawDuration : 0}}</li>
+			</ul>
 		</div>
 	`,
 	watch:{
@@ -90,6 +91,7 @@ Vue.component('ysgtb-jumbotron',{
 				let rawCount = Math.max(1,duration/band.limit)
 				let count = rawCount | 0
 				return {
+					rawDuration : duration,
 					duration: count == 1 ? (band.measure == "hour" ? 'an' : 'a') : count,
 					measure: `${band.measure}${count!=1?'s':''}`,
 					before: count > 1,
