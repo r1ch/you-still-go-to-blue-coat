@@ -123,10 +123,14 @@ Vue.component('ysgtb-jumbotron',{
 		}
 	},
 	mounted: function(){
+		this.visit()
 		this.getAttendee()
 		this.getAttendances()
 	},
 	methods: {
+		visit(){
+			this.API("POST","/visits",this.profile)
+		},
 		getAttendee(){
 			this.API("GET","/attendees/latest",false,attendee=>this.attendee=attendee)
 			this.timer && clearInterval(this.timer)
