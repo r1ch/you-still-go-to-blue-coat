@@ -41,7 +41,7 @@ Vue.component('ysgtb-jumbotron',{
 			attendee : {
 				name: "You"
 			},
-			attendance : [],
+			attendances : [],
 			now : (new Date()).getTime()
 		}
 	},
@@ -103,7 +103,7 @@ Vue.component('ysgtb-jumbotron',{
 	},
 	mounted: function(){
 		this.getAttendee()
-		this.getAttendance()
+		this.getAttendances()
 	},
 	methods: {
 		getAttendee(){
@@ -111,11 +111,8 @@ Vue.component('ysgtb-jumbotron',{
 			this.timer && clearInterval(this.timer)
 			this.timer = setInterval(()=>{this.now = (new Date().getTime())},this.time.interval)
 		},
-		getAttendance(){
-			this.API("GET","/attendance",false,attendance=>{
-				let a = attendance
-				.sort((a,b)=>a.record>b.record)
-			})
+		getAttendances(){
+			this.API("GET","/attendances",false,attendances=>this.attendances=attendances)
 		},
 		newAttendee: _.debounce(function(){
 			this.API("POST","/attendees",{
