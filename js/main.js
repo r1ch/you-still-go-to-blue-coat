@@ -59,7 +59,7 @@ Vue.component('ysgtb-jumbotron',{
 			<div class = "container" v-if = "profile.ready">
 				<h4>Grew in grace</h4>
 				<ul class="list-group">
-					<li class="list-group-item" v-for = "attendance in attendances"><h5>{{attendance.identifier}}</h5> {{attendee.name = attendance.identifier ? time.running :  attendance.record | grace}}</li>
+					<li class="list-group-item" v-for = "attendance in attendances"><h5>{{attendance.identifier}}</h5> {{attendee.name == attendance.identifier ? time.running :  attendance.record | grace}}</li>
 				</ul>
 			</div>
 		</div>
