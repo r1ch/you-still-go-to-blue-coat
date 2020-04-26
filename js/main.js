@@ -56,9 +56,9 @@ Vue.component('ysgtb-jumbotron',{
 					<small v-if = "time">{{attendee.name}} {{have}} been going to Blue Coat for over {{time.duration}}{{time.before?time.andAHalf:" "}}{{time.measure}}{{time.after?time.andAHalf:" "}}now</small>
 				</div>
 			</div>
-			<h5>Previous attendance</h5>
+			<h5>Grew in grace</h5>
 			<ul class="list-group">
-  				<li class="list-group-item" v-for = "attendance in attendances">{{attendance.identifier}} {{attendance.record}}</li>
+  				<li class="list-group-item" v-for = "attendance in attendances">{{attendance.identifier}} {{attendance | grace}}</li>
 			</ul>
 		</div>
 	`,
@@ -101,6 +101,20 @@ Vue.component('ysgtb-jumbotron',{
 				}
 			}
 			
+		}
+	},
+	filters: {
+		grace: function (attendance) {
+			let seconds = Number(attendance.record);
+			let d = Math.floor(seconds / (3600*24));
+			let h = Math.floor(seconds % (3600*24) / 3600);
+			let m = Math.floor(seconds % 3600 / 60);
+			let s = Math.floor(seconds % 60);
+			let dDisplay = d > 0 ? d + (d == 1 ? " day, " : " days, ") : "";
+			let hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
+			let mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
+			let sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+			let dDisplay + hDisplay + mDisplay + sDisplay;
 		}
 	},
 	mounted: function(){
