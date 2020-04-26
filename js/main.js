@@ -136,7 +136,10 @@ Vue.component('ysgtb-jumbotron',{
 			this.API("POST","/attendees",{
 				attendee:this.attendee,
 				reporter:this.profile
-			},attendee=>this.attendee=attendee)
+			},attendee=>{
+				this.attendee=attendee
+				setTimeout(this.getAttendances,1000)
+			})
 		},1000)
 	}
 })
