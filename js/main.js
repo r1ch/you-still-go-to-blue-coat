@@ -39,7 +39,7 @@ Vue.component('ysgtb-jumbotron',{
 		return {
 			timer: false,
 			attendee : {
-				association: "You"
+				name: "You"
 			},
 			now : (new Date()).getTime()
 		}
@@ -48,27 +48,27 @@ Vue.component('ysgtb-jumbotron',{
 		<div>
 			<div class="jumbotron" v-if = "profile.ready">
 				<div class="container">
-					<input @keyup = "newAttendee" class="form-control form-control-lg col-6 col-md-3 attendee-name" type="text" v-model="attendee.association">
+					<input @keyup = "newAttendee" class="form-control form-control-lg col-6 col-md-3 attendee-name" type="text" v-model="attendee.name">
 					<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
 					<br><br>
 					<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
-					<small v-if = "time">{{attendee.association}} {{have}} been going to Blue Coat for over {{time.duration}}{{time.before?time.andAHalf:" "}}{{time.measure}}{{time.after?time.andAHalf:" "}}now</small>
+					<small v-if = "time">{{attendee.name}} {{have}} been going to Blue Coat for over {{time.duration}}{{time.before?time.andAHalf:" "}}{{time.measure}}{{time.after?time.andAHalf:" "}}now</small>
 				</div>
 			</div>
 		</div>
 	`,
 	watch:{
 		"attendee"(){
-			if(!this.attendee.association || !this.attendee.association.length || !this.attendee.association.length>1) this.attendee.association = "You"
+			if(!this.attendee.association || !this.attendee.association.length || !this.attendee.association.length>1) this.attendee.name = "You"
 			console.log(JSON.stringify(this.attendee))
 		}
 	},
 	computed:{
 		go: function(){
-			return this.attendee.association==="You"?"go":"goes"
+			return this.attendee.name==="You"?"go":"goes"
 		},
 		have: function(){
-			return this.attendee.association==="You"?"have":"has"
+			return this.attendee.name==="You"?"have":"has"
 		},
 		time: function(){
 			if(!this.attendee.identifier) return false
