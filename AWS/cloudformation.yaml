@@ -78,6 +78,8 @@ Resources:
           ProvisionedThroughput: 
             ReadCapacityUnits: "1"
             WriteCapacityUnits: "1"
+      StreamSpecification: 
+        StreamViewType: "NEW_IMAGE"
 
   BlueCoatRestApi:
     Type: AWS::Serverless::Api
@@ -90,7 +92,7 @@ Resources:
             Location: ./simple-proxy-api.yaml
       StageName: prod
 
-  BlueCoatRestApiRestAPIExecutionRole:
+  APIHandlerExecutionRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -161,7 +163,7 @@ Resources:
       CodeUri: restHandler/
       Handler: lambda.handler
       MemorySize: 1024
-      Role: !GetAtt BlueCoatRestApiRestAPIExecutionRole.Arn
+      Role: !GetAtt APIHandlerExecutionRole.Arn
       Runtime: nodejs12.x
       Timeout: 30
       Events:
@@ -177,6 +179,83 @@ Resources:
             RestApiId: !Ref BlueCoatRestApi
             Path: /{proxy+}
             Method: ANY
+
+  StreamProcessor:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: streamProcessor/
+      Handler: lambda.handler
+      MemorySize: 1024
+      Role: !GetAtt StreamProcessorExecutionRole.Arn
+      Runtime: nodejs12.x
+      Timeout: 30
+      Events:
+
+  StreamProcessorExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource: arn:aws:logs:*:*:*
+          - Effect: Allow
+            Action:
+            - dynamodb:GetRecords
+            - dynamodb:GetShardIterator
+            - dynamodb:DescribeStream
+            - dynamodb:ListStreams
+            Resource: !Join
+              - '' 
+              - - 'arn:aws:dynamodb:'
+                - !Ref AWS::Region
+                - ":"
+                - !Ref AWS::AccountId
+                - ":"
+                - "table/bluecoat/*"
+          - Effect: Allow
+            Action:
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:Query
+            Resource: !Join
+              - '' 
+              - - 'arn:aws:dynamodb:'
+                - !Ref AWS::Region
+                - ":"
+                - !Ref AWS::AccountId
+                - ":"
+                - "table/bluecoat"
+
+  StreamProcessorTrigger:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties: 
+      BatchSize: 1
+      Enabled: true
+      EventSourceArn: !GetAtt BlueCoatTable.StreamArn
+      FunctionName: !GetAtt StreamProcessor.Arn
+      MaximumBatchingWindowInSeconds: 0
+      MaximumRecordAgeInSeconds: 60
+      MaximumRetryAttempts: 3
+      ParallelizationFactor: 3
+      StartingPosition: LATEST
+
+
 
 Outputs:
   LambdaFunctionConsoleUrl:

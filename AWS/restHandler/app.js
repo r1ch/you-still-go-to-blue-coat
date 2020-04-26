@@ -1,7 +1,6 @@
 'use strict'
 //AWS Setup
 const AWS = require('aws-sdk');
-const dynamo = new AWS.DynamoDB.DocumentClient()
 
 //Dynamo Setup
 const {
@@ -16,11 +15,9 @@ const client = new DynamoDB({region: 'eu-west-1'});
 const mapper = new DataMapper({client});
 
 //Express Setup
-const path = require('path')
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
-const compression = require('compression')
 const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware')
 const app = express()
 const router = express.Router()
@@ -44,20 +41,18 @@ router.get('/attendees/latest', asyncHandler(async (req, res) => {
 
 
 //Get the recent attendees
-router.get('/attendees/latest/:count', asyncHandler(async (req, res) => {
-    let countParam = req.params.count
-    countParam = isNaN(countParam) ? 1 : Math.max(6,countParam|0)
-    let attendees = []
-    for await (const attendee of mapper.query(Attendee, {recordType: 'ATTENDEE'}, {scanIndexForward:false, limit:countParam})){
-        attendees.push(attendee)
+router.get('/attendance', asyncHandler(async (req, res) => {
+    let attendances = []
+    for await (const attendance of mapper.query(Attendance, {recordType: 'ATTENDANCE'})){
+        attendances.push(attendee)
     }
-    res.json(attendees)
+    res.json(attendances)
 }))
 
 router.post('/attendees', asyncHandler(async (req, res) => {
     let attendee = new Attendee();
     attendee.identifier = (new Date()).getTime()
-    attendee.name = req.body.attendee.name
+    attendee.association = req.body.attendee.association
     attendee.reporter = req.body.reporter.name
     mapper.update(attendee,{onMissing: 'skip'}).then(res.json.bind(res))
 }))
@@ -70,6 +65,12 @@ module.exports = app
 class Attendee {
     constructor(){
         this.recordType = "ATTENDEE";
+    }
+}
+
+class Attendance {
+    constructor(){
+        this.recordType = "ATTENDANCE";
     }
 }
 
@@ -89,8 +90,30 @@ Object.defineProperties(Attendee.prototype, {
                   keyType: 'RANGE',
                   defaultProvider: v4
             },
-            name: {type: 'String'},
+            association: {type: 'String'},
             reporter: {type: 'String'}
+        },
+    },
+});
+
+Object.defineProperties(Attendance.prototype, {
+    [DynamoDbTable]: {
+        value: 'bluecoat'
+    },
+    [DynamoDbSchema]: {
+        value: {
+            recordType: {
+                type: 'String',
+                keyType: 'HASH',
+                defaultProvider: ()=>"ATTENDANCE",
+            },
+            identifier: {
+	              type: 'String',
+                  keyType: 'RANGE',
+                  defaultProvider: v4
+            },
+            association: {type: 'String'},
+            record: {type: 'Number'}
         },
     },
 });
