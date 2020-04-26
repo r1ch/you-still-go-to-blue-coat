@@ -57,7 +57,7 @@ Vue.component('ysgtb-jumbotron',{
 				</div>
 			</div>
 			<div class = "container">
-				<h4>Grew in grace</h5>
+				<h4>Grew in grace</h4>
 				<ul class="list-group">
 					<li class="list-group-item" v-for = "attendance in attendances"><h5>{{attendance.identifier}}</h5> {{attendance | grace}}</li>
 				</ul>
