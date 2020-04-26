@@ -57,7 +57,7 @@ Vue.component('ysgtb-jumbotron',{
 				</div>
 			</div>
 			<ul class="list-group">
-  				<li class="list-group-item">v-for = "attendance in attendances">{{attendance.identifier}} {{attendance.record + attendance.identifier == attendee.name ? time.rawDuration : 0}}</li>
+  				<li class="list-group-item" v-for = "attendance in attendances">{{attendance.identifier}} {{attendance.record + attendance.identifier == attendee.name ? time.rawDuration : 0}}</li>
 			</ul>
 		</div>
 	`,
@@ -91,7 +91,6 @@ Vue.component('ysgtb-jumbotron',{
 				let rawCount = Math.max(1,duration/band.limit)
 				let count = rawCount | 0
 				return {
-					rawDuration : duration,
 					duration: count == 1 ? (band.measure == "hour" ? 'an' : 'a') : count,
 					measure: `${band.measure}${count!=1?'s':''}`,
 					before: count > 1,
