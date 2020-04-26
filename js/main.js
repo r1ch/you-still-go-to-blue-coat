@@ -102,7 +102,7 @@ Vue.component('ysgtb-jumbotron',{
 					after: count == 1,
 					andAHalf: band.measure != "second" && (rawCount - count >= 0.5) ? " and a half " : " ",
 					interval: Math.min(band.limit/2,1000*30),
-					runningSeconds : 0
+					runningSeconds : runningSeconds
 				}
 			}
 			
