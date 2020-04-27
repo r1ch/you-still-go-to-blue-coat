@@ -41,10 +41,10 @@ router.get('/attendees/latest', asyncHandler(async (req, res) => {
 
 
 //Get the recent attendees
-router.get('/attendance', asyncHandler(async (req, res) => {
+router.get('/attendances', asyncHandler(async (req, res) => {
     let attendances = []
-    for await (const attendance of mapper.query(Attendance, {recordType: 'ATTENDANCE'})){
-        attendances.push(attendee)
+    for await (const attendance of mapper.query(Attendance, {recordType: 'ATTENDANCE'}, {indexName: 'index', scanIndexForward:false, limit:5})){
+        attendances.push(attendance)
     }
     res.json(attendances)
 }))
@@ -52,9 +52,16 @@ router.get('/attendance', asyncHandler(async (req, res) => {
 router.post('/attendees', asyncHandler(async (req, res) => {
     let attendee = new Attendee();
     attendee.identifier = (new Date()).getTime()
-    attendee.association = req.body.attendee.association
+    attendee.name = req.body.attendee.name
     attendee.reporter = req.body.reporter.name
     mapper.update(attendee,{onMissing: 'skip'}).then(res.json.bind(res))
+}))
+
+router.post('/visits', asyncHandler(async (req, res) => {
+    let visit = new Visit();
+    visit.identifier = (new Date()).getTime()
+    visit.name = req.body.name
+    mapper.update(visit,{onMissing: 'skip'}).then(res.json.bind(res))
 }))
 
 app.use('/', router)
@@ -74,6 +81,14 @@ class Attendance {
     }
 }
 
+class Visit {
+    constructor(){
+        this.recordType = "VISIT";
+        this.TTL = (new Date()).getTime()/1000 + 10*24*60*60
+    }
+}
+
+
 Object.defineProperties(Attendee.prototype, {
     [DynamoDbTable]: {
         value: 'bluecoat'
@@ -90,7 +105,7 @@ Object.defineProperties(Attendee.prototype, {
                   keyType: 'RANGE',
                   defaultProvider: v4
             },
-            association: {type: 'String'},
+            name: {type: 'String'},
             reporter: {type: 'String'}
         },
     },
@@ -112,8 +127,28 @@ Object.defineProperties(Attendance.prototype, {
                   keyType: 'RANGE',
                   defaultProvider: v4
             },
-            association: {type: 'String'},
             record: {type: 'Number'}
+        },
+    },
+});
+
+Object.defineProperties(Visit.prototype, {
+    [DynamoDbTable]: {
+        value: 'bluecoat'
+    },
+    [DynamoDbSchema]: {
+        value: {
+            recordType: {
+                type: 'String',
+                keyType: 'HASH',
+                defaultProvider: ()=>"VISIT",
+            },
+            identifier: {
+	              type: 'String',
+                  keyType: 'RANGE',
+                  defaultProvider: v4
+            },
+            name: {type: 'String'}
         },
     },
 });
