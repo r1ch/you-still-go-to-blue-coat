@@ -148,7 +148,8 @@ Object.defineProperties(Visit.prototype, {
                   keyType: 'RANGE',
                   defaultProvider: v4
             },
-            name: {type: 'String'}
+            name: {type: 'String'},
+            TTL: {type : 'Number'}
         },
     },
 });
