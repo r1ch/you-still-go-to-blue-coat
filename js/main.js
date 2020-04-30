@@ -64,8 +64,8 @@ Vue.component('ysgtb-jumbotron',{
 						<h5 class="mb-1">{{attendance.identifier}}</h5>
 						<p>{{attendee.name == attendance.identifier ? time.running :  attendance.record | grace}}</p>
 						</div>
-						<small><b>Longest stay:</b>{{attendee.name == attendance.identifier && time.millis > attendance.longest ? time.millis : attendance.longest | grace}}</small><br>
-						<small><b>Shortest stay:</b>{{attendee.name == attendance.identifier && time.millis < attendance.shortest ? time.millis : attendance.shortest | grace}}</small>
+						<small><b>Longest stay:</b> {{attendee.name == attendance.identifier && time.millis > attendance.longest ? time.millis : attendance.longest | grace}}</small><br>
+						<small><b>Shortest stay:</b> {{attendee.name == attendance.identifier && time.millis < attendance.shortest ? time.millis : attendance.shortest | grace}}</small>
 					</li>
 				</ul>
 			</div>
