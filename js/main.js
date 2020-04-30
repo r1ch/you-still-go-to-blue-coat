@@ -129,7 +129,7 @@ Vue.component('ysgtb-jumbotron',{
 			let hDisplay = h > 0 ? h + (h == 1 ? "h" : "h") : "";
 			let mDisplay = m > 0 ? m + (m == 1 ? "m" : "m") : "";
 			let sDisplay = s > 0 ? s + (s == 1 ? "s" : "s") : "";
-			return [dDisplay,hDisplay,mDisplay,sDisplay].filter(item=>item!="").join("")
+			return [dDisplay,hDisplay,mDisplay,sDisplay].filter(item=>item!="").join(" ")
 		}
 	},
 	mounted: function(){
