@@ -10,7 +10,10 @@ const {
 } = require('@aws/dynamodb-data-mapper');
 
 const {
+    greaterThan,
+    lessThan,
     lessThanOrEqualTo,
+    AttributePath,
     UpdateExpression,
 } = require('@aws/dynamodb-expressions')
 const { v4 } = require('uuid');
@@ -72,11 +75,12 @@ Object.defineProperties(Attendance.prototype, {
                   keyType: 'RANGE',
                   defaultProvider: v4
             },
-            record: {type: 'Number'}
+            record: {type: 'Number'},
+            longest: {type: 'Number'},
+            shortest: {type: 'Number'}
         },
     },
 });
-
 
 
 
@@ -106,10 +110,10 @@ exports.handler = async (event, context) => {
         //get the last in attendee
         let attendees = [];
         for await (const attendee of mapper.query(
-                                                    Attendee, 
-                                                    {recordType: 'ATTENDEE', identifier: lessThanOrEqualTo(newAttendee.time)},
-                                                    {scanIndexForward:false, limit:2}
-                                                )
+                Attendee, 
+                {recordType: 'ATTENDEE', identifier: lessThanOrEqualTo(newAttendee.time)},
+                {scanIndexForward:false, limit:2}
+            )
         ){
             attendees.push(attendee)
         }
@@ -119,16 +123,42 @@ exports.handler = async (event, context) => {
         console.log(`Previous attendee name = ${attendees[1].name}`)
         console.log(`So add ${attendees[0].identifier-attendees[1].identifier} to ${attendees[1].name} score`)
 
+        let delta = attendees[0].identifier-attendees[1].identifier
+
         
-        let updateExpression = new UpdateExpression
-        updateExpression.add('record', attendees[0].identifier-attendees[1].identifier)
+        let attendanceUpdateExpression = new UpdateExpression
+        attendanceUpdateExpression.add('record', delta)
         await mapper.executeUpdateExpression(
-            updateExpression,
+            attendanceUpdateExpression,
             {recordType:"ATTENDANCE",identifier:attendees[1].name},
             Attendance
         )
         .then(console.log)
         .catch(console.log)
+
+        let shortestStintUpdateExpression = new UpdateExpression
+        shortestStintUpdateExpression.set('shortest', delta)
+        let longestStintUpdateExpression = new UpdateExpression
+        longestStintUpdateExpression.set('longest', delta)
+
+        await mapper.executeUpdateExpression(
+            shortestStintUpdateExpression,
+            {recordType:"ATTENDANCE",identifier:attendees[1].name},
+            Attendance,
+            {shortest: lessThan(AttributePath('shortest'))}
+        )
+        .then(console.log)
+        .catch(console.log)
+
+        await mapper.executeUpdateExpression(
+            longestStintUpdateExpression,
+            {recordType:"ATTENDANCE",identifier:attendees[1].name},
+            Attendance,
+            {longest: greaterThan(AttributePath('longest'))}
+        )
+        .then(console.log)
+        .catch(console.log)
+
 
     } else {
         console.log(`IGNORE ${JSON.stringify(event)}`)

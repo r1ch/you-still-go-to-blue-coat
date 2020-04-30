@@ -43,7 +43,7 @@ router.get('/attendees/latest', asyncHandler(async (req, res) => {
 //Get the recent attendees
 router.get('/attendances', asyncHandler(async (req, res) => {
     let attendances = []
-    for await (const attendance of mapper.query(Attendance, {recordType: 'ATTENDANCE'}, {indexName: 'index', scanIndexForward:false, limit:5})){
+    for await (const attendance of mapper.query(Attendance, {recordType: 'ATTENDANCE'}, {indexName: 'index', scanIndexForward:false, limit:3})){
         attendances.push(attendance)
     }
     res.json(attendances)
@@ -127,7 +127,9 @@ Object.defineProperties(Attendance.prototype, {
                   keyType: 'RANGE',
                   defaultProvider: v4
             },
-            record: {type: 'Number'}
+            record: {type: 'Number'},
+            longest: {type: 'Number'},
+            shortest: {type: 'Number'}
         },
     },
 });
