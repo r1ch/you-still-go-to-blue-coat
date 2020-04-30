@@ -64,8 +64,8 @@ Vue.component('ysgtb-jumbotron',{
 						<h5 class="mb-1">{{attendance.identifier}}</h5>
 						<p>{{attendee.name == attendance.identifier ? time.running :  attendance.record | grace}}</p>
 						</div>
-						<small><b>Longest stint:</b>{{attendee.name == attendance.identifier && time.duration > attendance.longest ? time.duration : attendance.longest | grace}}</small><br>
-						<small><b>Shortest stint:</b>{{attendee.name == attendance.identifier && time.duration < attendance.shortest ? time.duration : attendance.shortest | grace}}</small>
+						<small><b>Longest stay:</b>{{attendee.name == attendance.identifier && time.millis > attendance.longest ? time.millis : attendance.longest | grace}}</small><br>
+						<small><b>Shortest stay:</b>{{attendee.name == attendance.identifier && time.millis < attendance.shortest ? time.millis : attendance.shortest | grace}}</small>
 					</li>
 				</ul>
 			</div>
@@ -96,12 +96,12 @@ Vue.component('ysgtb-jumbotron',{
 					{limit:1000*60*60*24*30,measure:"month"},
 					{limit:1000*60*60*24*365,measure:"year"}
 				].reverse()
-				let duration = Math.max(1,this.now - this.attendee.identifier) | 0
-				let band = bands.find(band=>band.limit<duration) || bands[bands.length-1]
-				let rawCount = Math.max(1,duration/band.limit)
+				let millis = Math.max(1,this.now - this.attendee.identifier) | 0
+				let band = bands.find(band=>band.limit<millis) || bands[bands.length-1]
+				let rawCount = Math.max(1,millis/band.limit)
 				let count = rawCount | 0
 				let runningAttendance = this.attendances.find(attendance=>attendance.identifier==this.attendee.name)
-				let running = runningAttendance ? runningAttendance.record + duration : 0
+				let running = runningAttendance ? runningAttendance.record + millis : 0
 				return {
 					duration: count == 1 ? (band.measure == "hour" ? 'an' : 'a') : count,
 					measure: `${band.measure}${count!=1?'s':''}`,
@@ -109,7 +109,8 @@ Vue.component('ysgtb-jumbotron',{
 					after: count == 1,
 					andAHalf: band.measure != "second" && (rawCount - count >= 0.5) ? " and a half " : " ",
 					interval: Math.min(band.limit/2,1000*30),
-					running : running
+					running : running,
+					millis: millis
 				}
 			}
 			
