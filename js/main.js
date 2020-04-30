@@ -59,13 +59,13 @@ Vue.component('ysgtb-jumbotron',{
 			<div class = "container" v-if = "profile.ready">
 				<h4>Grew in grace</h4>
 				<ul class="list-group">
-					<li class="list-group-item flex-column align-items-start active" v-for = "attendance in attendances">
+					<li class="list-group-item flex-column align-items-start" v-for = "attendance in attendances" :class= "{active:attendee.name == attendance.identifier}">
 						<div class="d-flex w-100 justify-content-between">
 						<h5 class="mb-1">{{attendance.identifier}}</h5>
 						<p>{{attendee.name == attendance.identifier ? time.running :  attendance.record | grace}}</p>
 						</div>
-						<small><b>Longest stint:</b>{{attendee.name == attendance.identifier && time.running > attendance.longest ? time.running : attendance.longest | grace}}</small><br>
-						<small><b>Shortest stint:</b>{{attendee.name == attendance.identifier && time.running < attendance.shortest ? time.running : attendance.shortest | grace}}</small>
+						<small><b>Longest stint:</b>{{attendee.name == attendance.identifier && time.duration > attendance.longest ? time.duration : attendance.longest | grace}}</small><br>
+						<small><b>Shortest stint:</b>{{attendee.name == attendance.identifier && time.duration < attendance.shortest ? time.duration : attendance.shortest | grace}}</small>
 					</li>
 				</ul>
 			</div>
