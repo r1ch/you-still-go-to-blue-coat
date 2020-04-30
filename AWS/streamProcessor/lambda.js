@@ -14,6 +14,7 @@ const {
     lessThan,
     lessThanOrEqualTo,
     AttributePath,
+    ConditionExpression
     UpdateExpression,
 } = require('@aws/dynamodb-expressions')
 const { v4 } = require('uuid');
@@ -145,7 +146,10 @@ exports.handler = async (event, context) => {
             shortestStintUpdateExpression,
             {recordType:"ATTENDANCE",identifier:attendees[1].name},
             Attendance,
-            {shortest: lessThan(AttributePath('shortest'))}
+            {
+                ...lessThan(new AttributePath('shortest')),
+                subject: 'shortest'
+            }
         )
         .then(console.log)
         .catch(console.log)
@@ -154,7 +158,10 @@ exports.handler = async (event, context) => {
             longestStintUpdateExpression,
             {recordType:"ATTENDANCE",identifier:attendees[1].name},
             Attendance,
-            {longest: greaterThan(AttributePath('longest'))}
+            {
+                ... greaterThan(new AttributePath('longest')),
+                subject: 'longest'
+            }
         )
         .then(console.log)
         .catch(console.log)
