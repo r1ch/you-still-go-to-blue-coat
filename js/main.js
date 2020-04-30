@@ -136,8 +136,13 @@ Vue.component('ysgtb-jumbotron',{
 		this.visit()
 		this.getAttendee()
 		this.getAttendances()
+		setInterval(this.refresh,60000)
 	},
 	methods: {
+		refresh(){
+			this.getAttendee()
+			this.getAttendances()
+		},
 		visit(){
 			this.API("POST","/visits",this.profile)
 		},
