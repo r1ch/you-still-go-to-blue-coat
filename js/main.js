@@ -59,7 +59,16 @@ Vue.component('ysgtb-jumbotron',{
 			<div class = "container" v-if = "profile.ready">
 				<h4>Grew in grace</h4>
 				<ul class="list-group">
-					<li class="list-group-item" v-for = "attendance in attendances"><h5>{{attendance.identifier}}</h5> {{attendee.name == attendance.identifier ? time.running :  attendance.record | grace}}</li>
+					<li class="list-group-item flex-column align-items-start" v-for = "attendance in attendances" :class= "{active:attendee.name == attendance.identifier}">
+						<div class="d-flex w-100 justify-content-between">
+							<h5 class="mb-1">{{attendance.identifier}}</h5>
+							<p>&nbsp;{{attendee.name == attendance.identifier ? time.running :  attendance.record | grace}}</p>
+						</div>
+						<div class="d-flex w-100 justify-content-between">
+							<small><b>Longest: </b>{{attendee.name == attendance.identifier && time.millis > attendance.longest ? time.millis : attendance.longest | grace}}</small>
+							<small><b>&nbsp;Shortest: </b>{{attendee.name == attendance.identifier && time.millis < attendance.shortest ? time.millis : attendance.shortest | grace}}</small>
+						</div>
+					</li>
 				</ul>
 			</div>
 		</div>
@@ -89,12 +98,12 @@ Vue.component('ysgtb-jumbotron',{
 					{limit:1000*60*60*24*30,measure:"month"},
 					{limit:1000*60*60*24*365,measure:"year"}
 				].reverse()
-				let duration = Math.max(1,this.now - this.attendee.identifier) | 0
-				let band = bands.find(band=>band.limit<duration) || bands[bands.length-1]
-				let rawCount = Math.max(1,duration/band.limit)
+				let millis = Math.max(1,this.now - this.attendee.identifier) | 0
+				let band = bands.find(band=>band.limit<millis) || bands[bands.length-1]
+				let rawCount = Math.max(1,millis/band.limit)
 				let count = rawCount | 0
 				let runningAttendance = this.attendances.find(attendance=>attendance.identifier==this.attendee.name)
-				let running = runningAttendance ? runningAttendance.record + duration : 0
+				let running = runningAttendance ? runningAttendance.record + millis : 0
 				return {
 					duration: count == 1 ? (band.measure == "hour" ? 'an' : 'a') : count,
 					measure: `${band.measure}${count!=1?'s':''}`,
@@ -102,7 +111,8 @@ Vue.component('ysgtb-jumbotron',{
 					after: count == 1,
 					andAHalf: band.measure != "second" && (rawCount - count >= 0.5) ? " and a half " : " ",
 					interval: Math.min(band.limit/2,1000*30),
-					running : running
+					running : running,
+					millis: millis
 				}
 			}
 			
@@ -115,11 +125,11 @@ Vue.component('ysgtb-jumbotron',{
 			let h = Math.floor(seconds % (3600*24) / 3600);
 			let m = Math.floor(seconds % 3600 / 60);
 			let s = Math.floor(seconds % 60);
-			let dDisplay = d > 0 ? d + (d == 1 ? " day" : " days") : "";
-			let hDisplay = h > 0 ? h + (h == 1 ? " hour" : " hours") : "";
-			let mDisplay = m > 0 ? m + (m == 1 ? " minute" : " minutes") : "";
-			let sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
-			return [dDisplay,hDisplay,mDisplay,sDisplay].filter(item=>item!="").join(", ")
+			let dDisplay = d > 0 ? d + (d == 1 ? "d" : "d") : "";
+			let hDisplay = h > 0 ? h + (h == 1 ? "h" : "h") : "";
+			let mDisplay = m > 0 ? m + (m == 1 ? "m" : "m") : "";
+			let sDisplay = s > 0 ? s + (s == 1 ? "s" : "s") : "";
+			return [dDisplay,hDisplay,mDisplay,sDisplay].filter(item=>item!="").join(" ")
 		}
 	},
 	mounted: function(){
