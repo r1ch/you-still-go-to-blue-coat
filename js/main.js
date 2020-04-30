@@ -61,11 +61,13 @@ Vue.component('ysgtb-jumbotron',{
 				<ul class="list-group">
 					<li class="list-group-item flex-column align-items-start" v-for = "attendance in attendances" :class= "{active:attendee.name == attendance.identifier}">
 						<div class="d-flex w-100 justify-content-between">
-						<h5 class="mb-1">{{attendance.identifier}}</h5>
-						<p>{{attendee.name == attendance.identifier ? time.running :  attendance.record | grace}}</p>
+							<h5 class="mb-1">{{attendance.identifier}}</h5>
+							<p>&nbsp;{{attendee.name == attendance.identifier ? time.running :  attendance.record | grace}}</p>
 						</div>
-						<small><b>Longest stay:</b> {{attendee.name == attendance.identifier && time.millis > attendance.longest ? time.millis : attendance.longest | grace}}</small><br>
-						<small><b>Shortest stay:</b> {{attendee.name == attendance.identifier && time.millis < attendance.shortest ? time.millis : attendance.shortest | grace}}</small>
+						<div class="d-flex w-100 justify-content-between">
+							<small><b>Longest: </b>{{attendee.name == attendance.identifier && time.millis > attendance.longest ? time.millis : attendance.longest | grace}}</small>
+							<small><b>&nbsp;Shortest: </b>{{attendee.name == attendance.identifier && time.millis < attendance.shortest ? time.millis : attendance.shortest | grace}}</small>
+						</div>
 					</li>
 				</ul>
 			</div>
@@ -123,11 +125,11 @@ Vue.component('ysgtb-jumbotron',{
 			let h = Math.floor(seconds % (3600*24) / 3600);
 			let m = Math.floor(seconds % 3600 / 60);
 			let s = Math.floor(seconds % 60);
-			let dDisplay = d > 0 ? d + (d == 1 ? " day" : " days") : "";
-			let hDisplay = h > 0 ? h + (h == 1 ? " hour" : " hours") : "";
-			let mDisplay = m > 0 ? m + (m == 1 ? " minute" : " minutes") : "";
-			let sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
-			return [dDisplay,hDisplay,mDisplay,sDisplay].filter(item=>item!="").join(", ")
+			let dDisplay = d > 0 ? d + (d == 1 ? "d" : "d") : "";
+			let hDisplay = h > 0 ? h + (h == 1 ? "h" : "h") : "";
+			let mDisplay = m > 0 ? m + (m == 1 ? "m" : "m") : "";
+			let sDisplay = s > 0 ? s + (s == 1 ? "s" : "s") : "";
+			return [dDisplay,hDisplay,mDisplay,sDisplay].filter(item=>item!="").join("")
 		}
 	},
 	mounted: function(){
