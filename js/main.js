@@ -149,7 +149,7 @@ Vue.component('ysgtb-jumbotron',{
 		getAttendee(){
 			this.API("GET","/attendees/latest",false,attendee=>this.attendee=attendee)
 			this.timer && clearInterval(this.timer)
-			this.timer = setInterval(()=>{this.now = (new Date().getTime())},this.time.interval)
+			this.timer = setInterval(()=>{this.now = (new Date().getTime())},1000)
 		},
 		getAttendances(){
 			this.API("GET","/attendances",false,attendances=>this.attendances=attendances)
