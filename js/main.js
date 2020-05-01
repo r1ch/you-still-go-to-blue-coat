@@ -53,9 +53,7 @@ Vue.component('ysgtb-jumbotron',{
 					<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
 					<br><br>
 					<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
-					<small v-if = "time">It's been over {{time.duration}}{{time.before?time.andAHalf:" "}}{{time.measure}}{{time.after?time.andAHalf:" "}}now</small>
-					<ysgtb-time :millis="attendee.identifier" :short = "false"></ysgtb-time>
-					<ysgtb-time :millis="attendee.identifier" :short = "true"></ysgtb-time>
+					<small v-if = "time">It's been over <ysgtb-time :short="false" :millis="now-attendee.identifier"></ysgtb-time> now</small>
 				</div>
 			</div>
 			<div class = "container" v-if = "profile.ready">
@@ -64,11 +62,11 @@ Vue.component('ysgtb-jumbotron',{
 					<li class="list-group-item flex-column align-items-start" v-for = "attendance in attendances" :class= "{active:attendee.name == attendance.identifier, 'image-background':attendee.name == attendance.identifier}">
 						<div class="d-flex w-100 justify-content-between">
 							<h5 class="mb-1">{{attendance.identifier}}</h5>
-							<p>&nbsp;{{attendee.name == attendance.identifier ? time.running :  attendance.record | grace}}</p>
+							<ysgtb-time :short = "true" :millis = "attendance.record + (attendee.name == attendance.identifier ? (now-attendee.identifier) : 0)"></ysgtb-time>
 						</div>
 						<div class="d-flex w-100 justify-content-between">
-							<small><b>Longest: </b>{{attendee.name == attendance.identifier && time.millis > attendance.longest ? time.millis : attendance.longest | grace}}</small>
-							<small><b>Shortest: </b>{{attendee.name == attendance.identifier && time.millis < attendance.shortest ? time.millis : attendance.shortest | grace}}</small>
+							<small><b>Longest: </b><ysgtb-time :short = "true" :millis = "attendance.longest"></ysgtb-time></small>
+							<small><b>Shortest: </b><ysgtb-time :short = "true" :millis = "attendance.shortest"></ysgtb-time></small>
 						</div>
 					</li>
 				</ul>
@@ -198,7 +196,7 @@ Vue.component('ysgtb-time', {
 			let html = parts.map(part=>`${part.count}<sup>${part.shortMeasure}</sup>`).join(" ")
 			return {
 				html: html,
-				text: `${duration}${before}${long.measure}${after}`
+				text: `${duration}${before}${long.displayMeasure}${after}`
 			}
 		}
 	},
