@@ -178,7 +178,7 @@ Vue.component('ysgtb-time', {
 		time: function(){
 			let parts = this.bands.map(band=>{
 				let rawCount = this.millis / band.millis
-				if(band.number) rawCount %= band.number
+				rawCount = band.number ? rawCount % band.number : rawCount
 				return {
 					measure: band.measure,
 					shortMeasure: band.measure[0],
