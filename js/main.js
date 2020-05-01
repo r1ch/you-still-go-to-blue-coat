@@ -136,8 +136,8 @@ Vue.component('ysgtb-jumbotron',{
 		this.visit()
 		this.getAttendee()
 		this.getAttendances()
-		this.listenFor('ATTENDEE',this.getAttendee())
-		this.listenFor('ATTENDANCE',this.getAttendance())
+		this.listenFor('ATTENDEE',this.getAttendee)
+		this.listenFor('ATTENDANCE',this.getAttendances)
 	},
 	methods: {
 		visit(){
