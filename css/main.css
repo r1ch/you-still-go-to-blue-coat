@@ -17,11 +17,9 @@
 
 @keyframes pulse {
   0% {
-    opacity: 1;
     background-size: 1.5rem;
   }
   100% {
-    opacity: 0.3;
     background-size: 2.5rem;
   }
 }
