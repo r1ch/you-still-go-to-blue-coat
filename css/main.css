@@ -6,3 +6,10 @@
   display:inline;
   font-size: 2.5rem;
 }
+
+.image-background {
+  background-image: url("/img/logo.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
