@@ -34,7 +34,7 @@ Vue.component('google-login', {
 
 Vue.component('ysgtb-jumbotron',{
 	mixins:[APIMixin],
-	inject:['profile'],
+	inject:['profile','listenFor'],
 	data: function(){
 		return {
 			timer: false,
@@ -136,13 +136,10 @@ Vue.component('ysgtb-jumbotron',{
 		this.visit()
 		this.getAttendee()
 		this.getAttendances()
-		setInterval(this.refresh,60000)
+		this.listenFor('ATTENDEE',this.getAttendee())
+		this.listenFor('ATTENDANCE',this.getAttendance())
 	},
 	methods: {
-		refresh(){
-			this.getAttendee()
-			this.getAttendances()
-		},
 		visit(){
 			this.API("POST","/visits",this.profile)
 		},
@@ -160,9 +157,8 @@ Vue.component('ysgtb-jumbotron',{
 				reporter:this.profile
 			},attendee=>{
 				this.attendee=attendee
-				setTimeout(this.getAttendances,2000)
 			})
-		},1000)
+		},1500)
 	}
 })
 
