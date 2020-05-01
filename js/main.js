@@ -139,7 +139,7 @@ Vue.component('ysgtb-time', {
 					shortMeasure: band.measure[0],
 					displayMeasure: band.measure + (rawCount>2 ? 's' : ''),
 					rawCount : rawCount,
-					fractionalCount : rawCount - rawCount|0,
+					fractionalCount : rawCount - (rawCount|0),
 					count : rawCount|0
 				}
 			}).filter(part=>part.count>0)
