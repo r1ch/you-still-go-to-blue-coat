@@ -8,8 +8,20 @@
 }
 
 .image-background {
+  animation: pulse 2s infinite;
+  animation-direction: alternate;
   background-image: url("/img/logo.png");
   background-position: center;
   background-repeat: no-repeat;
-  background-size: 2.5rem;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    background-size: 1.5rem;
+  }
+  100% {
+    opacity: 0.3;
+    background-size: 2.5rem;
+  }
 }
