@@ -54,6 +54,8 @@ Vue.component('ysgtb-jumbotron',{
 					<br><br>
 					<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
 					<small v-if = "time">It's been over {{time.duration}}{{time.before?time.andAHalf:" "}}{{time.measure}}{{time.after?time.andAHalf:" "}}now</small>
+					<ysgtb-time :millis="attendee.identifier" :short = "false"></ysgtb-time>
+					<ysgtb-time :millis="attendee.identifier" :short = "true"></ysgtb-time>
 				</div>
 			</div>
 			<div class = "container" v-if = "profile.ready">
