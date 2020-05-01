@@ -18,9 +18,9 @@
 
 @keyframes pulse {
   0% {
-    background-height: 2.5rem;
+    background-size: 2.5rem;
   }
   100% {
-    background-height: 10rem;
+    background-size: 10rem;
   }
 }
