@@ -125,7 +125,7 @@ Vue.component('ysgtb-jumbotron',{
 			let h = Math.floor(seconds % (3600*24) / 3600);
 			let m = Math.floor(seconds % 3600 / 60);
 			let s = Math.floor(seconds % 60);
-			let dDisplay = d > 0 ? d + (d == 1 ? "d" : "d") : "";
+			let dDisplay = d > 0 ? d + (d == 1 ? "<sup>d</sup>" : "<sup>d</sup>") : "";
 			let hDisplay = h > 0 ? h + (h == 1 ? "h" : "h") : "";
 			let mDisplay = m > 0 ? m + (m == 1 ? "m" : "m") : "";
 			let sDisplay = s > 0 ? s + (s == 1 ? "s" : "s") : "";
