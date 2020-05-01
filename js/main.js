@@ -187,7 +187,7 @@ Vue.component('ysgtb-time', {
 					fractionalCount : rawCount - rawCount|0,
 					count : rawCount|0
 				}
-			})).filter(part=>part.count>0)
+			}).filter(part=>part.count>0)
 			let long = parts[0]
 			let duration = long.count == 1 ? (long.measure == "hour" ? 'an' : 'a') : long.count
 			let andAHalf = long.measure != "second" && (long.fractionalCount >= 0.5) ? " and a half " : " ",
