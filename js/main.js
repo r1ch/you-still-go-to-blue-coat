@@ -191,8 +191,8 @@ Vue.component('ysgtb-time', {
 			let long = parts[0]
 			let duration = long.count == 1 ? (long.measure == "hour" ? 'an' : 'a') : long.count
 			let andAHalf = long.measure != "second" && (long.fractionalCount >= 0.5) ? " and a half " : " ",
-			let before = long.count > 1 : andAHalf : " "
-			let after = long.count == 1 : andAHalf : " "
+			let before = long.count > 1 ? andAHalf : " "
+			let after = long.count == 1 ? andAHalf : " "
 			let html = parts.map(part=>`${part.count}<sup>${part.shortMeasure}</sup>`).join(" ")
 			return {
 				html: html,
