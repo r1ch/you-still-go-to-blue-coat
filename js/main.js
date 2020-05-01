@@ -53,7 +53,7 @@ Vue.component('ysgtb-jumbotron',{
 					<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
 					<br><br>
 					<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
-					<small v-if = "time">It's been over <ysgtb-time :short="false" :millis="now-attendee.identifier"></ysgtb-time> now</small>
+					<small v-if = "attendee.identifier">It's been over <ysgtb-time :short="false" :millis="now-attendee.identifier"></ysgtb-time> now</small>
 				</div>
 			</div>
 			<div class = "container" v-if = "profile.ready">
@@ -86,51 +86,6 @@ Vue.component('ysgtb-jumbotron',{
 		have: function(){
 			return this.attendee.name==="You"?"have":"has"
 		},
-		time: function(){
-			if(!this.attendee.identifier) return false
-			else{
-				let bands = [
-					{limit:1000*1,measure:"second"},
-					{limit:1000*60,measure:"minute"},
-					{limit:1000*60*60,measure:"hour"},
-					{limit:1000*60*60*24,measure:"day"},
-					{limit:1000*60*60*24*7,measure:"week"},
-					{limit:1000*60*60*24*30,measure:"month"},
-					{limit:1000*60*60*24*365,measure:"year"}
-				].reverse()
-				let millis = Math.max(1,this.now - this.attendee.identifier) | 0
-				let band = bands.find(band=>band.limit<millis) || bands[bands.length-1]
-				let rawCount = Math.max(1,millis/band.limit)
-				let count = rawCount | 0
-				let runningAttendance = this.attendances.find(attendance=>attendance.identifier==this.attendee.name)
-				let running = runningAttendance ? runningAttendance.record + millis : 0
-				return {
-					duration: count == 1 ? (band.measure == "hour" ? 'an' : 'a') : count,
-					measure: `${band.measure}${count!=1?'s':''}`,
-					before: count > 1,
-					after: count == 1,
-					andAHalf: band.measure != "second" && (rawCount - count >= 0.5) ? " and a half " : " ",
-					interval: Math.min(band.limit/2,1000*30),
-					running : running,
-					millis: millis
-				}
-			}
-			
-		}
-	},
-	filters: {
-		grace: function (record) {
-			let seconds = Number(record/1000);
-			let d = Math.floor(seconds / (3600*24));
-			let h = Math.floor(seconds % (3600*24) / 3600);
-			let m = Math.floor(seconds % 3600 / 60);
-			let s = Math.floor(seconds % 60);
-			let dDisplay = d > 0 ? d + (d == 1 ? "d" : "d") : "";
-			let hDisplay = h > 0 ? h + (h == 1 ? "h" : "h") : "";
-			let mDisplay = m > 0 ? m + (m == 1 ? "m" : "m") : "";
-			let sDisplay = s > 0 ? s + (s == 1 ? "s" : "s") : "";
-			return [dDisplay,hDisplay,mDisplay,sDisplay].filter(item=>item!="").join(" ")
-		}
 	},
 	mounted: function(){
 		this.visit()
@@ -182,7 +137,7 @@ Vue.component('ysgtb-time', {
 				return {
 					measure: band.measure,
 					shortMeasure: band.measure[0],
-					displayMeasure: band.measure + rawCount>2 ? 's' : '',
+					displayMeasure: band.measure + (rawCount>2 ? 's' : ''),
 					rawCount : rawCount,
 					fractionalCount : rawCount - rawCount|0,
 					count : rawCount|0
