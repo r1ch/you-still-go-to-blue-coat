@@ -66,7 +66,7 @@ Vue.component('ysgtb-jumbotron',{
 						</div>
 						<div class="d-flex w-100 justify-content-between">
 							<small><b>Longest: </b>{{attendee.name == attendance.identifier && time.millis > attendance.longest ? time.millis : attendance.longest | grace}}</small>
-							<small><b>&nbsp;Shortest: </b>{{attendee.name == attendance.identifier && time.millis < attendance.shortest ? time.millis : attendance.shortest | grace}}</small>
+							<small><b>Shortest: </b>{{attendee.name == attendance.identifier && time.millis < attendance.shortest ? time.millis : attendance.shortest | grace}}</small>
 						</div>
 					</li>
 				</ul>
