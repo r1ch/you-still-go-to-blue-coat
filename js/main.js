@@ -200,7 +200,7 @@ Vue.component('ysgtb-time', {
 			}
 		}
 	},
-	template:`<span v-if = "millis" v-html="short?time.text:time.html"></span>`
+	template:`<span v-if = "millis" v-html="short?time.html:time.text"></span>`
 })
 
 var app = new Vue({
