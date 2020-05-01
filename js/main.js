@@ -201,7 +201,6 @@ Vue.component('ysgtb-time', {
 		}
 	},
 	template:`<span></span>`
-	`
 })
 
 var app = new Vue({
