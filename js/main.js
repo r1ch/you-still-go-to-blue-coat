@@ -162,6 +162,48 @@ Vue.component('ysgtb-jumbotron',{
 	}
 })
 
+Vue.component('ysgtb-time', {
+	props: ['millis','short'],
+	data: ()=>({
+		bands:[
+			{millis:1000*60*60*24*365,measure:"year"},
+			{millis:1000*60*60*24*7,number:52,measure:"week"},
+			{millis:1000*60*60*24,number:7,measure:"day"},
+			{millis:1000*60*60,number:24,measure:"hour"},
+			{millis:1000*60,number:60,measure:"minute"},
+			{millis:1000*1,number:60,measure:"second"},
+		]
+	}),
+	computed: {
+		time: function(){
+			let parts = this.bands.map(band=>{
+				let rawCount = this.millis / band.millis
+				band.number && rawCount = rawCount % band.number
+				return {
+					measure: band.measure,
+					shortMeasure: band.measure[0],
+					displayMeasure: band.measure + rawCount>2 ? 's' : '',
+					rawCount : rawCount,
+					fractionalCount : rawCount - rawCount|0,
+					count : rawCount|0
+				}
+			})).filter(part=>part.count>0)
+			let long = parts[0]
+			let duration = long.count == 1 ? (long.measure == "hour" ? 'an' : 'a') : long.count
+			let andAHalf = long.measure != "second" && (long.fractionalCount >= 0.5) ? " and a half " : " ",
+			let before = long.count > 1 : andAHalf : " "
+			let after = long.count == 1 : andAHalf : " "
+			let html = parts.map(part=>`${part.count}<sup>${part.shortMeasure}</sup>`).join(" ")
+			return {
+				html: html,
+				text: `${duration}${before}${long.measure}${after}`
+			}
+		}
+	},
+	template:`<span v-html="short ? text : html"></span>`
+	`
+})
+
 var app = new Vue({
 	el: '#app',
 	data: {
