@@ -173,6 +173,9 @@ var app = new Vue({
 		version:version,
 		revision:revision.substring(0,5)
 	},
+	created: function(){
+		this.socket = new WebSocket(window.config.socketGatewayUrl + window.config.socketGatewayPath)
+	},
 	methods:{
 		userReady(event){
 			console.log(`User Ready ${JSON.stringify(event)}`)
@@ -182,11 +185,24 @@ var app = new Vue({
 			this.profile.url = basicProfile.getImageUrl();
 			this.profile.token = event.getAuthResponse().id_token
 			this.profile.ready = true
+		},
+		listenFor(key,handler){
+			this.socket.addEventListener("message",event=>{
+				let data = event && event.data
+				try{
+					data = JSON.parse(data)
+				} catch(err){
+					console.err(`Error in parse of ${JSON.stringify(event)} data`)
+					data = false
+				}
+				data && data.eventType && (data.eventType == key || key == "*") ? handler(data) : false
+			})
 		}
 	},
 	provide: function(){
 		return {
-			profile: this.profile
+			profile: this.profile,
+			listenFor: this.listenFor
 		}
 	},
 	template: `
@@ -196,3 +212,5 @@ var app = new Vue({
 		</div>
 	`
 })	
+
+	
