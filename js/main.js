@@ -176,7 +176,7 @@ Vue.component('ysgtb-time', {
 	}),
 	computed: {
 		time: function(){
-			let parts = this.bands.map(band=>{
+			/*let parts = this.bands.map(band=>{
 				let rawCount = this.millis / band.millis
 				if(band.number) rawCount %= band.number
 				return {
@@ -197,10 +197,10 @@ Vue.component('ysgtb-time', {
 			return {
 				html: html,
 				text: `${duration}${before}${long.measure}${after}`
-			}
+			}*/
 		}
 	},
-	template:`<span v-html="short ? text : html"></span>`
+	template:`<span></span>`
 	`
 })
 
