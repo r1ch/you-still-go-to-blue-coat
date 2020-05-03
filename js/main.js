@@ -38,6 +38,7 @@ Vue.component('ysgtb-jumbotron',{
 	data: function(){
 		return {
 			timer: false,
+			refresher: false,
 			attendee : {
 				name: "You"
 			},
@@ -88,15 +89,21 @@ Vue.component('ysgtb-jumbotron',{
 		},
 	},
 	mounted: function(){
-		this.visit()
 		this.getAttendee()
 		this.getAttendances()
 		this.listenFor('ATTENDEE',this.getAttendee)
 		this.listenFor('ATTENDANCE',this.getAttendances)
 		this.timer && clearInterval(this.timer)
 		this.timer = setInterval(()=>{this.now = (new Date().getTime())},1000)
+		this.refresher && clearInterval(this.refresher)
+		this.refresher = setInterval(this.refresh,60*1000)
+		this.visit()
 	},
 	methods: {
+		refresh(){
+			this.getAttendee()
+			this.getAttendances()
+		},
 		visit(){
 			this.API("POST","/visits",this.profile)
 		},
