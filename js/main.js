@@ -93,6 +93,8 @@ Vue.component('ysgtb-jumbotron',{
 		this.getAttendances()
 		this.listenFor('ATTENDEE',this.getAttendee)
 		this.listenFor('ATTENDANCE',this.getAttendances)
+		this.timer && clearInterval(this.timer)
+		this.timer = setInterval(()=>{this.now = (new Date().getTime())},1000)
 	},
 	methods: {
 		visit(){
@@ -100,8 +102,6 @@ Vue.component('ysgtb-jumbotron',{
 		},
 		getAttendee(){
 			this.API("GET","/attendees/latest",false,attendee=>this.attendee=attendee)
-			this.timer && clearInterval(this.timer)
-			this.timer = setInterval(()=>{this.now = (new Date().getTime())},1000)
 		},
 		getAttendances(){
 			this.API("GET","/attendances",false,attendances=>this.attendances=attendances)
@@ -112,8 +112,9 @@ Vue.component('ysgtb-jumbotron',{
 				reporter:this.profile
 			},attendee=>{
 				this.attendee=attendee
+				this.getAttendances()
 			})
-		},1500)
+		},1000)
 	}
 })
 
