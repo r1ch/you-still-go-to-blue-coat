@@ -140,7 +140,7 @@ Vue.component('ysgtb-time', {
 	computed: {
 		time: function(){
 			let parts = this.bands.map(band=>{
-				let rawCount = this.millis / band.millis
+				let rawCount = Math.max(0,this.millis) / band.millis
 				rawCount = band.number ? rawCount % band.number : rawCount
 				return {
 					measure: band.measure,
@@ -150,7 +150,7 @@ Vue.component('ysgtb-time', {
 					fractionalCount : rawCount - (rawCount|0),
 					count : rawCount|0
 				}
-			}).filter(part=>part.count>0)
+			}).filter(part=>part.count>0 || part.measure == "second")
 			let long = parts[0]
 			let duration = long.count == 1 ? (long.measure == "hour" ? 'an' : 'a') : long.count
 			let andAHalf = long.measure != "second" && (long.fractionalCount >= 0.5) ? " and a half " : " "
