@@ -113,5 +113,5 @@ function signHttpRequest(method,path,data) {
 }
 
 function handleError(error) {
-    console.log("Authentication failed: " + error);
+    console.log(`Authentication failed:  ${JSON.stringify(error)}`);
 }
