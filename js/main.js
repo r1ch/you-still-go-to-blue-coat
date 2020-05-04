@@ -112,7 +112,7 @@ Vue.component('ysgtb-jumbotron',{
 			else {
 				Authenticator.then(GA=>GA.signIn())
 			}
-		}
+		},
 		refresh(){
 			this.getAttendee()
 			this.getAttendances()
