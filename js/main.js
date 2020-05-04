@@ -1,7 +1,4 @@
 var APIMixin = {
-	created: function () {
-		console.log("API created")
-	},
 	methods: {
 		API(method,URL,body,handler){
 			body = body ? body : undefined;
@@ -85,7 +82,6 @@ Vue.component('ysgtb-jumbotron',{
 	watch:{
 		"attendee"(){
 			if(!this.attendee.name || !this.attendee.name.length || !this.attendee.name.length>1) this.attendee.name = "You"
-			console.log(JSON.stringify(this.attendee))
 		}
 	},
 	computed:{
