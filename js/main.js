@@ -168,7 +168,7 @@ Vue.component('ysgtb-d3', {
 			left: 25
 		};
 		let fullWidth = 900
-		let fullHeight = 70
+		let fullHeight = 60
 		let width = fullWidth - margin.left - margin.right;
 		let height = fullHeight - margin.top - margin.bottom;
 		return {
