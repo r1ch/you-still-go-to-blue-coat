@@ -124,7 +124,7 @@ Vue.component('ysgtb-time', {
 			{millis:1000*60*60*24,number:7,measure:"day"},
 			{millis:1000*60*60,number:24,measure:"hour"},
 			{millis:1000*60,number:60,measure:"minute"},
-			{millis:1000*1,number:60,measure:"second"},
+			{millis:1000*1,number:60,measure:"second"}
 		]
 	}),
 	computed: {
@@ -160,17 +160,36 @@ var app = new Vue({
 	el: '#app',
 	data: {
 		profile: {ready:false},
+		pingInterval : false,
+		pongTimeout : false,
 		version:version,
 		revision:revision.substring(0,5)
 	},
 	created: function(){
-		this.socket = new WebSocket(window.config.socketGatewayUrl + window.config.socketGatewayPath)
+		connectSocket()
 		Authenticator.then(GoogleAuth=>{
 			if(GoogleAuth.isSignedIn.get()) this.userReady(GoogleAuth.currentUser.get())
 			else GoogleAuth.currentUser.listen(this.userReady)		
 		})
 	},
 	methods:{
+		connectSocket(){
+			this.socket = new WebSocket(window.config.socketGatewayUrl + window.config.socketGatewayPath)
+			this.listenFor("pong",this.pong)
+			this.pingInterval && clearInterval(this.pingInterval)
+			this.pingInterval = setInterval(this.ping,30*1000)
+		},
+		ping(){
+			this.socket.send(JSON.stringify({action:"ping"}))
+			this.pongTimeout = setTimeout(this.timeout,5000)
+		},
+		pong(){
+			this.pongTimeout && this.clearInterval(this.pongTimeout)
+			this.pongTimeout = false
+		},
+		timeout(){
+			connectSocket()
+		},
 		userReady(event){
 			console.log(`User Ready`)
 			let basicProfile = event.getBasicProfile();
