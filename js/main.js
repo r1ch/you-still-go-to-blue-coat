@@ -211,7 +211,7 @@ Vue.component('ysgtb-d3', {
 			if (this.times.length == 0) return;
 			let t = d3.transition().duration(750);
 			
-			let colourScale = d3.scaleOrdinal().domain([... new Set(this.times.map(time=>time.name))]).range(d3.schemeSet2);
+			let colourScale = d3.scaleOrdinal().domain([... new Set(this.times.map(time=>time.name))]).range(d3.schemeSet1);
 			
 			let xScale = d3.scaleTime()
 				.domain([this.times[0].from,this.times[this.times.length-1].to])
