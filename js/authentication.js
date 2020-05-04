@@ -22,9 +22,8 @@ function initGoogleAuthentication(){
 		gapi.auth2.init({
   			client_id: window.config.googleClientId
 		}).then(GoogleAuth=>{
-			//if(GoogleAuth.isSignedIn) authenticate(GoogleAuth.currentUser)
-			//else 
-				GoogleAuth.currentUser.listen(authenticate)
+			if(GoogleAuth.isSignedIn.get()) authenticate(GoogleAuth.currentUser.get())
+			else GoogleAuth.currentUser.listen(authenticate)
 			Authenticator.setObject(GoogleAuth)
 			Authenticator.resolve()
 		})
