@@ -58,6 +58,22 @@ function handleSTSResponse(data) {
     return  Credentials.resolve()
 }
 
+function signedHttpRequest(method,path,data){
+	return signHttpRequest(method,path,data)
+}
+
+function unsignedHttpRequest(method,path,data){
+	return Promise.resolve(
+		{
+			method : method,
+			url : `${window.config.apiGatewayPath}${path}`,
+			baseURL: window.config.apiGatewayUrl,
+			data: data
+		}
+	)
+}
+
+
 function signHttpRequest(method,path,data) {
     return Credentials.then(()=>{
 	    let request = new AWS.HttpRequest(window.config.apiGatewayUrl, window.config.region);
