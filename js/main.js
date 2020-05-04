@@ -181,7 +181,11 @@ Vue.component('ysgtb-d3', {
 		}
 	},
 	template: `
-		<div id = 'd3' class = "col s12"></div>
+		<div class = "row">
+			<div class = "col s12">
+				 <div id = "d3"></div>
+			</div>
+		</div>
     	`,
 	mounted : function(){
 		this.svg = d3.select("#d3")
