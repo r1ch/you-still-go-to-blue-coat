@@ -182,9 +182,7 @@ Vue.component('ysgtb-d3', {
 	},
 	template: `
 		<div class = "row">
-			<div class = "col-12" style="overflow:scroll">
-				 <div id = "d3"></div>
-			</div>
+			<div id = "d3" class = "col-12" style="overflow:scroll"></div>
 		</div>
     	`,
 	mounted : function(){
