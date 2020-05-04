@@ -76,9 +76,10 @@ Vue.component('ysgtb-jumbotron',{
 		},
 	},
 	mounted: function(){
-		Authenticator.then(GA=>GA.currentUser.listen((user)=>{
-			this.$emit("userReady",user)
-		}))
+		Authenticator.then(GoogleAuth=>{
+			if(GoogleAuth.isSignedIn) this.$emit("userReady",GoogleAuth.currentUser)
+			else GoogleAuth.currentUser.listen((user)=>this.$emit("userReady",user))		
+		})
 		this.getAttendee()
 		this.getAttendances()
 		this.listenFor('ATTENDEE',this.getAttendee)
@@ -91,7 +92,7 @@ Vue.component('ysgtb-jumbotron',{
 	methods: {
 		startAuthentication(){
 			if(this.profile.ready) return
-			else Authenticator.then(GA=>GA.signIn())
+			else Authenticator.then(GoogleAuth=>GoogleAuth.signIn())
 		},
 		refresh(){
 			this.getAttendee()
