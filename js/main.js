@@ -162,9 +162,9 @@ Vue.component('ysgtb-d3', {
 	mixins:[APIMixin],
 	data: function() {
 		let margin = {
-			top: 10,
+			top: 25,
 			right: 25,
-			bottom: 10,
+			bottom: 25,
 			left: 25
 		};
 		let fullWidth = 900
