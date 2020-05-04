@@ -162,7 +162,7 @@ Vue.component('ysgtb-d3', {
 	mixins:[APIMixin],
 	data: function() {
 		let margin = {
-			top: 25,
+			top: 10,
 			right: 25,
 			bottom: 25,
 			left: 25
