@@ -166,7 +166,7 @@ var app = new Vue({
 		revision:revision.substring(0,5)
 	},
 	created: function(){
-		connectSocket()
+		this.connectSocket()
 		Authenticator.then(GoogleAuth=>{
 			if(GoogleAuth.isSignedIn.get()) this.userReady(GoogleAuth.currentUser.get())
 			else GoogleAuth.currentUser.listen(this.userReady)		
@@ -184,11 +184,13 @@ var app = new Vue({
 			this.pongTimeout = setTimeout(this.timeout,5000)
 		},
 		pong(){
-			this.pongTimeout && this.clearInterval(this.pongTimeout)
+			this.pongTimeout && clearInterval(this.pongTimeout)
 			this.pongTimeout = false
 		},
 		timeout(){
-			connectSocket()
+			this.pingInterval && clearInterval(this.pingInterval)
+			this.pingInterval = false;
+			this.connectSocket()
 		},
 		userReady(event){
 			console.log(`User Ready`)
