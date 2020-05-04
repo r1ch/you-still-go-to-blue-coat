@@ -5,11 +5,19 @@ var APIMixin = {
 	methods: {
 		API(method,URL,body,handler){
 			body = body ? body : undefined;
-			signHttpRequest(method, URL, body)
-			.then(axios)
-			.then(({data}) => {
-				if(handler) handler(data)
-			})
+			if(method != 'GET'){
+				signedHttpRequest(method, URL, body)
+				.then(axios)
+				.then(({data}) => {
+					if(handler) handler(data)
+				})
+			} else {
+				unsignedHttpRequest(method, URL, body)
+				.then(axios)
+				.then(({data}) => {
+					if(handler) handler(data)
+				})
+			}
 		},
 	}
 }
