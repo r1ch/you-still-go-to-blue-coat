@@ -168,7 +168,7 @@ Vue.component('ysgtb-d3', {
 			left: 25
 		};
 		let fullWidth = 900
-		let fullHeight = 100
+		let fullHeight = 75
 		let width = fullWidth - margin.left - margin.right;
 		let height = fullHeight - margin.top - margin.bottom;
 		return {
@@ -204,9 +204,7 @@ Vue.component('ysgtb-d3', {
 			let t = d3.transition().duration(750);
 			
 			let xScale = d3.scaleTime()
-				.domain(d3.extent(this.times, function(d) {
-					return d.to
-				}))
+				.domain([this.times[0].from,this.times[this.times.length-1].to])
 				.range([0, this.width])
 
 			let xAxis = d3.axisBottom(xScale)
@@ -250,7 +248,7 @@ Vue.component('ysgtb-d3', {
 			
 			times.enter()
 				.append('rect')
-				.attr('class', function(d){return `strategy ${d.name}`})
+				.attr('class', function(d){return `time ${d.name}`})
 				.attr('width', function(d) {
 					return d.width
 				})
