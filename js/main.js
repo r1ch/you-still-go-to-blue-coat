@@ -214,8 +214,8 @@ var app = new Vue({
 	},
 	template: `
 		<div>
-			<ysgtb-jumbotron></ysgtb-jumbotron>
 			<google-login @userReady = "userReady"></google-login>
+			<ysgtb-jumbotron></ysgtb-jumbotron>
 		</div>
 	`
 })	
