@@ -56,16 +56,16 @@ Vue.component('ysgtb-jumbotron',{
 	},
 	template:`
 		<div>
-			<div class="jumbotron" v-if = "profile.ready">
+			<div class="jumbotron" v-if = "attendee">
 				<div class="container">
-					<input @keyup = "newAttendee" class="form-control form-control-lg col-6 col-md-3 attendee-name" type="text" v-model="attendee.name">
+					<input @keyup = "newAttendee" class="form-control form-control-lg col-6 col-md-3 attendee-name" type="text" v-model="attendee.name" :disabled = "!profile.ready">
 					<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
 					<br><br>
 					<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
 					<small v-if = "attendee.identifier">It's been over <ysgtb-time :short="false" :millis="now-attendee.identifier"></ysgtb-time> now</small>
 				</div>
 			</div>
-			<div class = "container" v-if = "profile.ready">
+			<div class = "container" v-if = "attendances.length > 0">
 				<h4>Grew in grace</h4>
 				<ul class="list-group">
 					<li class="list-group-item flex-column align-items-start" v-for = "attendance in attendances" :class= "{active:attendee.name == attendance.identifier, 'image-background':attendee.name == attendance.identifier}">
