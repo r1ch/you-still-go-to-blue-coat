@@ -77,8 +77,9 @@ Vue.component('ysgtb-jumbotron',{
 	},
 	mounted: function(){
 		Authenticator.then(GoogleAuth=>{
-			if(GoogleAuth.isSignedIn) this.$emit("userReady",GoogleAuth.currentUser)
-			else GoogleAuth.currentUser.listen((user)=>this.$emit("userReady",user))		
+			//if(GoogleAuth.isSignedIn) this.$emit("userReady",GoogleAuth.currentUser)
+			//else
+			GoogleAuth.currentUser.listen((user)=>this.$emit("userReady",user))		
 		})
 		this.getAttendee()
 		this.getAttendances()
