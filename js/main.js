@@ -19,23 +19,6 @@ var APIMixin = {
 	}
 }
 
-/*Vue.component('google-login', {
-	mixins:[APIMixin],
-	data: () => ({
-		authenticated: false,
-	}),
-	template: `
-		<div class = "row">
-			<div v-if = "!authenticated" class="g-signin2 col" data-width="200" data-height="50" data-onsuccess="authenticate" data-theme="dark"></div>
-		</div>
-	`,
-	mounted: function() {
-		Credentials.then((user) => {
-			this.authenticated = true;
-			this.$emit("userReady",user)
-		})
-	},
-})*/
 
 Vue.component('ysgtb-jumbotron',{
 	mixins:[APIMixin],
@@ -55,7 +38,7 @@ Vue.component('ysgtb-jumbotron',{
 		<div>
 			<div class="jumbotron" v-if = "attendee">
 				<div class="container">
-					<input @keyup = "newAttendee" class="form-control form-control-lg col-6 col-md-3 attendee-name" type="text" v-model="attendee.name" @click = "startAuthentication">
+					<input @keyup = "newAttendee" class="form-control form-control-lg col-6 col-md-3 attendee-name" type="text" v-model="attendee.name" @click = "startAuthentication" :class = "{'btn-primary':!profile.ready}">
 					<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
 					<br><br>
 					<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
@@ -217,7 +200,6 @@ var app = new Vue({
 	},
 	template: `
 		<div>
-			<!--<google-login @userReady = "userReady"></google-login>-->
 			<ysgtb-jumbotron @userReady = "userReady"></ysgtb-jumbotron>
 		</div>
 	`
