@@ -76,9 +76,9 @@ Vue.component('ysgtb-jumbotron',{
 		},
 	},
 	mounted: function(){
-		Credentials.then((user) => {
+		Authenticator.then(GA=>GA.currentUser.listen((user)=>{
 			this.$emit("userReady",user)
-		})
+		}))
 		this.getAttendee()
 		this.getAttendances()
 		this.listenFor('ATTENDEE',this.getAttendee)
@@ -91,7 +91,7 @@ Vue.component('ysgtb-jumbotron',{
 	methods: {
 		startAuthentication(){
 			if(this.profile.ready) return
-			else Authenticator.then(GA=>GA.signIn().then(authenticate).catch(handleError))
+			else Authenticator.then(GA=>GA.signIn())
 		},
 		refresh(){
 			this.getAttendee()
