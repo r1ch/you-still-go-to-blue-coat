@@ -166,8 +166,8 @@ var app = new Vue({
 	created: function(){
 		this.socket = new WebSocket(window.config.socketGatewayUrl + window.config.socketGatewayPath)
 		Authenticator.then(GoogleAuth=>{
-			if(GoogleAuth.isSignedIn.get()) userReady(GoogleAuth.currentUser.get())
-			else GoogleAuth.currentUser.listen(userReady)		
+			if(GoogleAuth.isSignedIn.get()) this.userReady(GoogleAuth.currentUser.get())
+			else GoogleAuth.currentUser.listen(this.userReady)		
 		})
 	},
 	methods:{
