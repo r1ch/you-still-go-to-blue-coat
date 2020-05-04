@@ -55,7 +55,7 @@ Vue.component('ysgtb-jumbotron',{
 		<div>
 			<div class="jumbotron" v-if = "attendee">
 				<div class="container">
-					<input @keyup = "newAttendee" class="form-control form-control-lg col-6 col-md-3 attendee-name" type="text" v-model="attendee.name" @click = "authenticate">
+					<input @keyup = "newAttendee" class="form-control form-control-lg col-6 col-md-3 attendee-name" type="text" v-model="attendee.name" @click = "startAuthentication">
 					<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
 					<br><br>
 					<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
@@ -94,7 +94,6 @@ Vue.component('ysgtb-jumbotron',{
 	},
 	mounted: function(){
 		Credentials.then((user) => {
-			this.authenticated = true;
 			this.$emit("userReady",user)
 		})
 		this.getAttendee()
@@ -107,11 +106,9 @@ Vue.component('ysgtb-jumbotron',{
 		this.refresher = setInterval(this.refresh,60*1000)
 	},
 	methods: {
-		authenticate(){
+		startAuthentication(){
 			if(this.profile.ready) return
-			else {
-				Authenticator.then(GA=>GA.signIn())
-			}
+			else Authenticator.then(GA=>GA.signIn().then(authenticate).catch(handleError))
 		},
 		refresh(){
 			this.getAttendee()
