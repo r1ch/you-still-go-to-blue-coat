@@ -5,9 +5,11 @@ function Deferred() {
 		rej = reject;
 	});
 	promise.setObject = function(o){
+		console.log("SET OBJ")
 		object = o
 	};
 	promise.resolve = ()=>{
+		console.log("RESOLVE")
 		res(object);
 	};
 	promise.reject = rej;
@@ -18,10 +20,13 @@ let Credentials = Deferred()
 let Authenticator = Deferred()
 
 function initGoogleAuthentication(){
+	console.log("INIT")
 	gapi.load('auth2',()=>{
+		console.log("AUTH 2 INIT")
 		gapi.auth2.init({
   			client_id: window.config.googleClientId
 		}).then(GoogleAuth=>{
+			console.log("GA INIT")
 			Authenticator.setObject(GoogleAuth)
 			Authenticator.resolve()
 		})
