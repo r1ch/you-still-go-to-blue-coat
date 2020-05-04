@@ -253,7 +253,7 @@ Vue.component('ysgtb-d3', {
 				.attr('x', function(d) {
 					return d.start
 				})
-				.attr("fill", function(d){return colorScale(d.name) })
+				.attr("fill", function(d){return colourScale(d.name) })
 
 
 			
