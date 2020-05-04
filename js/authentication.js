@@ -5,11 +5,9 @@ function Deferred() {
 		rej = reject;
 	});
 	promise.setObject = function(o){
-		console.log("SET OBJ")
 		object = o
 	};
 	promise.resolve = ()=>{
-		console.log("RESOLVE")
 		res(object);
 	};
 	promise.reject = rej;
