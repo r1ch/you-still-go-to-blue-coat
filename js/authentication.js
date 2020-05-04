@@ -16,6 +16,21 @@ function DeferredCredentials() {
 
 var Credentials = DeferredCredentials()
 
+function initGoogleAuthentication(){
+	gapi.load('auth2',()=>{
+		gapi.auth2.init({
+  			client_id: window.config.googleClientId
+		}).then(()=>{
+			gapi.auth2.getAuthInstance().attachClickHandler(
+				document.getElementById("theName"),
+				{},
+				authenticate,
+				handleError
+			)   
+		})
+	})
+}
+
 function authenticate(googleUser) {
     getIdToken(googleUser)
         .then(AWSSTSSignIn)
