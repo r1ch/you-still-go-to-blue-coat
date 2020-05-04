@@ -210,7 +210,7 @@ Vue.component('ysgtb-d3', {
 				.range([0, this.width])
 
 			let xAxis = d3.axisBottom(xScale)
-				.ticks(d3.timeHour.every(2))
+				.ticks(d3.timeHour.every(6))
 				.tickFormat(d3.timeFormat("%H"))
 
 			this.svg.select(".x")
@@ -220,8 +220,8 @@ Vue.component('ysgtb-d3', {
 			
 			let timeBlocks = this.times.map(time=>{
 				let output = {
-					end: xScale(time.from),
-					start: xScale(time.to),
+					end: xScale(time.to),
+					start: xScale(time.from),
 					name: time.name
 				}
 				output.width = output.end - output.start
