@@ -172,6 +172,7 @@ Vue.component('ysgtb-d3', {
 		let width = fullWidth - margin.left - margin.right;
 		let height = fullHeight - margin.top - margin.bottom;
 		return {
+			times:[],
 			margin: margin,
 			width: width,
 			height: height,
@@ -195,10 +196,16 @@ Vue.component('ysgtb-d3', {
 			.attr("transform", "translate(0," + this.height + ")")
 	},
 	methods: {
-		draw() {		
+		getTimes(){
+			this.API("GET","/times",false,times=>this.times=times)
+		},
+		draw() {
+			if (this.strategies.length == 0) return;
+			let t = d3.transition().duration(750);
+			
 			let xScale = d3.scaleTime()
-				.domain(d3.extent(this.strategies, function(d) {
-					return d.timestamp
+				.domain(d3.extent(this.times, function(d) {
+					return d.to
 				}))
 				.range([0, this.width])
 
@@ -210,26 +217,25 @@ Vue.component('ysgtb-d3', {
 				.transition(t)
 				.call(xAxis);
 
-			let strategyBlocks = [];
 			
-			for (i = 0; i < this.strategies.length - 1; i++) {
+			let timeBlocks = this.times.map(time=>{
 				let output = {
-					end: xScale(this.strategies[i].timestamp),
-					start: xScale(this.strategies[i + 1].timestamp),
-					detail: this.strategies[i + 1].detail
+					end: xScale(time.from),
+					start: xScale(time.to),
+					name: time.name
 				}
 				output.width = output.end - output.start
-				strategyBlocks.push(output)
-			}
+				return output
+			})
 
-			let strategies = this.svg.selectAll('.strategy')
-				.data(strategyBlocks)
+			let times = this.svg.selectAll('.time')
+				.data(timeBlocks)
 			
 						
-			strategies.exit().remove()
+			times.exit().remove()
 			
-			strategies
-				.attr('class', function(d){return `strategy ${d.detail}`})
+			times
+				.attr('class', function(d){return `time ${d.name}`})
 				.attr('width', function(d) {
 					return d.width
 				})
@@ -242,9 +248,9 @@ Vue.component('ysgtb-d3', {
 
 
 			
-			strategies.enter()
+			times.enter()
 				.append('rect')
-				.attr('class', function(d){return `strategy ${d.detail}`})
+				.attr('class', function(d){return `strategy ${d.name}`})
 				.attr('width', function(d) {
 					return d.width
 				})
