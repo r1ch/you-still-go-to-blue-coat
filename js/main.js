@@ -200,7 +200,7 @@ Vue.component('ysgtb-d3', {
 			this.API("GET","/times",false,times=>this.times=times)
 		},
 		draw() {
-			if (this.strategies.length == 0) return;
+			if (this.times.length == 0) return;
 			let t = d3.transition().duration(750);
 			
 			let xScale = d3.scaleTime()
@@ -337,6 +337,7 @@ var app = new Vue({
 	template: `
 		<div>
 			<ysgtb-jumbotron></ysgtb-jumbotron>
+			<ysgtb-d3></ysgtb-d3>
 		</div>
 	`
 })	
