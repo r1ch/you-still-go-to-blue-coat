@@ -15,7 +15,7 @@ function Deferred() {
 }
 
 let Credentials = Deferred()
-let Authenticator = Defered()
+let Authenticator = Deferred()
 
 function initGoogleAuthentication(){
 	gapi.load('auth2',()=>{
