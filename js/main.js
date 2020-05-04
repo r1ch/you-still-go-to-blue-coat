@@ -156,6 +156,114 @@ Vue.component('ysgtb-time', {
 	template:`<span v-if = "millis" v-html="short?time.html:time.text"></span>`
 })
 
+
+
+Vue.component('ysgtb-d3', {
+	mixins:[APIMixin],
+	data: function() {
+		let margin = {
+			top: 10,
+			right: 25,
+			bottom: 10,
+			left: 25
+		};
+		let fullWidth = 900
+		let fullHeight = 100
+		let width = fullWidth - margin.left - margin.right;
+		let height = fullHeight - margin.top - margin.bottom;
+		return {
+			margin: margin,
+			width: width,
+			height: height,
+			fullWidth : fullWidth,
+			fullHeight : fullHeight,
+		}
+	},
+	template: `
+		<div id = 'd3' class = "col s12"></div>
+    	`,
+	mounted : function(){
+		this.svg = d3.select("#d3")
+			.append("svg")
+			.attr('width',this.fullWidth)
+			.attr('height',this.fullHeight)
+			.append("g")
+			.attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")")
+		
+		this.svg.append("g")
+			.attr("class", "x axis")
+			.attr("transform", "translate(0," + this.height + ")")
+	},
+	methods: {
+		draw() {		
+			let xScale = d3.scaleTime()
+				.domain(d3.extent(this.strategies, function(d) {
+					return d.timestamp
+				}))
+				.range([0, this.width])
+
+			let xAxis = d3.axisBottom(xScale)
+				.ticks(d3.timeHour.every(2))
+				.tickFormat(d3.timeFormat("%H"))
+
+			this.svg.select(".x")
+				.transition(t)
+				.call(xAxis);
+
+			let strategyBlocks = [];
+			
+			for (i = 0; i < this.strategies.length - 1; i++) {
+				let output = {
+					end: xScale(this.strategies[i].timestamp),
+					start: xScale(this.strategies[i + 1].timestamp),
+					detail: this.strategies[i + 1].detail
+				}
+				output.width = output.end - output.start
+				strategyBlocks.push(output)
+			}
+
+			let strategies = this.svg.selectAll('.strategy')
+				.data(strategyBlocks)
+			
+						
+			strategies.exit().remove()
+			
+			strategies
+				.attr('class', function(d){return `strategy ${d.detail}`})
+				.attr('width', function(d) {
+					return d.width
+				})
+				.attr('height', this.height)
+				.attr('y', 0)
+				.transition(t)
+				.attr('x', function(d) {
+					return d.start
+				})
+
+
+			
+			strategies.enter()
+				.append('rect')
+				.attr('class', function(d){return `strategy ${d.detail}`})
+				.attr('width', function(d) {
+					return d.width
+				})
+				.attr('height', this.height)
+				.attr('y', 0)
+				.transition(t)
+				.attr('x', function(d) {
+					return d.start
+				})
+
+			d3.selectAll("#d3").node()
+				.scrollLeft = this.fullWidth
+
+			return true;
+		}
+	}
+})
+
+
 var app = new Vue({
 	el: '#app',
 	data: {
