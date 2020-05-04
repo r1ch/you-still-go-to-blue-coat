@@ -20,13 +20,10 @@ let Credentials = Deferred()
 let Authenticator = Deferred()
 
 function initGoogleAuthentication(){
-	console.log("INIT")
 	gapi.load('auth2',()=>{
-		console.log("AUTH 2 INIT")
 		gapi.auth2.init({
   			client_id: window.config.googleClientId
 		}).then(GoogleAuth=>{
-			console.log("GA INIT")
 			Authenticator.setObject(GoogleAuth)
 			Authenticator.resolve()
 		})
