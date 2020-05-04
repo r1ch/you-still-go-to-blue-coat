@@ -76,10 +76,6 @@ Vue.component('ysgtb-jumbotron',{
 		},
 	},
 	mounted: function(){
-		Authenticator.then(GoogleAuth=>{
-			if(GoogleAuth.isSignedIn.get()) this.$emit("userReady",GoogleAuth.currentUser.get())
-			else GoogleAuth.currentUser.listen((user)=>this.$emit("userReady",user))		
-		})
 		this.getAttendee()
 		this.getAttendances()
 		this.listenFor('ATTENDEE',this.getAttendee)
@@ -169,10 +165,14 @@ var app = new Vue({
 	},
 	created: function(){
 		this.socket = new WebSocket(window.config.socketGatewayUrl + window.config.socketGatewayPath)
+		Authenticator.then(GoogleAuth=>{
+			if(GoogleAuth.isSignedIn.get()) userReady(GoogleAuth.currentUser.get())
+			else GoogleAuth.currentUser.listen(userReady)		
+		})
 	},
 	methods:{
 		userReady(event){
-			console.log(`User Ready ${JSON.stringify(event)}`)
+			console.log(`User Ready`)
 			let basicProfile = event.getBasicProfile();
 			this.profile.id = basicProfile.getId();
 			this.profile.name = basicProfile.getGivenName();
@@ -201,7 +201,7 @@ var app = new Vue({
 	},
 	template: `
 		<div>
-			<ysgtb-jumbotron @userReady = "userReady"></ysgtb-jumbotron>
+			<ysgtb-jumbotron></ysgtb-jumbotron>
 		</div>
 	`
 })	
