@@ -198,6 +198,8 @@ Vue.component('ysgtb-d3', {
 		this.svg.append("g")
 			.attr("class", "x axis")
 			.attr("transform", "translate(0," + this.height + ")")
+		this.getTimes()
+		this.draw()
 	},
 	methods: {
 		getTimes(){
