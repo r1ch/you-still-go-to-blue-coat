@@ -216,8 +216,8 @@ Vue.component('ysgtb-d3', {
 				.range([0, this.width])
 
 			let xAxis = d3.axisBottom(xScale)
-				.ticks(d3.timeHour.every(6))
-				.tickFormat(d3.timeFormat())
+				.ticks(d3.timeHour.every(12))
+				.tickFormat(d3.timeFormat("%B %d %H"))
 
 			this.svg.select(".x")
 				.transition(t)
