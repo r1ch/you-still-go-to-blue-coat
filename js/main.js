@@ -216,8 +216,8 @@ Vue.component('ysgtb-d3', {
 				.range([0, this.width])
 
 			let xAxis = d3.axisBottom(xScale)
-				.ticks(20)
-				.tickFormat(20)
+				.ticks(xScale.ticks(20))
+				.tickFormat(xScale.ticksFormat())
 
 			this.svg.select(".x")
 				.transition(t)
