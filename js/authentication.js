@@ -1,32 +1,29 @@
-function DeferredCredentials() {
-	let res, rej, user
+function Deferred() {
+	let res, rej, object
 	let promise = new Promise((resolve, reject) => {
 		res = resolve;
 		rej = reject;
 	});
-	promise.setUser = function(u){
-		user = u
+	promise.setObject = function(o){
+		object = o
 	};
 	promise.resolve = ()=>{
-		res(user);
+		res(object);
 	};
 	promise.reject = rej;
 	return promise;
 }
 
-var Credentials = DeferredCredentials()
+let Credentials = Deferred()
+let Authenticator = Deffered()
 
 function initGoogleAuthentication(){
 	gapi.load('auth2',()=>{
 		gapi.auth2.init({
   			client_id: window.config.googleClientId
-		}).then(()=>{
-			gapi.auth2.getAuthInstance().attachClickHandler(
-				document.getElementById("theName"),
-				{},
-				authenticate,
-				handleError
-			)   
+		}).then(GoogleAuth=>{
+			Authenticator.setObject(GoogleAuth)
+			Authenticator.resolve()
 		})
 	})
 }
@@ -39,7 +36,7 @@ function authenticate(googleUser) {
 };
 
 function getIdToken(googleUser) {
-    Credentials.setUser(googleUser)
+    Credentials.setObject(googleUser)
     var idToken = googleUser.getAuthResponse().id_token;
     return new Promise(function (resolve) {
         resolve(idToken);
