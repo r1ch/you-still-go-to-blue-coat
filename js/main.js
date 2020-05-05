@@ -256,7 +256,7 @@ Vue.component('ysgtb-d3', {
 				.attr('x', function(d) {
 					return d.start
 				})
-				.attr("fill", function(d){return this.colourScale(d.name[0]) })
+				.attr("fill", (d)=>this.colourScale(d.name[0]))
 
 
 			
@@ -272,7 +272,7 @@ Vue.component('ysgtb-d3', {
 				.attr('x', function(d) {
 					return d.start
 				})
-				.attr("fill", function(d){return this.colourScale(d.name) })
+				.attr("fill", (d)=>this.colourScale(d.name[0]))
 
 			d3.selectAll("#d3").node()
 				.scrollLeft = this.fullWidth
