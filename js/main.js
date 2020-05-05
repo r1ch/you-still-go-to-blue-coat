@@ -107,12 +107,7 @@ Vue.component('ysgtb-jumbotron',{
 			this.API("GET","/attendees/latest",false,attendee=>this.attendee=attendee)
 		},
 		getAttendances(){
-			this.API("GET","/attendances",false,attendances=>{
-				this.attendances=attendances
-				.sort((one,other)=>{
-					return one.
-				})
-			})
+			this.API("GET","/attendances",false,attendances=>this.attendances=attendances)
 		},
 		newAttendee: _.debounce(function(){
 			this.API("POST","/attendees",{
