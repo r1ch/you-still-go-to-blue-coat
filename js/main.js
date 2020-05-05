@@ -21,6 +21,7 @@ var APIMixin = {
 
 Vue.component('ysgtb-d3', {
 	mixins:[APIMixin],
+	inject:['profile','listenFor','colourScale'],
 	data: function() {
 		let margin = {
 			top: 10,
@@ -33,7 +34,6 @@ Vue.component('ysgtb-d3', {
 		let width = fullWidth - margin.left - margin.right;
 		let height = fullHeight - margin.top - margin.bottom;
 		return {
-			colourScale : ()=>"#000000",
 			times:[],
 			margin: margin,
 			width: width,
@@ -288,7 +288,8 @@ var app = new Vue({
 		pingInterval : false,
 		pongTimeout : false,
 		version:version,
-		revision:revision.substring(0,5)
+		revision:revision.substring(0,5),
+		scale: d3.scaleOrdinal().range(d3.schemePaired)
 	},
 	created: function(){
 		this.connectSocket()
@@ -298,6 +299,9 @@ var app = new Vue({
 		})
 	},
 	methods:{
+		colourScale(x){
+			return this.scale(x)
+		},
 		connectSocket(){
 			this.socket = new WebSocket(window.config.socketGatewayUrl + window.config.socketGatewayPath)
 			this.listenFor("pong",this.pong)
@@ -342,7 +346,8 @@ var app = new Vue({
 	provide: function(){
 		return {
 			profile: this.profile,
-			listenFor: this.listenFor
+			listenFor: this.listenFor,
+			colourScale: this.colourScale
 		}
 	},
 	template: `
