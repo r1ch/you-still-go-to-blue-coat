@@ -256,12 +256,6 @@ Vue.component('ysgtb-d3', {
 				.transition(t)
 				.attr('x', d=>d.start)
 				.attr("fill", (d)=>this.colourScale(d.name[0]))
-				.append('text')
-				.attr('text-anchor', 'middle')
-				.attr('font-size', '6px')
-				.text(d=>d.name[0] || "")
-
-
 			
 			times.enter()
 				.append('rect')
@@ -272,11 +266,6 @@ Vue.component('ysgtb-d3', {
 				.transition(t)
 				.attr('x', d=>d.start)
 				.attr("fill", (d)=>this.colourScale(d.name[0]))
-				.append('text')
-				.attr('text-anchor', 'middle')
-				.attr('font-size', '6px')
-				.text(d=>d.name[0] || "")
-
 
 			d3.selectAll("#d3").node()
 				.scrollLeft = this.fullWidth
