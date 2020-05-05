@@ -75,7 +75,7 @@ Vue.component('ysgtb-jumbotron',{
 			return this.attendee.name==="You"?"have":"has"
 		},
 		orderedAttendances: function(){
-			this.attendances
+			return this.attendances
 			.map(attendance=>{
 				let a = {...attendance}
 				a.record += (this.attendee.name == a.identifier ? this.now-this.attendee.identifier : 0)
