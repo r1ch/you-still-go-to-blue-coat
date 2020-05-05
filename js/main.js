@@ -302,9 +302,10 @@ var app = new Vue({
 		},
 		connectSocket(){
 			this.socket = new WebSocket(window.config.socketGatewayUrl + window.config.socketGatewayPath)
+			this.socket.onclose(this.connectSocket)
 			this.listenFor("pong",this.pong)
 			this.pingInterval && clearInterval(this.pingInterval)
-			this.pingInterval = setInterval(this.ping,30*1000)
+			this.pingInterval = setInterval(this.ping,2*60*1000)
 		},
 		ping(){
 			this.socket.send(JSON.stringify({action:"ping"}))
