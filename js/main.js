@@ -249,33 +249,34 @@ Vue.component('ysgtb-d3', {
 			times.exit().remove()
 			
 			times
-				.attr('class', function(d){return `time ${d.name}`})
-				.attr('width', function(d) {
-					return d.width
-				})
+				.attr('class', d=>`time ${d.name}`)
+				.attr('width', d=>d.width)
 				.attr('height', this.height)
 				.attr('y', 0)
 				.transition(t)
-				.attr('x', function(d) {
-					return d.start
-				})
+				.attr('x', d=>d.start)
 				.attr("fill", (d)=>this.colourScale(d.name[0]))
+				.append('text')
+				.attr('text-anchor', 'middle')
+				.attr('font-size', '6px')
+				.text(d=>d.name[0] || "")
 
 
 			
 			times.enter()
 				.append('rect')
-				.attr('class', function(d){return `time ${d.name}`})
-				.attr('width', function(d) {
-					return d.width
-				})
+				.attr('class', d=>`time ${d.name}`)
+				.attr('width', d=>d.width)
 				.attr('height', this.height)
 				.attr('y', 0)
 				.transition(t)
-				.attr('x', function(d) {
-					return d.start
-				})
+				.attr('x', d=>d.start)
 				.attr("fill", (d)=>this.colourScale(d.name[0]))
+				.append('text')
+				.attr('text-anchor', 'middle')
+				.attr('font-size', '6px')
+				.text(d=>d.name[0] || "")
+
 
 			d3.selectAll("#d3").node()
 				.scrollLeft = this.fullWidth
