@@ -13,3 +13,9 @@
   background-repeat: no-repeat;
   background-size: 2.5rem;
 }
+
+
+.svgHolder {
+  overflow:scroll;
+  text-align:center;
+}
