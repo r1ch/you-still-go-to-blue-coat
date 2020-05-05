@@ -186,8 +186,10 @@ Vue.component('ysgtb-d3', {
 			<div id = "d3" class = "col mx-auto" style="overflow:scroll"></div>
 		</div>
     	`,
-	provides: function(){
-		return this.colourScale
+	provide: function(){
+		return {
+			colourScale : this.colourScale
+		}
 	},
 	mounted : function(){
 		this.svg = d3.select("#d3")
