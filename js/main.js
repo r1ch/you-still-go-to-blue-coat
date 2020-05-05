@@ -81,7 +81,7 @@ Vue.component('ysgtb-jumbotron',{
 				a.record += (this.attendee.name == a.identifier ? this.now-this.attendee.identifier : 0)
 				return a
 			})
-			.sort((a,b)=>a.record-b.record)
+			.sort((a,b)=>b.record-a.record)
 		}
 	},
 	mounted: function(){
