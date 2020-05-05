@@ -76,13 +76,11 @@ Vue.component('ysgtb-jumbotron',{
 		},
 		orderedAttendances: function(){
 			this.attendances
-			.map(attendance=>({
-				identifier: attendance.identifier,
-				record:(this.attendee.name == attendance.identifier ? this.now-this.attendee.identifier:0)+attendance.record,
-				longest: attendance.longest,
-				shortest: attendance.shortest,
-				
-			}))
+			.map(attendance=>{
+				let a = {...attendance}
+				a.record += (this.attendee.name == a.identifier ? this.now-this.attendee.identifier : 0)
+				return a
+			})
 			.sort((a,b)=>a.record>b.record)
 		}
 	},
