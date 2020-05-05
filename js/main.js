@@ -19,129 +19,6 @@ var APIMixin = {
 	}
 }
 
-Vue.component('ysgtb-d3', {
-	mixins:[APIMixin],
-	inject:['profile','listenFor','colourScale'],
-	data: function() {
-		let margin = {
-			top: 10,
-			right: 25,
-			bottom: 25,
-			left: 25
-		};
-		let fullWidth = 900
-		let fullHeight = 60
-		let width = fullWidth - margin.left - margin.right;
-		let height = fullHeight - margin.top - margin.bottom;
-		return {
-			times:[],
-			margin: margin,
-			width: width,
-			height: height,
-			fullWidth : fullWidth,
-			fullHeight : fullHeight,
-		}
-	},
-	template: `
-		<div class = "row">
-			<div id = "d3" class = "col mx-auto" style="overflow:scroll"></div>
-		</div>
-    	`,
-	provide: function(){
-		return {
-			colourScale : this.colourScale
-		}
-	},
-	mounted : function(){
-		this.svg = d3.select("#d3")
-			.append("svg")
-			.attr('width',this.fullWidth)
-			.attr('height',this.fullHeight)
-			.append("g")
-			.attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")")
-		
-		this.svg.append("g")
-			.attr("class", "x axis")
-			.attr("transform", "translate(0," + this.height + ")")
-		this.getTimes()
-	},
-	methods: {
-		getTimes(){
-			this.API("GET","/times",false,times=>{
-				this.times=times
-				this.draw()
-			})
-		},
-		draw() {
-			if (this.times.length == 0) return;
-			let t = d3.transition().duration(750);
-			
-			let xScale = d3.scaleTime()
-				.domain([this.times[0].from,this.times[this.times.length-1].to])
-				.range([0, this.width])
-
-			let xAxis = d3.axisBottom(xScale)
-				.ticks(10)
-
-			this.svg.select(".x")
-				.transition(t)
-				.call(xAxis);
-
-			
-			let timeBlocks = this.times.map(time=>{
-				let output = {
-					end: xScale(time.to),
-					start: xScale(time.from),
-					name: time.name
-				}
-				output.width = output.end - output.start
-				return output
-			})
-
-			let times = this.svg.selectAll('.time')
-				.data(timeBlocks)
-			
-						
-			times.exit().remove()
-			
-			times
-				.attr('class', function(d){return `time ${d.name}`})
-				.attr('width', function(d) {
-					return d.width
-				})
-				.attr('height', this.height)
-				.attr('y', 0)
-				.transition(t)
-				.attr('x', function(d) {
-					return d.start
-				})
-				.attr("fill", (d)=>this.colourScale(d.name[0]))
-
-
-			
-			times.enter()
-				.append('rect')
-				.attr('class', function(d){return `time ${d.name}`})
-				.attr('width', function(d) {
-					return d.width
-				})
-				.attr('height', this.height)
-				.attr('y', 0)
-				.transition(t)
-				.attr('x', function(d) {
-					return d.start
-				})
-				.attr("fill", (d)=>this.colourScale(d.name[0]))
-
-			d3.selectAll("#d3").node()
-				.scrollLeft = this.fullWidth
-
-			return true;
-		}
-	}
-})
-
-
 
 Vue.component('ysgtb-jumbotron',{
 	mixins:[APIMixin],
@@ -278,6 +155,127 @@ Vue.component('ysgtb-time', {
 	},
 	template:`<span v-if = "millis" v-html="short?time.html:time.text"></span>`
 })
+
+
+Vue.component('ysgtb-d3', {
+	mixins:[APIMixin],
+	inject:['profile','listenFor','colourScale'],
+	data: function() {
+		let margin = {
+			top: 10,
+			right: 25,
+			bottom: 25,
+			left: 25
+		};
+		let fullWidth = 900
+		let fullHeight = 60
+		let width = fullWidth - margin.left - margin.right;
+		let height = fullHeight - margin.top - margin.bottom;
+		return {
+			times:[],
+			margin: margin,
+			width: width,
+			height: height,
+			fullWidth : fullWidth,
+			fullHeight : fullHeight,
+		}
+	},
+	template: `
+		<div class = "row">
+			<div id = "d3" class = "col-12 svgHolder"></div>
+		</div>
+    	`,
+	mounted : function(){
+		this.svg = d3.select("#d3")
+			.append("svg")
+			.attr('width',this.fullWidth)
+			.attr('height',this.fullHeight)
+			.append("g")
+			.attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")")
+		
+		this.svg.append("g")
+			.attr("class", "x axis")
+			.attr("transform", "translate(0," + this.height + ")")
+		this.getTimes()
+	},
+	methods: {
+		getTimes(){
+			this.API("GET","/times",false,times=>{
+				this.times=times
+				this.draw()
+			})
+		},
+		draw() {
+			if (this.times.length == 0) return;
+			let t = d3.transition().duration(750);
+			
+			let xScale = d3.scaleTime()
+				.domain([this.times[0].from,this.times[this.times.length-1].to])
+				.range([0, this.width])
+
+			let xAxis = d3.axisBottom(xScale)
+				.ticks(10)
+
+			this.svg.select(".x")
+				.transition(t)
+				.call(xAxis);
+
+			
+			let timeBlocks = this.times.map(time=>{
+				let output = {
+					end: xScale(time.to),
+					start: xScale(time.from),
+					name: time.name
+				}
+				output.width = output.end - output.start
+				return output
+			})
+
+			let times = this.svg.selectAll('.time')
+				.data(timeBlocks)
+			
+						
+			times.exit().remove()
+			
+			times
+				.attr('class', function(d){return `time ${d.name}`})
+				.attr('width', function(d) {
+					return d.width
+				})
+				.attr('height', this.height)
+				.attr('y', 0)
+				.transition(t)
+				.attr('x', function(d) {
+					return d.start
+				})
+				.attr("fill", (d)=>this.colourScale(d.name[0]))
+
+
+			
+			times.enter()
+				.append('rect')
+				.attr('class', function(d){return `time ${d.name}`})
+				.attr('width', function(d) {
+					return d.width
+				})
+				.attr('height', this.height)
+				.attr('y', 0)
+				.transition(t)
+				.attr('x', function(d) {
+					return d.start
+				})
+				.attr("fill", (d)=>this.colourScale(d.name[0]))
+
+			d3.selectAll("#d3").node()
+				.scrollLeft = this.fullWidth
+
+			return true;
+		}
+	}
+})
+
+
+
 
 var app = new Vue({
 	el: '#app',
