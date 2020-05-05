@@ -167,7 +167,8 @@ Vue.component('ysgtb-d3', {
 			bottom: 25,
 			left: 25
 		};
-		let fullWidth = 900
+		let fullWidth = 1800
+		let ticks = fullWidth/90
 		let fullHeight = 60
 		let width = fullWidth - margin.left - margin.right;
 		let height = fullHeight - margin.top - margin.bottom;
@@ -178,6 +179,7 @@ Vue.component('ysgtb-d3', {
 			height: height,
 			fullWidth : fullWidth,
 			fullHeight : fullHeight,
+			ticks:ticks
 		}
 	},
 	template: `
@@ -214,7 +216,7 @@ Vue.component('ysgtb-d3', {
 				.range([0, this.width])
 
 			let xAxis = d3.axisBottom(xScale)
-				.ticks(10)
+				.ticks(this.ticks)
 
 			this.svg.select(".x")
 				.transition(t)
