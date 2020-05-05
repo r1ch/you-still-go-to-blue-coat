@@ -22,7 +22,7 @@ var APIMixin = {
 
 Vue.component('ysgtb-jumbotron',{
 	mixins:[APIMixin],
-	inject:['profile','listenFor'],
+	inject:['profile','listenFor','colourScale'],
 	data: function(){
 		return {
 			timer: false,
@@ -50,7 +50,7 @@ Vue.component('ysgtb-jumbotron',{
 				<ul class="list-group">
 					<li class="list-group-item flex-column align-items-start" v-for = "attendance in attendances" :class= "{active:attendee.name == attendance.identifier, 'image-background':attendee.name == attendance.identifier}">
 						<div class="d-flex w-100 justify-content-between">
-							<h5 class="mb-1">{{attendance.identifier}}</h5>
+							<h5 class="mb-1" :style="`color:${this.colourScale(attendance.identifier[0])}`">{{attendance.identifier}}</h5>
 							<ysgtb-time :short = "true" :millis = "attendance.record + (attendee.name == attendance.identifier ? (now-attendee.identifier) : 0)"></ysgtb-time>
 						</div>
 						<div class="d-flex w-100 justify-content-between">
@@ -172,6 +172,7 @@ Vue.component('ysgtb-d3', {
 		let width = fullWidth - margin.left - margin.right;
 		let height = fullHeight - margin.top - margin.bottom;
 		return {
+			colourScale : ()=>"#000000",
 			times:[],
 			margin: margin,
 			width: width,
@@ -182,9 +183,12 @@ Vue.component('ysgtb-d3', {
 	},
 	template: `
 		<div class = "row">
-			<div id = "d3" class = "col-12" style="overflow:scroll"></div>
+			<div id = "d3" class = "col mx-auto" style="overflow:scroll"></div>
 		</div>
     	`,
+	provides: function(){
+		return this.colourScale
+	},
 	mounted : function(){
 		this.svg = d3.select("#d3")
 			.append("svg")
@@ -209,7 +213,7 @@ Vue.component('ysgtb-d3', {
 			if (this.times.length == 0) return;
 			let t = d3.transition().duration(750);
 			
-			let colourScale = d3.scaleOrdinal().domain([... new Set(this.times.map(time=>time.name))]).range(d3.schemePaired);
+			this.colourScale = d3.scaleOrdinal().domain([... new Set(this.times.map(time=>time.name[0] || "Y"))]).range(d3.schemePastel1);
 			
 			let xScale = d3.scaleTime()
 				.domain([this.times[0].from,this.times[this.times.length-1].to])
@@ -250,7 +254,7 @@ Vue.component('ysgtb-d3', {
 				.attr('x', function(d) {
 					return d.start
 				})
-				.attr("fill", function(d){return colourScale(d.name) })
+				.attr("fill", function(d){return this.colourScale(d.name[0]) })
 
 
 			
