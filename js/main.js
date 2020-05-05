@@ -82,7 +82,7 @@ Vue.component('ysgtb-jumbotron',{
 				longest: attendance.longest,
 				shortest: attendance.shortest,
 				
-			})
+			}))
 			.sort((a,b)=>a.record>b.record)
 		}
 	},
