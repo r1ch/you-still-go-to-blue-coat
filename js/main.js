@@ -175,7 +175,7 @@ Vue.component('ysgtb-jumbotron',{
 				<ul class="list-group">
 					<li class="list-group-item flex-column align-items-start" v-for = "attendance in attendances" :class= "{active:attendee.name == attendance.identifier, 'image-background':attendee.name == attendance.identifier}">
 						<div class="d-flex w-100 justify-content-between">
-							<h5 class="mb-1" :style="{color:colourScale(attendance.identifier[0])}">{{attendance.identifier}}</h5>
+							<h5 class="mb-1" :style="">{{attendance.identifier}}</h5>
 							<ysgtb-time :short = "true" :millis = "attendance.record + (attendee.name == attendance.identifier ? (now-attendee.identifier) : 0)"></ysgtb-time>
 						</div>
 						<div class="d-flex w-100 justify-content-between">
