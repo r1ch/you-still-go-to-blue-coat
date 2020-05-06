@@ -1,8 +1,21 @@
 .abcRioButtonBlue {
-  margin: 20vh auto 0 auto;
+  margin: 0px auto 0 auto;
 }
 
 .attendee-name {
   display:inline;
   font-size: 2.5rem;
+}
+
+.image-background {
+  background-image: url("/img/logo.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 2.5rem;
+}
+
+
+.svgHolder {
+  overflow:scroll;
+  text-align:center;
 }

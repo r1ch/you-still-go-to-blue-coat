@@ -1,20 +1,34 @@
-function DeferredCredentials() {
-	let res, rej, user
+function Deferred() {
+	let res, rej, object
 	let promise = new Promise((resolve, reject) => {
 		res = resolve;
 		rej = reject;
 	});
-	promise.setUser = function(u){
-		user = u
+	promise.setObject = function(o){
+		object = o
 	};
 	promise.resolve = ()=>{
-		res(user);
+		res(object);
 	};
 	promise.reject = rej;
 	return promise;
 }
 
-var Credentials = DeferredCredentials()
+let Credentials = Deferred()
+let Authenticator = Deferred()
+
+function initGoogleAuthentication(){
+	gapi.load('auth2',()=>{
+		gapi.auth2.init({
+  			client_id: window.config.googleClientId
+		}).then(GoogleAuth=>{
+			if(GoogleAuth.isSignedIn.get()) authenticate(GoogleAuth.currentUser.get())
+			else GoogleAuth.currentUser.listen(authenticate)
+			Authenticator.setObject(GoogleAuth)
+			Authenticator.resolve()
+		})
+	})
+}
 
 function authenticate(googleUser) {
     getIdToken(googleUser)
@@ -24,7 +38,7 @@ function authenticate(googleUser) {
 };
 
 function getIdToken(googleUser) {
-    Credentials.setUser(googleUser)
+    Credentials.setObject(googleUser)
     var idToken = googleUser.getAuthResponse().id_token;
     return new Promise(function (resolve) {
         resolve(idToken);
@@ -58,6 +72,22 @@ function handleSTSResponse(data) {
     return  Credentials.resolve()
 }
 
+function signedHttpRequest(method,path,data){
+	return signHttpRequest(method,path,data)
+}
+
+function unsignedHttpRequest(method,path,data){
+	return Promise.resolve(
+		{
+			method : method,
+			url : `${window.config.apiGatewayPath}${path}`,
+			baseURL: window.config.apiGatewayUrl,
+			data: data
+		}
+	)
+}
+
+
 function signHttpRequest(method,path,data) {
     return Credentials.then(()=>{
 	    let request = new AWS.HttpRequest(window.config.apiGatewayUrl, window.config.region);
@@ -82,5 +112,5 @@ function signHttpRequest(method,path,data) {
 }
 
 function handleError(error) {
-    console.log("Authentication failed: " + error);
+    console.log(`Authentication failed:  ${JSON.stringify(error)}`);
 }

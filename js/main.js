@@ -1,43 +1,32 @@
 var APIMixin = {
-	created: function () {
-		console.log("API created")
-	},
 	methods: {
 		API(method,URL,body,handler){
 			body = body ? body : undefined;
-			signHttpRequest(method, URL, body)
-			.then(axios)
-			.then(({data}) => {
-				if(handler) handler(data)
-			})
+			if(method != 'GET'){
+				signedHttpRequest(method, URL, body)
+				.then(axios)
+				.then(({data}) => {
+					if(handler) handler(data)
+				})
+			} else {
+				unsignedHttpRequest(method, URL, body)
+				.then(axios)
+				.then(({data}) => {
+					if(handler) handler(data)
+				})
+			}
 		},
 	}
 }
 
-Vue.component('google-login', {
-	mixins:[APIMixin],
-	data: () => ({
-		authenticated: false,
-	}),
-	template: `
-		<div class = "row">
-			<div v-if = "!authenticated" class="g-signin2 col" data-width="200" data-height="50" data-onsuccess="authenticate" data-theme="dark"></div>
-		</div>
-	`,
-	mounted: function() {
-		Credentials.then((user) => {
-			this.authenticated = true;
-			this.$emit("userReady",user)
-		})
-	},
-})
 
 Vue.component('ysgtb-jumbotron',{
 	mixins:[APIMixin],
-	inject:['profile'],
+	inject:['profile','listenFor','colourScale'],
 	data: function(){
 		return {
 			timer: false,
+			refresher: false,
 			attendee : {
 				name: "You"
 			},
@@ -47,26 +36,26 @@ Vue.component('ysgtb-jumbotron',{
 	},
 	template:`
 		<div>
-			<div class="jumbotron" v-if = "profile.ready">
+			<div class="jumbotron" v-if = "attendee">
 				<div class="container">
-					<input @keyup = "newAttendee" class="form-control form-control-lg col-6 col-md-3 attendee-name" type="text" v-model="attendee.name">
+					<input @keyup = "newAttendee" class="form-control form-control-lg col-6 col-md-3 attendee-name" type="text" v-model="attendee.name" @click = "startAuthentication" :class = "{'btn-outline-success':!profile.ready}">
 					<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
 					<br><br>
 					<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
-					<small v-if = "time">{{attendee.name}} {{have}} been going to Blue Coat for over {{time.duration}}{{time.before?time.andAHalf:" "}}{{time.measure}}{{time.after?time.andAHalf:" "}}now</small>
+					<small v-if = "attendee.identifier">It's been over <ysgtb-time :short="false" :millis="now-attendee.identifier"></ysgtb-time> now</small>
 				</div>
 			</div>
-			<div class = "container" v-if = "profile.ready">
+			<div class = "container" v-if = "attendances.length > 0">
 				<h4>Grew in grace</h4>
 				<ul class="list-group">
-					<li class="list-group-item flex-column align-items-start" v-for = "attendance in attendances" :class= "{active:attendee.name == attendance.identifier}">
+					<li class="list-group-item flex-column align-items-start" v-for = "attendance in orderedAttendances" :class= "{active:attendee.name == attendance.identifier, 'image-background':attendee.name == attendance.identifier}">
 						<div class="d-flex w-100 justify-content-between">
-							<h5 class="mb-1">{{attendance.identifier}}</h5>
-							<p>&nbsp;{{attendee.name == attendance.identifier ? time.running :  attendance.record | grace}}</p>
+							<h5 class="mb-1"><span :style="{color:colourScale(attendance.identifier[0])}">•</span>&nbsp;{{attendance.identifier}}</h5>
+							<ysgtb-time :short = "true" :millis = "attendance.record"></ysgtb-time>
 						</div>
 						<div class="d-flex w-100 justify-content-between">
-							<small><b>Longest: </b>{{attendee.name == attendance.identifier && time.millis > attendance.longest ? time.millis : attendance.longest | grace}}</small>
-							<small><b>&nbsp;Shortest: </b>{{attendee.name == attendance.identifier && time.millis < attendance.shortest ? time.millis : attendance.shortest | grace}}</small>
+							<small><b>Longest: </b><ysgtb-time :short = "true" :millis = "attendance.longest"></ysgtb-time></small>
+							<small><b>Shortest: </b><ysgtb-time :short = "true" :millis = "attendance.shortest"></ysgtb-time></small>
 						</div>
 					</li>
 				</ul>
@@ -76,7 +65,6 @@ Vue.component('ysgtb-jumbotron',{
 	watch:{
 		"attendee"(){
 			if(!this.attendee.name || !this.attendee.name.length || !this.attendee.name.length>1) this.attendee.name = "You"
-			console.log(JSON.stringify(this.attendee))
 		}
 	},
 	computed:{
@@ -86,65 +74,40 @@ Vue.component('ysgtb-jumbotron',{
 		have: function(){
 			return this.attendee.name==="You"?"have":"has"
 		},
-		time: function(){
-			if(!this.attendee.identifier) return false
-			else{
-				let bands = [
-					{limit:1000*1,measure:"second"},
-					{limit:1000*60,measure:"minute"},
-					{limit:1000*60*60,measure:"hour"},
-					{limit:1000*60*60*24,measure:"day"},
-					{limit:1000*60*60*24*7,measure:"week"},
-					{limit:1000*60*60*24*30,measure:"month"},
-					{limit:1000*60*60*24*365,measure:"year"}
-				].reverse()
-				let millis = Math.max(1,this.now - this.attendee.identifier) | 0
-				let band = bands.find(band=>band.limit<millis) || bands[bands.length-1]
-				let rawCount = Math.max(1,millis/band.limit)
-				let count = rawCount | 0
-				let runningAttendance = this.attendances.find(attendance=>attendance.identifier==this.attendee.name)
-				let running = runningAttendance ? runningAttendance.record + millis : 0
-				return {
-					duration: count == 1 ? (band.measure == "hour" ? 'an' : 'a') : count,
-					measure: `${band.measure}${count!=1?'s':''}`,
-					before: count > 1,
-					after: count == 1,
-					andAHalf: band.measure != "second" && (rawCount - count >= 0.5) ? " and a half " : " ",
-					interval: Math.min(band.limit/2,1000*30),
-					running : running,
-					millis: millis
-				}
-			}
-			
-		}
-	},
-	filters: {
-		grace: function (record) {
-			let seconds = Number(record/1000);
-			let d = Math.floor(seconds / (3600*24));
-			let h = Math.floor(seconds % (3600*24) / 3600);
-			let m = Math.floor(seconds % 3600 / 60);
-			let s = Math.floor(seconds % 60);
-			let dDisplay = d > 0 ? d + (d == 1 ? "d" : "d") : "";
-			let hDisplay = h > 0 ? h + (h == 1 ? "h" : "h") : "";
-			let mDisplay = m > 0 ? m + (m == 1 ? "m" : "m") : "";
-			let sDisplay = s > 0 ? s + (s == 1 ? "s" : "s") : "";
-			return [dDisplay,hDisplay,mDisplay,sDisplay].filter(item=>item!="").join(" ")
+		orderedAttendances: function(){
+			return this.attendances
+			.map(attendance=>{
+				let a = {...attendance}
+				a.record += (this.attendee.name == a.identifier ? this.now-this.attendee.identifier : 0)
+				return a
+			})
+			.sort((a,b)=>b.record-a.record)
 		}
 	},
 	mounted: function(){
-		this.visit()
 		this.getAttendee()
 		this.getAttendances()
+		this.listenFor('ATTENDEE',this.getAttendee)
+		this.listenFor('ATTENDANCE',this.getAttendances)
+		this.timer && clearInterval(this.timer)
+		this.timer = setInterval(()=>{this.now = (new Date().getTime())},1000)
+		this.refresher && clearInterval(this.refresher)
+		this.refresher = setInterval(this.refresh,60*1000)
 	},
 	methods: {
+		startAuthentication(){
+			if(this.profile.ready) return
+			else Authenticator.then(GoogleAuth=>GoogleAuth.signIn())
+		},
+		refresh(){
+			this.getAttendee()
+			this.getAttendances()
+		},
 		visit(){
-			this.API("POST","/visits",this.profile)
+			this.API("PUT","/visits",this.profile)
 		},
 		getAttendee(){
 			this.API("GET","/attendees/latest",false,attendee=>this.attendee=attendee)
-			this.timer && clearInterval(this.timer)
-			this.timer = setInterval(()=>{this.now = (new Date().getTime())},this.time.interval)
 		},
 		getAttendances(){
 			this.API("GET","/attendances",false,attendances=>this.attendances=attendances)
@@ -155,39 +118,249 @@ Vue.component('ysgtb-jumbotron',{
 				reporter:this.profile
 			},attendee=>{
 				this.attendee=attendee
-				setTimeout(this.getAttendances,2000)
+				this.getAttendances()
 			})
 		},1000)
 	}
 })
 
+Vue.component('ysgtb-time', {
+	props: ['millis','short'],
+	data: ()=>({
+		bands:[
+			{millis:1000*60*60*24*365,measure:"year"},
+			{millis:1000*60*60*24*7,number:52,measure:"week"},
+			{millis:1000*60*60*24,number:7,measure:"day"},
+			{millis:1000*60*60,number:24,measure:"hour"},
+			{millis:1000*60,number:60,measure:"minute"},
+			{millis:1000*1,number:60,measure:"second"}
+		]
+	}),
+	computed: {
+		time: function(){
+			let parts = this.bands.map(band=>{
+				let rawCount = Math.max(0,this.millis) / band.millis
+				rawCount = band.number ? rawCount % band.number : rawCount
+				return {
+					measure: band.measure,
+					shortMeasure: band.measure[0],
+					displayMeasure: band.measure + (rawCount>2 ? 's' : ''),
+					rawCount : rawCount,
+					fractionalCount : rawCount - (rawCount|0),
+					count : rawCount|0
+				}
+			}).filter(part=>part.count>0 || part.measure == "second")
+			let long = parts[0]
+			let duration = long.count == 1 ? (long.measure == "hour" ? 'an' : 'a') : long.count
+			let andAHalf = long.measure != "second" && (long.fractionalCount >= 0.5) ? " and a half " : " "
+			let before = long.count > 1 ? andAHalf : " "
+			let after = long.count == 1 ? andAHalf : " "
+			let html = parts.map(part=>`${part.count}<sup>${part.shortMeasure}</sup>`).join(" ")
+			return {
+				html: html,
+				text: `${duration}${before}${long.displayMeasure}${after}`
+			}
+		}
+	},
+	template:`<span v-if = "millis" v-html="short?time.html:time.text"></span>`
+})
+
+
+Vue.component('ysgtb-d3', {
+	mixins:[APIMixin],
+	inject:['profile','listenFor','colourScale'],
+	data: function() {
+		let margin = {
+			top: 10,
+			right: 25,
+			bottom: 25,
+			left: 25
+		};
+		let fullWidth = 1800
+		let ticks = fullWidth/90
+		let fullHeight = 60
+		let width = fullWidth - margin.left - margin.right;
+		let height = fullHeight - margin.top - margin.bottom;
+		return {
+			times:[],
+			margin: margin,
+			width: width,
+			height: height,
+			fullWidth : fullWidth,
+			fullHeight : fullHeight,
+			ticks:ticks
+		}
+	},
+	template: `
+		<div class = "row">
+			<div id = "d3" class = "col-12 svgHolder"></div>
+		</div>
+    	`,
+	mounted : function(){
+		this.svg = d3.select("#d3")
+			.append("svg")
+			.attr('width',this.fullWidth)
+			.attr('height',this.fullHeight)
+			.append("g")
+			.attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")")
+		
+		this.svg.append("g")
+			.attr("class", "x axis")
+			.attr("transform", "translate(0," + this.height + ")")
+		this.getTimes()
+	},
+	methods: {
+		getTimes(){
+			this.API("GET","/times",false,times=>{
+				this.times=times
+				this.draw()
+			})
+		},
+		draw() {
+			if (this.times.length == 0) return;
+			let t = d3.transition().duration(750);
+			
+			let xScale = d3.scaleTime()
+				.domain([this.times[0].from,this.times[this.times.length-1].to])
+				.range([0, this.width])
+
+			let xAxis = d3.axisBottom(xScale)
+				.ticks(this.ticks)
+
+			this.svg.select(".x")
+				.transition(t)
+				.call(xAxis);
+
+			
+			let timeBlocks = this.times.map(time=>{
+				let output = {
+					end: xScale(time.to),
+					start: xScale(time.from),
+					name: time.name
+				}
+				output.width = output.end - output.start
+				return output
+			})
+
+			let times = this.svg.selectAll('.time')
+				.data(timeBlocks)
+			
+						
+			times.exit().remove()
+			
+			times
+				.attr('class', d=>`time ${d.name}`)
+				.attr('width', d=>d.width)
+				.attr('height', 0)
+				.attr('y', this.height/2)
+				.attr('x', d=>d.start)
+				.attr("fill", "#aaaaaa")
+				.transition(t)
+				.attr('y',0)
+				.attr("fill", (d)=>this.colourScale(d.name[0]))
+				.attr('height', this.height)
+			
+			
+			times.enter()
+				.append('rect')
+				.attr('class', d=>`time ${d.name}`)
+				.attr('width', d=>d.width)
+				.attr('height', 0)
+				.attr("fill", "#aaaaaa")
+				.attr('y', this.height/2)
+				.attr('x', d=>d.start)
+				.transition(t)
+				.attr('y',0)
+				.attr("fill", (d)=>this.colourScale(d.name[0]))
+				.attr('height', this.height)
+
+			d3.selectAll("#d3").node()
+				.scrollLeft = this.fullWidth
+
+			return true;
+		}
+	}
+})
+
+
+
+
 var app = new Vue({
 	el: '#app',
 	data: {
 		profile: {ready:false},
+		pingInterval : false,
+		pongTimeout : false,
 		version:version,
-		revision:revision.substring(0,5)
+		revision:revision.substring(0,5),
+		scale: d3.scaleOrdinal().range(d3.schemeTableau10).domain("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split())
+	},
+	created: function(){
+		this.connectSocket()
+		Authenticator.then(GoogleAuth=>{
+			if(GoogleAuth.isSignedIn.get()) this.userReady(GoogleAuth.currentUser.get())
+			else GoogleAuth.currentUser.listen(this.userReady)		
+		})
 	},
 	methods:{
+		colourScale(x){
+			return this.scale(x)
+		},
+		connectSocket(){
+			this.socket = new WebSocket(window.config.socketGatewayUrl + window.config.socketGatewayPath)
+			this.socket.onclose = this.connectSocket
+			this.listenFor("pong",this.pong)
+			this.pingInterval && clearInterval(this.pingInterval)
+			this.pingInterval = setInterval(this.ping,2*60*1000)
+		},
+		ping(){
+			this.socket.send(JSON.stringify({action:"ping"}))
+			this.pongTimeout = setTimeout(this.timeout,5000)
+		},
+		pong(){
+			this.pongTimeout && clearInterval(this.pongTimeout)
+			this.pongTimeout = false
+		},
+		timeout(){
+			this.pingInterval && clearInterval(this.pingInterval)
+			this.pingInterval = false;
+			this.connectSocket()
+		},
 		userReady(event){
-			console.log(`User Ready ${JSON.stringify(event)}`)
+			console.log(`User Ready`)
 			let basicProfile = event.getBasicProfile();
 			this.profile.id = basicProfile.getId();
 			this.profile.name = basicProfile.getGivenName();
 			this.profile.url = basicProfile.getImageUrl();
 			this.profile.token = event.getAuthResponse().id_token
 			this.profile.ready = true
+		},
+		listenFor(key,handler){
+			this.socket.addEventListener("message",event=>{
+				let data = event && event.data
+				try{
+					data = JSON.parse(data)
+				} catch(err){
+					console.err(`Error in parse of ${JSON.stringify(event)} data`)
+					data = false
+				}
+				data && data.eventType && (data.eventType == key || key == "*") ? handler(data) : false
+			})
 		}
 	},
 	provide: function(){
 		return {
-			profile: this.profile
+			profile: this.profile,
+			listenFor: this.listenFor,
+			colourScale: this.colourScale
 		}
 	},
 	template: `
 		<div>
-			<google-login @userReady = "userReady"></google-login>
 			<ysgtb-jumbotron></ysgtb-jumbotron>
+			<ysgtb-d3></ysgtb-d3>
 		</div>
 	`
 })	
+
+	
