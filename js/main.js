@@ -218,7 +218,7 @@ Vue.component('ysgtb-d3', {
 		},
 		draw() {
 			if (this.times.length == 0) return;
-			let t = d3.transition().duration(750);
+			let t = d3.transition().duration(2000);
 			
 			let xScale = d3.scaleTime()
 				.domain([this.times[0].from,this.times[this.times.length-1].to])
@@ -251,21 +251,25 @@ Vue.component('ysgtb-d3', {
 			times
 				.attr('class', d=>`time ${d.name}`)
 				.attr('width', d=>d.width)
-				.attr('height', this.height)
+				.attr('height', 0)
 				.attr('y', 0)
-				.transition(t)
 				.attr('x', d=>d.start)
+				.attr("fill", "#aaaaaa")
+				.transition(t)
 				.attr("fill", (d)=>this.colourScale(d.name[0]))
+				.attr('height', this.height)
 			
 			times.enter()
 				.append('rect')
 				.attr('class', d=>`time ${d.name}`)
 				.attr('width', d=>d.width)
-				.attr('height', this.height)
+				.attr('height', 0)
+				.attr("fill", "#aaaaaa")
 				.attr('y', 0)
-				.transition(t)
 				.attr('x', d=>d.start)
+				.transition(t)
 				.attr("fill", (d)=>this.colourScale(d.name[0]))
+				.attr('height', this.height)
 
 			d3.selectAll("#d3").node()
 				.scrollLeft = this.fullWidth
