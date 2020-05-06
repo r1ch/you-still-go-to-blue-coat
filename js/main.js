@@ -27,6 +27,7 @@ Vue.component('ysgtb-jumbotron',{
 		return {
 			timer: false,
 			refresher: false,
+			loadedAttendeeName: false,
 			attendee : {
 				name: "You"
 			},
@@ -107,17 +108,22 @@ Vue.component('ysgtb-jumbotron',{
 			this.API("PUT","/visits",this.profile)
 		},
 		getAttendee(){
-			this.API("GET","/attendees/latest",false,attendee=>this.attendee=attendee)
+			this.API("GET","/attendees/latest",false,attendee=>{
+				this.attendee=attendee
+				this.loadedAttendeeName=attendee.name
+			})
 		},
 		getAttendances(){
 			this.API("GET","/attendances",false,attendances=>this.attendances=attendances)
 		},
 		newAttendee: _.debounce(function(){
+			if(this.attendee.name==this.originalAttendeeName) return
 			this.API("POST","/attendees",{
 				attendee:this.attendee,
 				reporter:this.profile
 			},attendee=>{
 				this.attendee=attendee
+				this.loadedAttendeeName=attendee.name
 				this.getAttendances()
 			})
 		},1000)
