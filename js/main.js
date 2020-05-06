@@ -92,7 +92,7 @@ Vue.component('ysgtb-jumbotron',{
 		this.timer && clearInterval(this.timer)
 		this.timer = setInterval(()=>{this.now = (new Date().getTime())},1000)
 		this.refresher && clearInterval(this.refresher)
-		this.refresher = setInterval(this.refresh,60*1000)
+		this.refresher = setInterval(this.refresh,5*60*1000)
 	},
 	methods: {
 		startAuthentication(){
