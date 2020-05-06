@@ -286,7 +286,7 @@ var app = new Vue({
 		pongTimeout : false,
 		version:version,
 		revision:revision.substring(0,5),
-		scale: d3.scaleOrdinal().range(d3.schemeTableau10)
+		scale: d3.scaleOrdinal().range(d3.schemeTableau10).domain("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split())
 	},
 	created: function(){
 		this.connectSocket()
