@@ -218,7 +218,7 @@ Vue.component('ysgtb-d3', {
 		},
 		draw() {
 			if (this.times.length == 0) return;
-			let t = d3.transition().duration(2000);
+			let t = d3.transition().duration(750);
 			
 			let xScale = d3.scaleTime()
 				.domain([this.times[0].from,this.times[this.times.length-1].to])
@@ -252,7 +252,7 @@ Vue.component('ysgtb-d3', {
 				.attr('class', d=>`time ${d.name}`)
 				.attr('width', d=>d.width)
 				.attr('height', 0)
-				.attr('y', 0)
+				.attr('y', this.height/2)
 				.attr('x', d=>d.start)
 				.attr("fill", "#aaaaaa")
 				.transition(t)
@@ -265,7 +265,7 @@ Vue.component('ysgtb-d3', {
 				.attr('width', d=>d.width)
 				.attr('height', 0)
 				.attr("fill", "#aaaaaa")
-				.attr('y', 0)
+				.attr('y', this.height/2)
 				.attr('x', d=>d.start)
 				.transition(t)
 				.attr("fill", (d)=>this.colourScale(d.name[0]))
