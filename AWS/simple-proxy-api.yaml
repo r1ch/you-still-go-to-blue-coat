@@ -57,7 +57,23 @@ paths:
           application/json: "{\"statusCode\": 200}"
         type: mock
   /{proxy+}:
-    x-amazon-apigateway-any-method:
+    get:
+      x-amazon-apigateway-auth:
+        type: None
+      produces:
+      - application/json
+      parameters:
+      - name: proxy
+        in: path
+        required: true
+        type: string
+      responses: {}
+      x-amazon-apigateway-integration:
+        uri: 
+         Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RestAPIHandler.Arn}/invocations"
+        httpMethod: POST
+        type: aws_proxy
+    post:
       x-amazon-apigateway-auth:
         type: AWS_IAM
       produces:

@@ -29,8 +29,6 @@ router.use(bodyParser.json())
 router.use(bodyParser.urlencoded({ extended: true }))
 router.use(awsServerlessExpressMiddleware.eventContext())
 
-
-//Get the latest attendee
 router.get('/attendees/latest', asyncHandler(async (req, res) => {
     let attendees = []
     for await (const attendee of mapper.query(Attendee, {recordType: 'ATTENDEE'}, {scanIndexForward:false, limit:1})){
@@ -40,7 +38,6 @@ router.get('/attendees/latest', asyncHandler(async (req, res) => {
 }))
 
 
-//Get the recent attendees
 router.get('/attendances', asyncHandler(async (req, res) => {
     let attendances = []
     for await (const attendance of mapper.query(Attendance, {recordType: 'ATTENDANCE'}, {indexName: 'index', scanIndexForward:false, limit:3})){
@@ -49,7 +46,20 @@ router.get('/attendances', asyncHandler(async (req, res) => {
     res.json(attendances)
 }))
 
+let times = []
+router.get('/times', asyncHandler(async (req, res) => {
+    if(times.length>0) return res.json(times)
+    console.log("Cache miss")
+    for await (const attendee of mapper.query(Attendee, {recordType: 'ATTENDEE'}, {scanIndexForward:false})){
+        times.unshift({name: attendee.name, from: attendee.identifier})
+        times[1] && (times[0].to = times[1].from)
+    }
+    times[times.length-1].to = (new Date()).getTime()
+    res.json(times)
+}))
+
 router.post('/attendees', asyncHandler(async (req, res) => {
+    times = []
     let attendee = new Attendee();
     attendee.identifier = (new Date()).getTime()
     attendee.name = req.body.attendee.name

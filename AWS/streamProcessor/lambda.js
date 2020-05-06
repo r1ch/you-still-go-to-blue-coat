@@ -10,11 +10,10 @@ const {
 } = require('@aws/dynamodb-data-mapper');
 
 const {
-    greaterThan,
     lessThan,
+    greaterThan,
     lessThanOrEqualTo,
     AttributePath,
-    ConditionExpression
     UpdateExpression,
 } = require('@aws/dynamodb-expressions')
 const { v4 } = require('uuid');
@@ -22,8 +21,6 @@ const DynamoDB = require('aws-sdk/clients/dynamodb');
 
 const client = new DynamoDB({region: 'eu-west-1'});
 const mapper = new DataMapper({client});
-
-
 
 
 class Attendee {
@@ -142,29 +139,46 @@ exports.handler = async (event, context) => {
         let longestStintUpdateExpression = new UpdateExpression
         longestStintUpdateExpression.set('longest', delta)
 
+
         await mapper.executeUpdateExpression(
             shortestStintUpdateExpression,
             {recordType:"ATTENDANCE",identifier:attendees[1].name},
             Attendance,
             {
-                ...lessThan(new AttributePath('shortest')),
-                subject: 'shortest'
+                condition: {
+                    ... greaterThan(delta),
+                    subject: 'shortest',
+                }
             }
         )
         .then(console.log)
-        .catch(console.log)
+        .catch(err=>{
+            if(err.code=="ConditionalCheckFailedException"){
+                console.log("Not a new shortest record!")
+            } else {
+                console.log(err)
+            }
+        })
 
         await mapper.executeUpdateExpression(
             longestStintUpdateExpression,
             {recordType:"ATTENDANCE",identifier:attendees[1].name},
             Attendance,
-            {
-                ... greaterThan(new AttributePath('longest')),
-                subject: 'longest'
+            { 
+                condition: {
+                    ... lessThan(delta),
+                    subject: 'longest',
+                }
             }
         )
         .then(console.log)
-        .catch(console.log)
+        .catch(err=>{
+            if(err.code=="ConditionalCheckFailedException"){
+                console.log("Not a new longest record!")
+            } else {
+                console.log(err)
+            }
+        })
 
 
     } else {

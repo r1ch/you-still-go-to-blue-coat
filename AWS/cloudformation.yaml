@@ -262,6 +262,200 @@ Resources:
       StartingPosition: LATEST
 
 
+  BlueCoatSocketApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties: 
+      Description: "Blue Coat Socket API"
+      DisableSchemaValidation: true
+      Name: "BlueCoatSocketApi"
+      ProtocolType: "WEBSOCKET"
+      RouteSelectionExpression: "$request.body.action"
+  ConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref BlueCoatSocketApi
+      RouteKey: $connect
+      AuthorizationType: NONE
+      OperationName: ConnectRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref ConnectInteg
+  ConnectInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref BlueCoatSocketApi
+      Description: Connect Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri: 
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SocketHandler.Arn}/invocations
+  DisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref BlueCoatSocketApi
+      RouteKey: $disconnect
+      AuthorizationType: NONE
+      OperationName: DisconnectRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref DisconnectInteg
+  DisconnectInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref BlueCoatSocketApi
+      Description: Disconnect Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri: 
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SocketHandler.Arn}/invocations
+  PingRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref BlueCoatSocketApi
+      RouteKey: ping
+      AuthorizationType: NONE
+      OperationName: PingRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref PingInteg
+  PingInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref BlueCoatSocketApi
+      Description: Ping Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri: 
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SocketHandler.Arn}/invocations
+
+  SocketHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./socketHandler
+      Handler: app.handler
+      MemorySize: 256
+      Runtime: nodejs12.x
+      Role: !GetAtt SocketHandlerExecutionRole.Arn
+      Environment:
+        Variables:
+          ENDPOINT: !Join
+                - ''
+                - - https://
+                  - !Ref BlueCoatSocketApi
+                  - ".execute-api."
+                  - !Ref AWS::Region
+                  - ".amazonaws.com/prod/"
+
+  SocketHandlerExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - execute-api:ManageConnections
+            Resource: !Join
+              - '' 
+              - - 'arn:aws:execute-api:'
+                - !Ref AWS::Region
+                - ":"
+                - !Ref AWS::AccountId
+                - ":"
+                - !Ref BlueCoatSocketApi
+                - "/prod/*"
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource: arn:aws:logs:*:*:*
+          - Effect: Allow
+            Action:
+            - dynamodb:GetRecords
+            - dynamodb:GetShardIterator
+            - dynamodb:DescribeStream
+            - dynamodb:ListStreams
+            Resource: !Join
+              - '' 
+              - - 'arn:aws:dynamodb:'
+                - !Ref AWS::Region
+                - ":"
+                - !Ref AWS::AccountId
+                - ":"
+                - "table/bluecoat/*"
+          - Effect: Allow
+            Action:
+            - dynamodb:PutItem
+            - dynamodb:DeleteItem
+            - dynamodb:Query
+            Resource: !Join
+              - '' 
+              - - 'arn:aws:dynamodb:'
+                - !Ref AWS::Region
+                - ":"
+                - !Ref AWS::AccountId
+                - ":"
+                - "table/bluecoat"
+
+  SocketExecutionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt SocketHandler.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:aws:execute-api:'
+          - !Ref AWS::Region
+          - ":"
+          - !Ref AWS::AccountId
+          - ":"
+          - !Ref BlueCoatSocketApi
+          - "/*/*"
+  
+  SocketHandlerChangeTrigger:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties: 
+      BatchSize: 1
+      Enabled: true
+      EventSourceArn: !GetAtt BlueCoatTable.StreamArn
+      FunctionName: !GetAtt SocketHandler.Arn
+      MaximumBatchingWindowInSeconds: 0
+      MaximumRecordAgeInSeconds: 60
+      MaximumRetryAttempts: 3
+      ParallelizationFactor: 3
+      StartingPosition: LATEST
+
+  Deployment:
+    Type: AWS::ApiGatewayV2::Deployment
+    DependsOn:
+    - ConnectRoute
+    - DisconnectRoute
+    - PingRoute
+    Properties:
+      ApiId: !Ref BlueCoatSocketApi
+  Stage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      StageName: prod
+      DeploymentId: !Ref Deployment
+      ApiId: !Ref BlueCoatSocketApi
+
+
 
 Outputs:
   LambdaFunctionConsoleUrl:
