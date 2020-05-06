@@ -256,8 +256,10 @@ Vue.component('ysgtb-d3', {
 				.attr('x', d=>d.start)
 				.attr("fill", "#aaaaaa")
 				.transition(t)
+				.attr('y',0)
 				.attr("fill", (d)=>this.colourScale(d.name[0]))
 				.attr('height', this.height)
+			
 			
 			times.enter()
 				.append('rect')
@@ -268,6 +270,7 @@ Vue.component('ysgtb-d3', {
 				.attr('y', this.height/2)
 				.attr('x', d=>d.start)
 				.transition(t)
+				.attr('y',0)
 				.attr("fill", (d)=>this.colourScale(d.name[0]))
 				.attr('height', this.height)
 
