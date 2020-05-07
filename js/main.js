@@ -194,7 +194,8 @@ Vue.component('ysgtb-d3', {
 			height: height,
 			fullWidth : fullWidth,
 			fullHeight : fullHeight,
-			ticks:ticks
+			ticks:ticks,
+			timer:false
 		}
 	},
 	template: `
@@ -214,6 +215,8 @@ Vue.component('ysgtb-d3', {
 			.attr("class", "x axis")
 			.attr("transform", "translate(0," + this.height + ")")
 		this.getTimes()
+		this.timer && clearInterval(this.timer)
+		this.timer = setInterval(this.getTimes,5*60*1000)
 	},
 	methods: {
 		getTimes(){
