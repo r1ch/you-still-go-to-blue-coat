@@ -27,6 +27,7 @@ Vue.component('ysgtb-jumbotron',{
 		return {
 			timer: false,
 			refresher: false,
+			loadedAttendeeName: false,
 			attendee : {
 				name: "You"
 			},
@@ -92,7 +93,7 @@ Vue.component('ysgtb-jumbotron',{
 		this.timer && clearInterval(this.timer)
 		this.timer = setInterval(()=>{this.now = (new Date().getTime())},1000)
 		this.refresher && clearInterval(this.refresher)
-		this.refresher = setInterval(this.refresh,60*1000)
+		this.refresher = setInterval(this.refresh,5*60*1000)
 	},
 	methods: {
 		startAuthentication(){
@@ -107,17 +108,22 @@ Vue.component('ysgtb-jumbotron',{
 			this.API("PUT","/visits",this.profile)
 		},
 		getAttendee(){
-			this.API("GET","/attendees/latest",false,attendee=>this.attendee=attendee)
+			this.API("GET","/attendees/latest",false,attendee=>{
+				this.attendee=attendee
+				this.loadedAttendeeName=attendee.name
+			})
 		},
 		getAttendances(){
 			this.API("GET","/attendances",false,attendances=>this.attendances=attendances)
 		},
 		newAttendee: _.debounce(function(){
+			if(this.attendee.name==this.loadedAttendeeName) return
 			this.API("POST","/attendees",{
 				attendee:this.attendee,
 				reporter:this.profile
 			},attendee=>{
 				this.attendee=attendee
+				this.loadedAttendeeName=attendee.name
 				this.getAttendances()
 			})
 		},1000)
@@ -240,7 +246,7 @@ Vue.component('ysgtb-d3', {
 				}
 				output.width = output.end - output.start
 				return output
-			})
+			}).filter(output=>output.width>0.5)
 
 			let times = this.svg.selectAll('.time')
 				.data(timeBlocks)
@@ -256,6 +262,7 @@ Vue.component('ysgtb-d3', {
 				.attr('x', d=>d.start)
 				.attr("fill", "#aaaaaa")
 				.transition(t)
+				.delay((d,i,A)=>(A.length-i)*100)
 				.attr('y',0)
 				.attr("fill", (d)=>this.colourScale(d.name[0]))
 				.attr('height', this.height)
@@ -270,6 +277,7 @@ Vue.component('ysgtb-d3', {
 				.attr('y', this.height/2)
 				.attr('x', d=>d.start)
 				.transition(t)
+				.delay((d,i,A)=>(A.length-i)*100)
 				.attr('y',0)
 				.attr("fill", (d)=>this.colourScale(d.name[0]))
 				.attr('height', this.height)
@@ -292,8 +300,7 @@ var app = new Vue({
 		pingInterval : false,
 		pongTimeout : false,
 		version:version,
-		revision:revision.substring(0,5),
-		scale: d3.scaleOrdinal().range(d3.schemeTableau10).domain("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split())
+		revision:revision.substring(0,5)
 	},
 	created: function(){
 		this.connectSocket()
@@ -303,9 +310,6 @@ var app = new Vue({
 		})
 	},
 	methods:{
-		colourScale(x){
-			return this.scale(x)
-		},
 		connectSocket(){
 			this.socket = new WebSocket(window.config.socketGatewayUrl + window.config.socketGatewayPath)
 			this.socket.onclose = this.connectSocket
@@ -352,7 +356,7 @@ var app = new Vue({
 		return {
 			profile: this.profile,
 			listenFor: this.listenFor,
-			colourScale: this.colourScale
+			colourScale: d3.scaleOrdinal().domain("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split()).range(d3.schemeTableau10)
 		}
 	},
 	template: `
