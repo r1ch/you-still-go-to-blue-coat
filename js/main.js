@@ -360,7 +360,7 @@ var app = new Vue({
 		return {
 			profile: this.profile,
 			listenFor: this.listenFor,
-			colourScale: d3.scaleOrdinal(d3.schemeTableau10).domain("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split())
+			colourScale: d3.scaleOrdinal().range(d3.schemeTableau10).domain("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split())
 		}
 	},
 	template: `
