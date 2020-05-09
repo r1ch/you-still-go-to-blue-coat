@@ -250,7 +250,7 @@ Vue.component('ysgtb-d3', {
 				}
 				output.width = output.end - output.start
 				return output
-			}).filter(output=>output.width>0.5)
+			}).filter(output=>output.width>0.1)
 
 			let times = this.svg.selectAll('.time')
 				.data(timeBlocks)
