@@ -117,7 +117,7 @@ Vue.component('ysgtb-jumbotron',{
 			this.API("GET","/attendances",false,attendances=>this.attendances=attendances)
 		},
 		newAttendee: _.debounce(function(){
-			if(this.attendee.name==this.loadedAttendeeName) return
+			if(this.attendee.name==this.loadedAttendeeName || ["","You"].contains(this.attendee.name)) return
 			this.API("POST","/attendees",{
 				attendee:this.attendee,
 				reporter:this.profile
