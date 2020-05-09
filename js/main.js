@@ -306,7 +306,7 @@ var app = new Vue({
 		pongTimeout : false,
 		version:version,
 		revision:revision.substring(0,5),
-		baseScale: d3.scaleOrdinal("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(),d3.schemeTableau10)
+		colourScale: d3.scaleOrdinal("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),d3.schemeTableau10)
 	},
 	created: function(){
 		this.connectSocket()
@@ -316,11 +316,6 @@ var app = new Vue({
 		})
 	},
 	methods:{
-		colourScale(x){
-			let y = this.baseScale(x)
-			console.log(`${x}=>${y}`)
-			return y
-		},
 		connectSocket(){
 			this.socket = new WebSocket(window.config.socketGatewayUrl + window.config.socketGatewayPath)
 			this.socket.onclose = this.connectSocket
