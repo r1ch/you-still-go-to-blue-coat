@@ -305,7 +305,8 @@ var app = new Vue({
 		pingInterval : false,
 		pongTimeout : false,
 		version:version,
-		revision:revision.substring(0,5)
+		revision:revision.substring(0,5),
+		baseScale: d3.scaleOrdinal().range(d3.schemeTableau10).domain("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split())
 	},
 	created: function(){
 		this.connectSocket()
@@ -315,6 +316,11 @@ var app = new Vue({
 		})
 	},
 	methods:{
+		colourScale(x){
+			let y = this.baseScale(x)
+			console.log(`${x}=>${y}`)
+			return y
+		},
 		connectSocket(){
 			this.socket = new WebSocket(window.config.socketGatewayUrl + window.config.socketGatewayPath)
 			this.socket.onclose = this.connectSocket
@@ -361,7 +367,7 @@ var app = new Vue({
 		return {
 			profile: this.profile,
 			listenFor: this.listenFor,
-			colourScale: d3.scaleOrdinal().range(d3.schemeTableau10).domain("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split())
+			colourScale: this.colourScale
 		}
 	},
 	template: `
