@@ -126,7 +126,7 @@ Vue.component('ysgtb-jumbotron',{
 				this.loadedAttendeeName=attendee.name
 				this.getAttendances()
 			})
-		},1000)
+		},1500)
 	}
 })
 
