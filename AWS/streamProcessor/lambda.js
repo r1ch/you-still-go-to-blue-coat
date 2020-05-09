@@ -97,13 +97,12 @@ exports.handler = async (event, context) => {
         event.Records[0].dynamodb.NewImage.recordType.S == "ATTENDEE" &&
         event.Records[0].dynamodb.NewImage.identifier &&
         event.Records[0].dynamodb.NewImage.identifier.S &&
-        event.Records[0].dynamodb.NewImage.name &&
-        event.Records[0].dynamodb.NewImage.name.S
+        event.Records[0].dynamodb.NewImage.name
     ){
         //extract
         let newAttendee = {
             time : event.Records[0].dynamodb.NewImage.identifier.S,
-            name : event.Records[0].dynamodb.NewImage.name.S
+            name : event.Records[0].dynamodb.NewImage.name.S || ""
         }
         //get the last in attendee
         let attendees = [];
