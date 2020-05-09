@@ -306,7 +306,7 @@ var app = new Vue({
 		pongTimeout : false,
 		version:version,
 		revision:revision.substring(0,5),
-		colourScale: d3.scaleOrdinal("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),d3.schemeTableau10)
+		colourScale: d3.scaleOrdinal("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),d3.schemeCategory10)
 	},
 	created: function(){
 		this.connectSocket()
