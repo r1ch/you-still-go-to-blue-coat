@@ -221,6 +221,10 @@ Vue.component('ysgtb-d3', {
 			.attr("class", "x axis")
 			.attr("transform", "translate(0," + this.barHeight + ")")
 		
+		this.svg.append("g")
+			.attr("class", "y axis")
+			.attr("transform", "translate(0," + this.barHeight+this.margin.middle + ")")
+		
 		this.getTimes()
 		this.timer && clearInterval(this.timer)
 		this.timer = setInterval(this.getTimes,5*60*1000)
@@ -258,8 +262,18 @@ Vue.component('ysgtb-d3', {
 				}
 				output.width = output.end - output.start
 				return output
-			})([])).filter(output=>output.width>0.05)
+			})({})).filter(output=>output.width>0.05)
 			
+			
+			let yScale = d3.scaleLinear()
+				.domain([0,Math.max(...Object.values(timeBlocks[timeBlocks.length-1].totals))])
+				.range([0,this.lineHeight]
+			
+			let yAxis = d3.axisLeft(yScale)
+			
+			this.svg.select(".y")
+				.transition(t)
+				.call(xAxis);	
 
 			let times = this.svg.selectAll('.time')
 				.data(timeBlocks)
