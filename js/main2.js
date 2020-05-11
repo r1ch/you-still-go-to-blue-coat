@@ -326,7 +326,7 @@ var app = new Vue({
 		newAttendee: _.debounce(function(){
 			if(this.attendee.name==this.loadedAttendeeName || ["","You"].includes(this.attendee.name)) return
 			this.attendee.name = this.attendee.name.toUpperCase()[0] + this.attendee.name.slice(1).trim()
-			this.API("POST","/attendeex",{
+			this.API("POST","/attendees",{
 				attendee:this.attendee,
 				reporter:this.profile
 			},attendee=>{
