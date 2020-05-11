@@ -187,7 +187,7 @@ Vue.component('ysgtb-d3', {
 		let fullWidth = 1800
 		let ticks = fullWidth/90
 		let fullHeight = 300
-		let xAxisOffset = 60
+		let barHeight = 60
 		let width = fullWidth - margin.left - margin.right;
 		let height = fullHeight - margin.top - margin.bottom;
 		return {
@@ -197,7 +197,7 @@ Vue.component('ysgtb-d3', {
 			height: height,
 			fullWidth : fullWidth,
 			fullHeight : fullHeight,
-			xAxisOffset : xAxisOffset,
+			barHeight : barHeight,
 			ticks:ticks,
 			timer:false
 		}
@@ -217,7 +217,7 @@ Vue.component('ysgtb-d3', {
 		
 		this.svg.append("g")
 			.attr("class", "x axis")
-			.attr("transform", "translate(0," + this.xAxisOffset + ")")
+			.attr("transform", "translate(0," + this.barHeight + ")")
 		
 		this.getTimes()
 		this.timer && clearInterval(this.timer)
@@ -268,14 +268,14 @@ Vue.component('ysgtb-d3', {
 				.attr('class', d=>`time ${d.name}`)
 				.attr('width', d=>d.width)
 				.attr('height', 0)
-				.attr('y', this.height/2)
+				.attr('y', this.barHeight/2)
 				.attr('x', d=>d.start)
 				.attr("fill", "#aaaaaa")
 				.transition(t)
 				.delay((d,i,A)=>(A.length-i)*100)
 				.attr('y',0)
 				.attr("fill", (d)=>this.colourScale(d.name[0]))
-				.attr('height', this.height)
+				.attr('height', this.barHeight)
 			
 			
 			times.enter()
@@ -284,13 +284,13 @@ Vue.component('ysgtb-d3', {
 				.attr('width', d=>d.width)
 				.attr('height', 0)
 				.attr("fill", "#aaaaaa")
-				.attr('y', this.height/2)
+				.attr('y', this.barHeight/2)
 				.attr('x', d=>d.start)
 				.transition(t)
 				.delay((d,i,A)=>(A.length-i)*100)
 				.attr('y',0)
 				.attr("fill", (d)=>this.colourScale(d.name[0]))
-				.attr('height', this.height)
+				.attr('height', this.barHeight)
 
 			d3.selectAll("#d3").node()
 				.scrollLeft = this.fullWidth
