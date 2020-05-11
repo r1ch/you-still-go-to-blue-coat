@@ -194,6 +194,7 @@ Vue.component('ysgtb-d3', {
 		let height = fullHeight - margin.top - margin.bottom
 		return {
 			times:[],
+			lines:[],
 			margin: margin,
 			width: width,
 			height: height,
@@ -288,14 +289,12 @@ Vue.component('ysgtb-d3', {
    				.curve(d3.curveMonotoneX)
 			
 			Object.keys(timeBlocks[timeBlocks.length-1].totals).forEach((name)=>{
-				let line = this.svg.selectAll(`.line .line-${name}`)
-					.datum(timeBlocks)
+				if(!this.lines[`line-${name}`]){
+					this.lines[`line-${name}`] = this.svg.append("path")
 				
-				line
-					.append("path")
+				this.lines[`line-${name}`]
 					.attr("class", `.line .line-${name}`)
-					.attr("d", lineGenerator(name));
-				
+					.attr("d", lineGenerator(name));		
 			})
 			
 
