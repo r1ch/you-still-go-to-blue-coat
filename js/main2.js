@@ -292,6 +292,10 @@ var app = new Vue({
 		loadedAttendeeName: false,
 		attendances: false,
 		colourScale: d3.scaleOrdinal("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),d3.schemeCategory10)
+		timer: false
+	},
+	computed:{
+		now : (new Date()).getTime()
 	},
 	created: function(){
 		this.connectSocket()
@@ -375,8 +379,21 @@ var app = new Vue({
 	},
 	template: `
 		<div>
-			<ysgtb-jumbotron @startAuthentication="startAuthentication" @newAttendee="newAttendee" :attendee = "attendee" :attendances = "attendances" :now = "now" :profile="profile"></ysgtb-jumbotron>
-			<ysgtb-d3 :times = "times" :attendances = "attendances" :now = "now" :profile="profile"></ysgtb-d3>
+			<ysgtb-jumbotron 
+				@startAuthentication="startAuthentication"
+				@newAttendee="newAttendee" :attendee = "attendee"
+				:attendances = "attendances" 
+				:now = "now" 
+				:profile="profile" 
+				:colourScale="colourScale">
+			</ysgtb-jumbotron>
+			<ysgtb-d3 
+				:times = "times"
+				:attendances = "attendances"
+				:now = "now"
+				:profile="profile"
+				:colourScale="colourScale">
+			</ysgtb-d3>
 		</div>
 	`
 })	
