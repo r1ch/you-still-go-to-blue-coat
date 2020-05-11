@@ -284,8 +284,8 @@ var app = new Vue({
 		revision:revision.substring(0,5),
 		attendee: false,
 		loadedAttendeeName: false,
-		attendances: false,
-		times: false,
+		attendances: [],
+		times: [],
 		colourScale: d3.scaleOrdinal("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),d3.schemeCategory10),
 		timer: false,
 		now : (new Date()).getTime()
@@ -304,7 +304,6 @@ var app = new Vue({
 	},
 	computed: {
 		orderedAttendances: function(){
-			if(!this.attendances) return
 			return this.attendances
 			.map(attendance=>{
 				let a = {...attendance}
