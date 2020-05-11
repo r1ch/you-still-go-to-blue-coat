@@ -260,7 +260,7 @@ Vue.component('ysgtb-d3', {
 					end: xScale(time.to),
 					start: xScale(time.from),
 					name: time.name,
-					totals: totals
+					totals: {...totals}
 				}
 				output.width = output.end - output.start
 				return output
