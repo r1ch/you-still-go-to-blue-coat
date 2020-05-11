@@ -37,7 +37,7 @@ Vue.component('ysgtb-jumbotron',{
 			<div class = "container" v-if = "attendances.length > 0">
 				<h4>Grew in grace</h4>
 				<ul class="list-group">
-					<li class="list-group-item flex-column align-items-start" v-for = "(attendance, index) in orderedAttendances" :class= "{active:attendee.name == attendance.identifier, 'image-background':attendee.name == attendance.identifier}">
+					<li class="list-group-item flex-column align-items-start" v-for = "(attendance, index) in attendances" :class= "{active:attendee.name == attendance.identifier, 'image-background':attendee.name == attendance.identifier}">
 						<div class="d-flex w-100 justify-content-between">
 							<h5 class="mb-1"><span :style="{color:colourScale(attendance.identifier[0])}">•</span>&nbsp;{{attendance.identifier}}</h5>
 							<!--<span class="badge badge-pill badge-dark d-none d-sm-block">{{["Mr Inches' favourite","",""][index]}}</span>-->
@@ -58,15 +58,6 @@ Vue.component('ysgtb-jumbotron',{
 		},
 		have: function(){
 			return this.attendee.name==="You"?"have":"has"
-		},
-		orderedAttendances: function(){
-			return this.attendances
-			.map(attendance=>{
-				let a = {...attendance}
-				a.record += (this.attendee.name == a.identifier ? this.now-this.attendee.identifier : 0)
-				return a
-			})
-			.sort((a,b)=>b.record-a.record)
 		}
 	},
 	methods: {
@@ -215,23 +206,14 @@ Vue.component('ysgtb-d3', {
 				.transition(t)
 				.call(yAxis)
 			
-			let lineGenerator = name => d3.line()
+			let lineGenerator = name => {
+				let attendance = attendances.find(attendance=>attendance.identifier==name))
+				let unexplained = attendance.
+				d3.line()
     				.x(d=>d.end)
     				.y(d=>yScale(d.totals[name] || 0))
    				.curve(d3.curveMonotoneX)
-			
-			Object.keys(timeBlocks[timeBlocks.length-1].totals).forEach((name)=>{
-				if(!this.lines[`line-${name}`]){
-					this.lines[`line-${name}`] = this.svg.append("path").datum(timeBlocks)
-				}
-				
-				this.lines[`line-${name}`]
-					.attr("class", `line line-${name}`)
-					.attr("d", lineGenerator(name))
-					.attr("fill", "none")
-					.attr("stroke", ()=>this.colourScale(name[0]))
-			})
-			
+			}
 
 			let times = this.svg.selectAll('.time')
 				.data(timeBlocks)
@@ -266,6 +248,19 @@ Vue.component('ysgtb-d3', {
 				.attr('y',0)
 				.attr("fill", (d)=>this.colourScale(d.name[0]))
 				.attr('height', this.barHeight)
+			
+			
+			Object.keys(timeBlocks[timeBlocks.length-1].totals).forEach((name)=>{
+				if(!this.lines[`line-${name}`]){
+					this.lines[`line-${name}`] = this.svg.append("path").datum(timeBlocks)
+				}
+				
+				this.lines[`line-${name}`]
+					.attr("class", `line line-${name}`)
+					.attr("d", lineGenerator(name))
+					.attr("fill", "none")
+					.attr("stroke", ()=>this.colourScale(name[0]))
+			})
 
 			d3.selectAll("#d3").node()
 				.scrollLeft = this.fullWidth
@@ -306,6 +301,17 @@ var app = new Vue({
 		this.getTimes()
 		this.getAttendee()
 		this.getAttendances()
+	},
+	computed: {
+		orderedAttendances: function(){
+			return this.attendances
+			.map(attendance=>{
+				let a = {...attendance}
+				a.record += (this.attendee.name == a.identifier ? this.now-this.attendee.identifier : 0)
+				return a
+			})
+			.sort((a,b)=>b.record-a.record)
+		}
 	},
 	methods:{
 		startAuthentication(){
@@ -383,7 +389,7 @@ var app = new Vue({
 				@startAuthentication="startAuthentication"
 				@newAttendee="newAttendee"
 				:attendee = "attendee"
-				:attendances = "attendances" 
+				:attendances = "orderedAttendances"
 				:now = "now" 
 				:profile="profile" 
 				:colourScale="colourScale">
