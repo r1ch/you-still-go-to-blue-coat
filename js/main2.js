@@ -291,6 +291,7 @@ Vue.component('ysgtb-d3', {
 			Object.keys(timeBlocks[timeBlocks.length-1].totals).forEach((name)=>{
 				if(!this.lines[`line-${name}`]){
 					this.lines[`line-${name}`] = this.svg.append("path")
+				}
 				
 				this.lines[`line-${name}`]
 					.attr("class", `.line .line-${name}`)
