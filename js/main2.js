@@ -304,6 +304,7 @@ var app = new Vue({
 	},
 	computed: {
 		orderedAttendances: function(){
+			if(!this.attendances) return
 			return this.attendances
 			.map(attendance=>{
 				let a = {...attendance}
