@@ -180,7 +180,7 @@ Vue.component('ysgtb-d3', {
 	data: function() {
 		let margin = {
 			top: 10,
-			right: 75,
+			right: 25,
 			middle : 20,
 			bottom: 10,
 			left: 75
@@ -274,7 +274,13 @@ Vue.component('ysgtb-d3', {
 			
 			this.svg.select(".y")
 				.transition(t)
-				.call(yAxis);	
+				.call(yAxis)
+			
+			let line = name => d3.line()
+    				.x(function(d, i) { return xScale(i); }) // set the x values for the line generator
+    				.y(function(d) { return yScale(d.y); }) // set the y values for the line generator 
+   				.curve(d3.curveMonotoneX) // apply smoothing to the line
+
 
 			let times = this.svg.selectAll('.time')
 				.data(timeBlocks)
