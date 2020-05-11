@@ -174,6 +174,7 @@ Vue.component('ysgtb-d3', {
 		this.svg.append("g")
 			.attr("class", "y axis")
 			.attr("transform", `translate(0,0)`)
+		this.draw()
 	},
 	methods: {
 		draw() {
