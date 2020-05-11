@@ -230,7 +230,10 @@ Vue.component('ysgtb-d3', {
 				let unexplained = attendance ? attendance.record - lastBlock.totals[name] : 0
 				return d3.line()
     				.x(d=>d.end)
-    				.y(d=>yScale((d.totals[name] || 0) + unexplained))
+    				.y(d=>{
+					console.log(JSON.stringify(d.totals[name]))
+					return yScale((d.totals[name] || 0) + unexplained)
+				})
    				.curve(d3.curveMonotoneX)
 			}
 
