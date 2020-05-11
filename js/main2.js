@@ -200,6 +200,7 @@ Vue.component('ysgtb-d3', {
 			fullWidth : fullWidth,
 			fullHeight : fullHeight,
 			barHeight : barHeight,
+			lineHeight: lineHeight,
 			ticks:ticks,
 			timer:false
 		}
