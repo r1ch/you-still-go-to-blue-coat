@@ -181,12 +181,13 @@ Vue.component('ysgtb-d3', {
 		let margin = {
 			top: 10,
 			right: 25,
-			bottom: 25,
+			bottom: 10,
 			left: 25
 		};
 		let fullWidth = 1800
 		let ticks = fullWidth/90
-		let fullHeight = 60
+		let fullHeight = 300
+		let xAxisOffset = 60
 		let width = fullWidth - margin.left - margin.right;
 		let height = fullHeight - margin.top - margin.bottom;
 		return {
@@ -196,6 +197,7 @@ Vue.component('ysgtb-d3', {
 			height: height,
 			fullWidth : fullWidth,
 			fullHeight : fullHeight,
+			xAxisOffset : xAxisOffset,
 			ticks:ticks,
 			timer:false
 		}
@@ -215,7 +217,8 @@ Vue.component('ysgtb-d3', {
 		
 		this.svg.append("g")
 			.attr("class", "x axis")
-			.attr("transform", "translate(0," + this.height + ")")
+			.attr("transform", "translate(0," + this.xAxisOffset + ")")
+		
 		this.getTimes()
 		this.timer && clearInterval(this.timer)
 		this.timer = setInterval(this.getTimes,5*60*1000)
@@ -243,15 +246,17 @@ Vue.component('ysgtb-d3', {
 				.call(xAxis);
 
 			
-			let timeBlocks = this.times.map(time=>{
+			let timeBlocks = this.times.map((totals=>time=>{
+				totals[time.name] = (totals[time.name] || 0) + parseInt(time.to) - parseInt(time.from)
 				let output = {
 					end: xScale(time.to),
 					start: xScale(time.from),
-					name: time.name
+					name: time.name,
+					totals: totals
 				}
 				output.width = output.end - output.start
 				return output
-			}).filter(output=>output.width>0.05)
+			})({})).filter(output=>output.width>0.05)
 
 			let times = this.svg.selectAll('.time')
 				.data(timeBlocks)
