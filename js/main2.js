@@ -208,10 +208,13 @@ Vue.component('ysgtb-d3', {
 			
 			let lineGenerator = name => {
 				let attendance = this.attendances.find(attendance=>attendance.identifier==name)
-				let unexplained = timeBlocks[timeBlocks.length-1].totals[name] - (attendance ? attendance.record : 0)
+				let unexplained = attendance ? attendance.record - timeBlocks[timeBlocks.length-1].totals[name] : 0
 				return d3.line()
     				.x(d=>d.end)
-    				.y(d=>yScale(d.totals[name]+unexplained))
+    				.y(d=>{
+					console.log(`${d} ${unexplained}`
+					return yScale((d.totals[name] || 0) + unexplained)
+				})
    				.curve(d3.curveMonotoneX)
 			}
 
