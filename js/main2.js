@@ -119,7 +119,7 @@ Vue.component('ysgtb-d3', {
 		let margin = {
 			top: 10,
 			right: 25,
-			middle : 10,
+			middle : 25,
 			bottom: 10,
 			left: 25
 		};
@@ -256,6 +256,7 @@ Vue.component('ysgtb-d3', {
 					.attr("d", lineGenerator(name))
 					.attr("fill", "none")
 					.attr("stroke", ()=>this.colourScale(name[0]))
+                                        .attr("stroke-width","3px")
 			})
 
 			d3.selectAll("#d3").node()
