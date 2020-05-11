@@ -267,7 +267,7 @@ Vue.component('ysgtb-d3', {
 			
 			let yScale = d3.scaleLinear()
 				.domain([0,Math.max(...Object.values(timeBlocks[timeBlocks.length-1].totals))])
-				.range([0,this.lineHeight]
+				.range([0,this.lineHeight])
 			
 			let yAxis = d3.axisLeft(yScale)
 			
