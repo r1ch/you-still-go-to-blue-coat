@@ -280,7 +280,7 @@ Vue.component('ysgtb-d3', {
 			let lineGenerator = name => d3.line()
     				.x(function(d) {
 					console.log(d)
-					return xScale(d.end); 
+					return d.end; 
 				})
     				.y(function(d) {
 					console.log(d)
@@ -294,7 +294,7 @@ Vue.component('ysgtb-d3', {
 				}
 				
 				this.lines[`line-${name}`]
-					.attr("class", `.line .line-${name}`)
+					.attr("class", `line line-${name}`)
 					.attr("d", lineGenerator(name));		
 			})
 			
