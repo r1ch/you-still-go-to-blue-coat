@@ -396,7 +396,7 @@ var app = new Vue({
 			</ysgtb-jumbotron>
 			<ysgtb-d3 
 				:times = "times"
-				:attendances = "attendances"
+				:attendances = "orderedAttendances"
 				:now = "now"
 				:profile="profile"
 				:colourScale="colourScale">
