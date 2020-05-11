@@ -114,7 +114,7 @@ Vue.component('ysgtb-time', {
 
 Vue.component('ysgtb-d3', {
 	mixins:[APIMixin],
-	props:['profile','colourScale','times'],
+	props:['profile','colourScale','times','attendances'],
 	data: function() {
 		let margin = {
 			top: 10,
