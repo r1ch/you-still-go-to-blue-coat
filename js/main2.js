@@ -227,7 +227,7 @@ Vue.component('ysgtb-d3', {
 		
 		this.svg.append("g")
 			.attr("class", "y axis")
-			.attr("transform", `translate(0,${this.barHeight+this.margin.middle})`)
+			.attr("transform", `translate(0,${this.lineOffset})`)
 		
 		this.getTimes()
 		this.timer && clearInterval(this.timer)
