@@ -180,10 +180,10 @@ Vue.component('ysgtb-d3', {
 	data: function() {
 		let margin = {
 			top: 10,
-			right: 25,
+			right: 75,
 			middle : 20,
 			bottom: 10,
-			left: 25
+			left: 75
 		};
 		let fullWidth = 1800
 		let ticks = fullWidth/90
