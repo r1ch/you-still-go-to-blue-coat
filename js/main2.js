@@ -291,7 +291,7 @@ Vue.component('ysgtb-d3', {
 					.attr("class", `line line-${name}`)
 					.attr("d", lineGenerator(name))
 					.attr("fill", "none")
-					.attr("fill", ()=>this.colourScale(name[0]))
+					.attr("stroke", ()=>this.colourScale(name[0]))
 			})
 			
 
