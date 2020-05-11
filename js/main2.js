@@ -208,10 +208,7 @@ Vue.component('ysgtb-d3', {
 			})({})).filter(output=>output.width>0.05)
 			
 			let yScale = d3.scaleLinear()
-				.domain([
-					this.attendances.reduce((a,current)=>Math.min(a,current.record),Math.Infinity),
-					this.attendances.reduce((a,current)=>Math.max(a,current.record),0)
-					])
+				.domain(d3.extent(this.attendances.map(attendance=>attendance.record)))
 				.range([this.lineHeight,this.lineOffset])
 			
 			let yAxis = d3.axisLeft(yScale)
