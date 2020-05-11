@@ -181,15 +181,17 @@ Vue.component('ysgtb-d3', {
 		let margin = {
 			top: 10,
 			right: 25,
+			middle : 20,
 			bottom: 10,
 			left: 25
 		};
 		let fullWidth = 1800
 		let ticks = fullWidth/90
 		let fullHeight = 300
-		let barHeight = 60
-		let width = fullWidth - margin.left - margin.right;
-		let height = fullHeight - margin.top - margin.bottom;
+		let barHeight = 40
+		let lineHeight = fullHeight - margin.top - margin.bottom - margin.middle - barHeight
+		let width = fullWidth - margin.left - margin.right
+		let height = fullHeight - margin.top - margin.bottom
 		return {
 			times:[],
 			margin: margin,
@@ -256,7 +258,8 @@ Vue.component('ysgtb-d3', {
 				}
 				output.width = output.end - output.start
 				return output
-			})({})).filter(output=>output.width>0.05)
+			})([])).filter(output=>output.width>0.05)
+			
 
 			let times = this.svg.selectAll('.time')
 				.data(timeBlocks)
