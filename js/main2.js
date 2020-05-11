@@ -231,7 +231,7 @@ Vue.component('ysgtb-d3', {
 				return d3.line()
     				.x(d=>d.end)
     				.y(d=>{
-					console.log(`${JSON.stringify(d.totals[name])} ${name}`)
+					console.log(`${JSON.stringify(d.totals[name])} ${name} ${unexplained}`)
 					return yScale((d.totals[name] || 0) + unexplained)
 				})
    				.curve(d3.curveMonotoneX)
