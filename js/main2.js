@@ -21,20 +21,8 @@ var APIMixin = {
 
 
 Vue.component('ysgtb-jumbotron',{
-	mixins:[APIMixin],
-	inject:['profile','listenFor','colourScale'],
-	data: function(){
-		return {
-			timer: false,
-			refresher: false,
-			loadedAttendeeName: false,
-			attendee : {
-				name: "You"
-			},
-			attendances : [],
-			now : (new Date()).getTime()
-		}
-	},
+	props:['profile','attendee','attendances','colourScale','now','loadedAttendeeName'],
+	data: ()=>({}),
 	template:`
 		<div>
 			<div class="jumbotron" v-if = "attendee">
@@ -64,11 +52,6 @@ Vue.component('ysgtb-jumbotron',{
 			</div>
 		</div>
 	`,
-	watch:{
-		"attendee"(){
-			if(!this.attendee.name || !this.attendee.name.length || !this.attendee.name.length>1) this.attendee.name = "You"
-		}
-	},
 	computed:{
 		go: function(){
 			return this.attendee.name==="You"?"go":"goes"
@@ -86,49 +69,9 @@ Vue.component('ysgtb-jumbotron',{
 			.sort((a,b)=>b.record-a.record)
 		}
 	},
-	mounted: function(){
-		this.getAttendee()
-		this.getAttendances()
-		this.listenFor('ATTENDEE',this.getAttendee)
-		this.listenFor('ATTENDANCE',this.getAttendances)
-		this.timer && clearInterval(this.timer)
-		this.timer = setInterval(()=>{this.now = (new Date().getTime())},1000)
-		this.refresher && clearInterval(this.refresher)
-		this.refresher = setInterval(this.refresh,5*60*1000)
-	},
 	methods: {
-		startAuthentication(){
-			if(this.profile.ready) return
-			else Authenticator.then(GoogleAuth=>GoogleAuth.signIn())
-		},
-		refresh(){
-			this.getAttendee()
-			this.getAttendances()
-		},
-		visit(){
-			this.API("PUT","/visits",this.profile)
-		},
-		getAttendee(){
-			this.API("GET","/attendees/latest",false,attendee=>{
-				this.attendee=attendee
-				this.loadedAttendeeName=attendee.name
-			})
-		},
-		getAttendances(){
-			this.API("GET","/attendances",false,attendances=>this.attendances=attendances)
-		},
-		newAttendee: _.debounce(function(){
-			if(this.attendee.name==this.loadedAttendeeName || ["","You"].includes(this.attendee.name)) return
-			this.attendee.name = this.attendee.name.toUpperCase()[0] + this.attendee.name.slice(1).trim()
-			this.API("POST","/attendees",{
-				attendee:this.attendee,
-				reporter:this.profile
-			},attendee=>{
-				this.attendee=attendee
-				this.loadedAttendeeName=attendee.name
-				this.getAttendances()
-			})
-		},1500)
+		newAttendee : this.$emit('newAttendee'),
+		startAuthentication: this.$emit('startAuthentication')
 	}
 })
 
@@ -176,7 +119,7 @@ Vue.component('ysgtb-time', {
 
 Vue.component('ysgtb-d3', {
 	mixins:[APIMixin],
-	inject:['profile','listenFor','colourScale'],
+	props:['profile','colourScale'],
 	data: function() {
 		let margin = {
 			top: 10,
@@ -228,18 +171,8 @@ Vue.component('ysgtb-d3', {
 		this.svg.append("g")
 			.attr("class", "y axis")
 			.attr("transform", `translate(0,0)`)
-		
-		this.getTimes()
-		this.timer && clearInterval(this.timer)
-		this.timer = setInterval(this.getTimes,5*60*1000)
 	},
 	methods: {
-		getTimes(){
-			this.API("GET","/times",false,times=>{
-				this.times=times
-				this.draw()
-			})
-		},
 		draw() {
 			if (this.times.length == 0) return;
 			let t = d3.transition().duration(750);
@@ -344,12 +277,16 @@ Vue.component('ysgtb-d3', {
 
 var app = new Vue({
 	el: '#app',
+	mixins: [APIMixin],
 	data: {
 		profile: {ready:false},
 		pingInterval : false,
 		pongTimeout : false,
 		version:version,
 		revision:revision.substring(0,5),
+		attendee: false,
+		loadedAttendeeName: false,
+		attendances: false,
 		colourScale: d3.scaleOrdinal("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),d3.schemeCategory10)
 	},
 	created: function(){
@@ -358,8 +295,39 @@ var app = new Vue({
 			if(GoogleAuth.isSignedIn.get()) this.userReady(GoogleAuth.currentUser.get())
 			else GoogleAuth.currentUser.listen(this.userReady)		
 		})
+		this.getTimes()
+		this.getAttendee()
+		this.getAttendances()
 	},
 	methods:{
+		startAuthentication(){
+			if(this.profile.ready) return
+			else Authenticator.then(GoogleAuth=>GoogleAuth.signIn())
+		},
+		getTimes(){
+			this.API("GET","/times",false,times=>this.times=times)
+		},
+		getAttendee(){
+			this.API("GET","/attendees/latest",false,attendee=>{
+				this.attendee=attendee
+				this.loadedAttendeeName=this.attendee.name
+			})
+		},
+		newAttendee: _.debounce(function(){
+			if(this.attendee.name==this.loadedAttendeeName || ["","You"].includes(this.attendee.name)) return
+			this.attendee.name = this.attendee.name.toUpperCase()[0] + this.attendee.name.slice(1).trim()
+			this.API("POST","/attendeex",{
+				attendee:this.attendee,
+				reporter:this.profile
+			},attendee=>{
+				this.attendee=attendee
+				this.loadedAttendeeName=attendee.name
+				this.getAttendances()
+			})
+		},1500),
+		getAttendances(){
+			this.API("GET","/attendances",false,attendances=>this.attendances=attendances)
+		},
 		connectSocket(){
 			this.socket = new WebSocket(window.config.socketGatewayUrl + window.config.socketGatewayPath)
 			this.socket.onclose = this.connectSocket
@@ -381,7 +349,6 @@ var app = new Vue({
 			this.connectSocket()
 		},
 		userReady(event){
-			console.log(`User Ready`)
 			let basicProfile = event.getBasicProfile();
 			this.profile.id = basicProfile.getId();
 			this.profile.name = basicProfile.getGivenName();
@@ -402,17 +369,10 @@ var app = new Vue({
 			})
 		}
 	},
-	provide: function(){
-		return {
-			profile: this.profile,
-			listenFor: this.listenFor,
-			colourScale: this.colourScale
-		}
-	},
 	template: `
 		<div>
-			<ysgtb-jumbotron></ysgtb-jumbotron>
-			<ysgtb-d3></ysgtb-d3>
+			<ysgtb-jumbotron @startAuthentication="startAuthentication" @newAttendee="newAttendee" :attendee = "attendee" :attendances = "attendances" :now = "now" :profile="profile"></ysgtb-jumbotron>
+			<ysgtb-d3 :times = "times" :attendances = "attendances" :now = "now" :profile="profile"></ysgtb-d3>
 		</div>
 	`
 })	
