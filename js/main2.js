@@ -180,10 +180,10 @@ Vue.component('ysgtb-d3', {
 	},
 	watch: {
 		"times.length": function(){
-			this.times && this.attendances && this.draw()
+			this.times && this.times.length > 0 && this.attendances && this.attendances.length > 0 && this.draw()
 		},
 		"attendances.length": function(){
-			this.times && this.attendances && this.draw()
+			this.times && this.times.length > 0 && this.attendances && this.attendances.length > 0 && this.draw()
 		}
 	},
 	methods: {
