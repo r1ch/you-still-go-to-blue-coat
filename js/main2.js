@@ -290,7 +290,7 @@ Vue.component('ysgtb-d3', {
 			
 			Object.keys(timeBlocks[timeBlocks.length-1].totals).forEach((name)=>{
 				if(!this.lines[`line-${name}`]){
-					this.lines[`line-${name}`] = this.svg.append("path").datum([timeBlocks])
+					this.lines[`line-${name}`] = this.svg.append("path").datum(timeBlocks)
 				}
 				
 				this.lines[`line-${name}`]
