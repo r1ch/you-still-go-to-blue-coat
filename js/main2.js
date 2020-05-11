@@ -189,7 +189,8 @@ Vue.component('ysgtb-d3', {
 		let ticks = fullWidth/90
 		let fullHeight = 300
 		let barHeight = 40
-		let lineHeight = fullHeight - margin.top - margin.bottom - margin.middle - barHeight
+		let lineOffset = margin.top + margin.middle + barHeight
+		let lineHeight = fullHeight - lineOffset - margin.bottom
 		let width = fullWidth - margin.left - margin.right
 		let height = fullHeight - margin.top - margin.bottom
 		return {
@@ -201,6 +202,7 @@ Vue.component('ysgtb-d3', {
 			fullWidth : fullWidth,
 			fullHeight : fullHeight,
 			barHeight : barHeight,
+			lineOffset: lineOffset,
 			lineHeight: lineHeight,
 			ticks:ticks,
 			timer:false
@@ -269,7 +271,7 @@ Vue.component('ysgtb-d3', {
 			
 			let yScale = d3.scaleLinear()
 				.domain([0,Math.max(...Object.values(timeBlocks[timeBlocks.length-1].totals))])
-				.range([this.lineHeight,0])
+				.range([this.lineHeight,this.lineOffset])
 			
 			let yAxis = d3.axisLeft(yScale)
 			
