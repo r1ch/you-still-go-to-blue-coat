@@ -215,15 +215,15 @@ Vue.component('ysgtb-d3', {
 			.attr('width',this.fullWidth)
 			.attr('height',this.fullHeight)
 			.append("g")
-			.attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")")
+			.attr("transform", `translate(${this.margin.left},${this.margin.top})`)
 		
 		this.svg.append("g")
 			.attr("class", "x axis")
-			.attr("transform", "translate(0," + this.barHeight + ")")
+			.attr("transform", `translate(0,${this.barHeight})`)
 		
 		this.svg.append("g")
 			.attr("class", "y axis")
-			.attr("transform", "translate(0," + this.barHeight+this.margin.middle + ")")
+			.attr("transform", `translate(0,${this.barHeight+this.margin.middle})`)
 		
 		this.getTimes()
 		this.timer && clearInterval(this.timer)
