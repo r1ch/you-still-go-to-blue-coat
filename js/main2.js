@@ -207,8 +207,15 @@ Vue.component('ysgtb-d3', {
 				return output
 			})({})).filter(output=>output.width>0.05)
 			
+			let lastBlock = timeBlocks[timeBlocks.length-1]
+			
 			let yScale = d3.scaleLinear()
-				.domain(d3.extent(this.attendances.map(attendance=>attendance.record)))
+				.domain([
+					d3.min(this.attendances.map(attendance=>{
+						attendance.record-lastBlock.totals[attendance.identifier]
+					})),
+					d3.max(this.attendances.map(attendance=>attendance.record))
+				])
 				.range([this.lineHeight,this.lineOffset])
 			
 			let yAxis = d3.axisLeft(yScale)
@@ -219,7 +226,7 @@ Vue.component('ysgtb-d3', {
 			
 			let lineGenerator = name => {
 				let attendance = this.attendances.find(attendance=>attendance.identifier==name)
-				let unexplained = attendance ? attendance.record - timeBlocks[timeBlocks.length-1].totals[name] : 0
+				let unexplained = attendance ? attendance.record - lastBlock.totals[name] : 0
 				return d3.line()
     				.x(d=>d.end)
     				.y(d=>{
@@ -242,7 +249,7 @@ Vue.component('ysgtb-d3', {
 				.call(this.timesHandler)
 			
 			
-			Object.keys(timeBlocks[timeBlocks.length-1].totals).forEach((name)=>{
+			Object.keys(lastBlock.totals).forEach((name)=>{
 				if(!this.lines[`line-${name}`]){
 					this.lines[`line-${name}`] = this.svg.append("path").datum(timeBlocks)
 				}
