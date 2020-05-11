@@ -180,7 +180,7 @@ Vue.component('ysgtb-d3', {
 	},
 	watch: {
 		"times": function(){
-			times && this.draw()
+			if(times) this.draw()
 		}
 	},
 	methods: {
@@ -390,7 +390,6 @@ var app = new Vue({
 			<ysgtb-d3 
 				:times = "times"
 				:attendances = "orderedAttendances"
-				:now = "now"
 				:profile="profile"
 				:colourScale="colourScale">
 			</ysgtb-d3>
