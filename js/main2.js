@@ -282,12 +282,12 @@ Vue.component('ysgtb-d3', {
    				.curve(d3.curveMonotoneX) // apply smoothing to the line
 			
 			Object.keys(timeBlocks[timeBlocks.length-1].totals).forEach((name)=>{
-				let line = this.svg.selectAll(`.line .${name}`)
+				let line = this.svg.selectAll(`.line .line-${name}`)
 					.datum(timeBlocks)
 				
 				line
 					.append("path")
-					.attr("class", `.line .${name}`)
+					.attr("class", `.line .line-${name}`)
 					.attr("d", lineGenerator(name));
 				
 			})
