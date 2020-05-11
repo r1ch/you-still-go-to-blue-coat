@@ -277,9 +277,15 @@ Vue.component('ysgtb-d3', {
 				.call(yAxis)
 			
 			let lineGenerator = name => d3.line()
-    				.x(function(d) { return xScale(d.end); }) // set the x values for the line generator
-    				.y(function(d) { return yScale(d.totals[name] || 0); }) // set the y values for the line generator 
-   				.curve(d3.curveMonotoneX) // apply smoothing to the line
+    				.x(function(d) {
+					console.log(d)
+					return xScale(d.end); 
+				})
+    				.y(function(d) {
+					console.log(d)
+					return yScale(d.totals[name] || 0) 
+				})
+   				.curve(d3.curveMonotoneX)
 			
 			Object.keys(timeBlocks[timeBlocks.length-1].totals).forEach((name)=>{
 				let line = this.svg.selectAll(`.line .line-${name}`)
