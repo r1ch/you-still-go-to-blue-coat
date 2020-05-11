@@ -121,7 +121,7 @@ Vue.component('ysgtb-d3', {
 			right: 25,
 			middle : 20,
 			bottom: 10,
-			left: 75
+			left: 72
 		};
 		let fullWidth = 1800
 		let ticks = fullWidth/90
@@ -216,27 +216,23 @@ Vue.component('ysgtb-d3', {
 				])
 				.range([this.lineHeight,this.lineOffset])
 			
-			let yAxis = d3.axisLeft(yScale)
+			/*let yAxis = d3.axisLeft(yScale)
 			
 			this.svg.select(".y")
 				.transition(d3.transition().duration(750))
-				.call(yAxis)
+				.call(yAxis)*/
 			
 			let lineGenerator = name => {
 				let attendance = this.attendances.find(attendance=>attendance.identifier==name)
 				let unexplained = attendance ? attendance.record - lastBlock.totals[name] : 0
 				return d3.line()
     				.x(d=>d.end)
-    				.y(d=>{
-					console.log(`${JSON.stringify(d.totals)} ${unexplained}`)
-					return yScale((d.totals[name] || 0) + unexplained)
-				})
+    				.y(d=>yScale((d.totals[name] || 0) + unexplained))
    				.curve(d3.curveMonotoneX)
 			}
 
 			let times = this.svg.selectAll('.time')
 				.data(timeBlocks)
-			
 						
 			times.exit().remove()
 			
@@ -246,11 +242,8 @@ Vue.component('ysgtb-d3', {
 				.append('rect')
 				.call(this.timesHandler)
 			
-			
 			Object.keys(lastBlock.totals).forEach((name)=>{
-				if(!this.lines[`line-${name}`]){
-					this.lines[`line-${name}`] = this.svg.append("path").datum(timeBlocks)
-				}
+				if(!this.lines[`line-${name}`]) this.lines[`line-${name}`] = this.svg.append("path").datum(timeBlocks)
 				
 				this.lines[`line-${name}`]
 					.attr("class", `line line-${name}`)
