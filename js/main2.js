@@ -168,7 +168,7 @@ Vue.component('ysgtb-d3', {
 	},
 	methods: {
 		draw() {
-			if (!this.times) return;
+			if (this.times.length == 0) return;
 			let t = d3.transition().duration(750);
 			
 			let xScale = d3.scaleTime()
