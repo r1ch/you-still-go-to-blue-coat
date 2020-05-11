@@ -290,9 +290,9 @@ var app = new Vue({
 		attendee: false,
 		loadedAttendeeName: false,
 		attendances: false,
-		colourScale: d3.scaleOrdinal("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),d3.schemeCategory10)
-	},
-	computed:{
+		times: false,
+		colourScale: d3.scaleOrdinal("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),d3.schemeCategory10),
+		timer: false,
 		now : (new Date()).getTime()
 	},
 	created: function(){
@@ -301,6 +301,8 @@ var app = new Vue({
 			if(GoogleAuth.isSignedIn.get()) this.userReady(GoogleAuth.currentUser.get())
 			else GoogleAuth.currentUser.listen(this.userReady)		
 		})
+		this.timer && clearInterval(this.timer)
+		this.timer = setInterval(()=>{this.now = (new Date()).getTime()},1000)
 		this.getTimes()
 		this.getAttendee()
 		this.getAttendances()
