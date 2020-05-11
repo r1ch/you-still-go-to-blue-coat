@@ -273,7 +273,7 @@ Vue.component('ysgtb-d3', {
 			
 			this.svg.select(".y")
 				.transition(t)
-				.call(xAxis);	
+				.call(yAxis);	
 
 			let times = this.svg.selectAll('.time')
 				.data(timeBlocks)
