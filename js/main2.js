@@ -173,17 +173,16 @@ Vue.component('ysgtb-d3', {
 				.attr('y', this.barHeight/2)
 				.attr('x', d=>d.start)
 				.attr("fill", "#aaaaaa")
-				.transition(t)
+				.transition(d3.transition().duration(750))
 				.delay((d,i,A)=>(A.length-i)*100)
 				.attr('y',0)
-				.attr("fill", (d)=>this.colourScale(d.name[0]))
+				.attr("fill", d=>this.colourScale(d.name[0]))
 				.attr('height', this.barHeight)
 		this.draw()
 	},
 	methods: {
 		draw() {
 			if (this.times.length == 0) return;
-			let t = d3.transition().duration(750);
 			
 			let xScale = d3.scaleTime()
 				.domain([this.times[0].from,this.times[this.times.length-1].to])
@@ -193,7 +192,7 @@ Vue.component('ysgtb-d3', {
 				.ticks(this.ticks)
 
 			this.svg.select(".x")
-				.transition(t)
+				.transition(d3.transition().duration(750))
 				.call(xAxis);
 			
 			let timeBlocks = this.times.map((totals=>time=>{
@@ -215,7 +214,7 @@ Vue.component('ysgtb-d3', {
 			let yAxis = d3.axisLeft(yScale)
 			
 			this.svg.select(".y")
-				.transition(t)
+				.transition(d3.transition().duration(750))
 				.call(yAxis)
 			
 			let lineGenerator = name => {
