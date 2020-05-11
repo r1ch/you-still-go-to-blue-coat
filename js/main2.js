@@ -180,6 +180,7 @@ Vue.component('ysgtb-d3', {
 	},
 	watch: {
 		"times": function(){
+			console.log(JSON.stringify(times))
 			this.draw()
 		}
 	},
