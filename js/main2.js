@@ -174,7 +174,6 @@ Vue.component('ysgtb-d3', {
 				.attr('x', d=>d.start)
 				.attr("fill", "#aaaaaa")
 				.transition(d3.transition().duration(750))
-				.delay((d,i,A)=>(A.length-i)*100)
 				.attr('y',0)
 				.attr("fill", d=>this.colourScale(d.name[0]))
 				.attr('height', this.barHeight)
