@@ -278,14 +278,8 @@ Vue.component('ysgtb-d3', {
 				.call(yAxis)
 			
 			let lineGenerator = name => d3.line()
-    				.x(function(d) {
-					console.log(d)
-					return d.end; 
-				})
-    				.y(function(d) {
-					console.log(d)
-					return yScale(d.totals[name] || 0) 
-				})
+    				.x(d=>d.end)
+    				.y(d=>yScale(d.totals[name] || 0))
    				.curve(d3.curveMonotoneX)
 			
 			Object.keys(timeBlocks[timeBlocks.length-1].totals).forEach((name)=>{
@@ -295,7 +289,9 @@ Vue.component('ysgtb-d3', {
 				
 				this.lines[`line-${name}`]
 					.attr("class", `line line-${name}`)
-					.attr("d", lineGenerator(name));		
+					.attr("d", lineGenerator(name))
+					.attr("fill", "none")
+					.attr("fill", ()=>this.colourScale(name[0]))
 			})
 			
 
