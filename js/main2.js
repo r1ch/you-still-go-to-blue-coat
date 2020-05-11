@@ -164,6 +164,20 @@ Vue.component('ysgtb-d3', {
 		this.svg.append("g")
 			.attr("class", "y axis")
 			.attr("transform", `translate(0,0)`)
+		
+		this.timesHandler = (selection)=>
+				selection
+				.attr('class', d=>`time ${d.name}`)
+				.attr('width', d=>d.width)
+				.attr('height', 0)
+				.attr('y', this.barHeight/2)
+				.attr('x', d=>d.start)
+				.attr("fill", "#aaaaaa")
+				.transition(t)
+				.delay((d,i,A)=>(A.length-i)*100)
+				.attr('y',0)
+				.attr("fill", (d)=>this.colourScale(d.name[0]))
+				.attr('height', this.barHeight)
 		this.draw()
 	},
 	methods: {
@@ -181,7 +195,6 @@ Vue.component('ysgtb-d3', {
 			this.svg.select(".x")
 				.transition(t)
 				.call(xAxis);
-
 			
 			let timeBlocks = this.times.map((totals=>time=>{
 				totals[time.name] = (totals[time.name] || 0) + parseInt(time.to) - parseInt(time.from)
@@ -194,7 +207,6 @@ Vue.component('ysgtb-d3', {
 				output.width = output.end - output.start
 				return output
 			})({})).filter(output=>output.width>0.05)
-			
 			
 			let yScale = d3.scaleLinear()
 				.domain([0,Math.max(...Object.values(timeBlocks[timeBlocks.length-1].totals))])
@@ -224,33 +236,11 @@ Vue.component('ysgtb-d3', {
 						
 			times.exit().remove()
 			
-			times
-				.attr('class', d=>`time ${d.name}`)
-				.attr('width', d=>d.width)
-				.attr('height', 0)
-				.attr('y', this.barHeight/2)
-				.attr('x', d=>d.start)
-				.attr("fill", "#aaaaaa")
-				.transition(t)
-				.delay((d,i,A)=>(A.length-i)*100)
-				.attr('y',0)
-				.attr("fill", (d)=>this.colourScale(d.name[0]))
-				.attr('height', this.barHeight)
-			
+			times.call(this.timesHandler)
 			
 			times.enter()
 				.append('rect')
-				.attr('class', d=>`time ${d.name}`)
-				.attr('width', d=>d.width)
-				.attr('height', 0)
-				.attr("fill", "#aaaaaa")
-				.attr('y', this.barHeight/2)
-				.attr('x', d=>d.start)
-				.transition(t)
-				.delay((d,i,A)=>(A.length-i)*100)
-				.attr('y',0)
-				.attr("fill", (d)=>this.colourScale(d.name[0]))
-				.attr('height', this.barHeight)
+				.call(this.timesHandler)
 			
 			
 			Object.keys(timeBlocks[timeBlocks.length-1].totals).forEach((name)=>{
