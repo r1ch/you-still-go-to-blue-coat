@@ -21,7 +21,7 @@ var APIMixin = {
 
 
 Vue.component('ysgtb-jumbotron',{
-	props:['profile','attendee','attendances','colourScale','now','loadedAttendeeName'],
+	props:['profile','attendee','attendances','colourScale','now'],
 	data: ()=>({}),
 	template:`
 		<div>
@@ -180,7 +180,10 @@ Vue.component('ysgtb-d3', {
 	},
 	watch: {
 		times: function(){
-			this.draw()
+			this.times && this.attendances && this.draw()
+		},
+		attendances: function(){
+			this.times && this.attendances && this.draw()
 		}
 	},
 	methods: {
