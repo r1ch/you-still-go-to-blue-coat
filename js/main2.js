@@ -179,8 +179,8 @@ Vue.component('ysgtb-d3', {
 				.attr('height', this.barHeight)
 	},
 	watch: {
-		"times": function(){
-			if(times) this.draw()
+		times: function(){
+			this.draw()
 		}
 	},
 	methods: {
