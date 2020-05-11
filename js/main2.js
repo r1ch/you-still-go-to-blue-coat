@@ -70,8 +70,12 @@ Vue.component('ysgtb-jumbotron',{
 		}
 	},
 	methods: {
-		newAttendee : this.$emit('newAttendee'),
-		startAuthentication: this.$emit('startAuthentication')
+		newAttendee(){
+			this.$emit('newAttendee')
+		},
+		startAuthentication(){
+			this.$emit('startAuthentication')
+		}
 	}
 })
 
