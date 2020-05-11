@@ -123,7 +123,7 @@ Vue.component('ysgtb-time', {
 
 Vue.component('ysgtb-d3', {
 	mixins:[APIMixin],
-	props:['profile','colourScale'],
+	props:['profile','colourScale','times'],
 	data: function() {
 		let margin = {
 			top: 10,
@@ -141,7 +141,6 @@ Vue.component('ysgtb-d3', {
 		let width = fullWidth - margin.left - margin.right
 		let height = fullHeight - margin.top - margin.bottom
 		return {
-			times:[],
 			lines:[],
 			margin: margin,
 			width: width,
@@ -382,7 +381,8 @@ var app = new Vue({
 		<div>
 			<ysgtb-jumbotron 
 				@startAuthentication="startAuthentication"
-				@newAttendee="newAttendee" :attendee = "attendee"
+				@newAttendee="newAttendee"
+				:attendee = "attendee"
 				:attendances = "attendances" 
 				:now = "now" 
 				:profile="profile" 
