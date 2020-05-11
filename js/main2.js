@@ -211,9 +211,7 @@ Vue.component('ysgtb-d3', {
 			
 			let yScale = d3.scaleLinear()
 				.domain([
-					d3.min(this.attendances.map(attendance=>{
-						attendance.record-lastBlock.totals[attendance.identifier]
-					})),
+					d3.min(this.attendances.map(attendance=>attendance.record-lastBlock.totals[attendance.identifier])),
 					d3.max(this.attendances.map(attendance=>attendance.record))
 				])
 				.range([this.lineHeight,this.lineOffset])
