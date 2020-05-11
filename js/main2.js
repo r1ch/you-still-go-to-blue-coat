@@ -179,10 +179,10 @@ Vue.component('ysgtb-d3', {
 				.attr('height', this.barHeight)
 	},
 	watch: {
-		times: function(){
+		"times.length": function(){
 			this.times && this.attendances && this.draw()
 		},
-		attendances: function(){
+		"attendances.length": function(){
 			this.times && this.attendances && this.draw()
 		}
 	},
