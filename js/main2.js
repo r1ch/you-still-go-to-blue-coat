@@ -177,7 +177,9 @@ Vue.component('ysgtb-d3', {
 				.attr('y',0)
 				.attr("fill", d=>this.colourScale(d.name[0]))
 				.attr('height', this.barHeight)
-		this.draw()
+	},
+	watch: {
+		"times": ()=>this.draw()
 	},
 	methods: {
 		draw() {
