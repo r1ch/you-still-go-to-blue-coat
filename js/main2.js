@@ -151,8 +151,7 @@ Vue.component('ysgtb-d3', {
 			barHeight : barHeight,
 			lineOffset: lineOffset,
 			lineHeight: lineHeight,
-			ticks:ticks,
-			timer:false
+			ticks:ticks
 		}
 	},
 	template: `
@@ -292,7 +291,6 @@ var app = new Vue({
 		loadedAttendeeName: false,
 		attendances: false,
 		colourScale: d3.scaleOrdinal("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),d3.schemeCategory10)
-		timer: false
 	},
 	computed:{
 		now : (new Date()).getTime()
