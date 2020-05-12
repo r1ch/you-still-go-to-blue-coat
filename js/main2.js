@@ -314,7 +314,7 @@ var app = new Vue({
 		this.getAttendee()
 		this.getAttendances()
 		this.listenFor("ATTENDEE",this.getAttendee)
-		this.listenFor("ATTENDANCE",this.getAttendance)
+		this.listenFor("ATTENDANCE",this.getAttendances)
 		this.listenFor("ATTENDEE",this.getTimes)
 	},
 	computed: {
