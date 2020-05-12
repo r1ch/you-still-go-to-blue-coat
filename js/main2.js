@@ -263,6 +263,14 @@ Vue.component('ysgtb-d3', {
 				.attr('cx', d=>d.start)
 				.attr("fill", "#aaaaaa")
 			
+			let reportersLabels = this.svg.selectAll('.reportersLabels')
+				.data(timeBlocks)
+				.join(enter=>enter.append('text'))
+				.attr('class', d=>`reportersLabels ${d.reporter}`)
+				.attr('r', 5)
+				.attr('cy', d=>yScale(d.totalsStart[d.name]))
+				.attr('cx', d=>d.start)
+			
 			d3.selectAll("#d3").node()
 				.scrollLeft = this.fullWidth
 
