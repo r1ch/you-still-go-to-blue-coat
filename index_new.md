@@ -1,0 +1,5 @@
+---
+layout: default
+---
+<div id = "app"></div>
+<script src = "js/main_new.js?{{site.github.build_revision}}"></script>
