@@ -202,10 +202,7 @@ Vue.component('ysgtb-d3', {
 				this.attendances.reduce((accumulator,current)=>{accumulator[current.identifier]=current.record; return accumulator},[])
 			))
 			.filter(output=>output.width>0.05)
-			.reverse()
-			
-			timeBlocks[timeBlocks.length] = {... timeBlocks[timeBlocks.length-1]}
-			
+			.reverse()		
 
 			
 			let yScale = d3.scaleLinear()
