@@ -269,6 +269,9 @@ Vue.component('ysgtb-d3', {
 				.text(d=>d.reporter)
 				.attr('class', 'reportersLabels')
 				.attr('y', d=>yScale(d.totalsStart[d.name]))
+				.attr('dy', 2.5)
+				.attr('text-anchor','middle')
+				.attr('font-size','8px')
 				.attr('x', d=>d.start)
 			
 			d3.selectAll("#d3").node()
