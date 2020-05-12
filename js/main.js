@@ -214,12 +214,6 @@ Vue.component('ysgtb-d3', {
 				])
 				.range([this.lineHeight,this.lineOffset])
 			
-			/*let yAxis = d3.axisLeft(yScale)
-			
-			this.svg.select(".y")
-				.transition(d3.transition().duration(750))
-				.call(yAxis)*/
-			
 			let lineGenerator = name => {
 				return d3.line()
     				.x(d=>d.end)
