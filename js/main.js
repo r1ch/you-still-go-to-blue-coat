@@ -296,6 +296,7 @@ var app = new Vue({
 		times: [],
 		colourScale: d3.scaleOrdinal("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),d3.schemeCategory10),
 		timer: false,
+		refresher: false,
 		now : (new Date()).getTime()
 	},
 	created: function(){
@@ -307,6 +308,8 @@ var app = new Vue({
 		this.timer && clearInterval(this.timer)
 		this.timer = setInterval(()=>{this.now = (new Date()).getTime()},1000)
 		this.update()
+		this.refresher && clearInterval(this.refresher)
+		this.refresher = setInterval(this.update,5*60*1000)
 		this.listenFor("ATTENDEE",this.update)
 		this.listenFor("ATTENDANCE",this.update)
 	},
