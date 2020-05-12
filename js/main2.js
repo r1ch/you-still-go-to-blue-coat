@@ -279,10 +279,23 @@ Vue.component('ysgtb-d3', {
 			reporters.enter()
 				.append('circle')
 				.call(reportersHandler)
-				.append('text')
-				.text(d=>d.reporter)
 
 			reporters.call(reportersHandler)
+			
+			let reportersTextHandler = (selection)=>
+				selection
+				.text(d=>d.reporter)
+			
+			let reporterText = reporters.selectAll('.reportersText')
+				.data(timeBlocks)
+			
+			reporterText.exit().remove()
+
+			reporterText.enter()
+				.append('text')
+				.call(reportersTextHandler)
+
+			reporterText.call(reportersTextHandler)
 
 
 
