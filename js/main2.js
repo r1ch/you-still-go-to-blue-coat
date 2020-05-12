@@ -261,7 +261,9 @@ Vue.component('ysgtb-d3', {
 				.attr('r', 5)
 				.attr('cy', d=>yScale(d.totalsStart[d.name]))
 				.attr('cx', d=>d.start)
-				.attr("fill", "#aaaaaa")
+				.attr('fill', '#ffffff')
+				.attr('stroke-width','1px')
+				.attr('stroke',d=>this.colourScale(d.name[0]))
 			
 			let reportersLabels = this.svg.selectAll('.reportersLabels')
 				.data(timeBlocks)
