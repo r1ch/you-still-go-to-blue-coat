@@ -169,7 +169,7 @@ Vue.component('ysgtb-d3', {
 		this.timer = setInterval(this.draw,10000)
 	},
 	watch : {
-		"times": function(){
+		"times.length": function(){
 			this.draw()
 		}
 	},
