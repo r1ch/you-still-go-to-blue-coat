@@ -175,7 +175,7 @@ Vue.component('ysgtb-d3', {
 	},
 	methods: {
 		draw() {
-			if (!this.times || this.times.length == 0 || !this.attendances || this.attendances.length == 0) return;
+			if (!this.times || this.times.length == 0 || !this.attendances || this.attendances.length == 0) return false;
 			
 			let xScale = d3.scaleTime()
 				.domain([this.times[0].from,this.times[this.times.length-1].to])
