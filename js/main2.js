@@ -199,7 +199,7 @@ Vue.component('ysgtb-d3', {
 				output.width = output.end - output.start
 				return output
 			})(
-				attendances.reduce((accumulator,current)=>{accumulator[current.identifier]=accumulator.record; return accumulator},[])
+				this.attendances.reduce((accumulator,current)=>{accumulator[current.identifier]=accumulator.record; return accumulator},[])
 			))
 			.filter(output=>output.width>0.05)
 			.reverse()
