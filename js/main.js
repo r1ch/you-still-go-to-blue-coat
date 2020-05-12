@@ -353,7 +353,7 @@ var app = new Vue({
 			},attendee=>{
 				this.attendee=attendee
 				this.loadedAttendeeName=attendee.name
-				this.getAttendances()
+				this.update()
 			})
 		},1500),
 		connectSocket(){
