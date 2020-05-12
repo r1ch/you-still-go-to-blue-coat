@@ -221,7 +221,7 @@ Vue.component('ysgtb-d3', {
 			let lineGenerator = name => {
 				return d3.line()
     				.x(d=>d.end)
-    				.y(d=>yScale(d.totals[name] || 0)
+    				.y(d=>yScale(d.totals[name] || 0))
    				.curve(d3.curveMonotoneX)
 			}
 
