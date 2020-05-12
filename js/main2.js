@@ -245,10 +245,9 @@ Vue.component('ysgtb-d3', {
 						
 			times.exit().remove()
 			
-			times.call(timesHandler)
-			
 			times.enter()
 				.append('rect')
+				.merge(times)
 				.call(timesHandler)
 			
 			Object.keys(timeBlocks[0].totalsEnd).forEach((name)=>{
@@ -277,28 +276,9 @@ Vue.component('ysgtb-d3', {
 
 			reporters.enter()
 				.append('circle')
+				.merge(reporters)
 				.call(reportersHandler)
-
-			reporters.call(reportersHandler)
 			
-			let reportersTextHandler = (selection)=>
-				selection
-				.attr('class', d=>`reportersText ${d.reporter}`)
-				.text(d=>d.reporter)
-			
-			let reportersText = reporters.selectAll('.reportersText')
-				.data(timeBlocks)
-			
-			reportersText.exit().remove()
-
-			reportersText.enter()
-				.append('text')
-				.call(reportersTextHandler)
-
-			reportersText.call(reportersTextHandler)
-
-
-
 			d3.selectAll("#d3").node()
 				.scrollLeft = this.fullWidth
 
