@@ -164,19 +164,6 @@ Vue.component('ysgtb-d3', {
 		this.svg.append("g")
 			.attr("class", "y axis")
 			.attr("transform", `translate(0,0)`)
-		
-		this.timesHandler = (selection)=>
-				selection
-				.attr('class', d=>`time ${d.name}`)
-				.attr('width', d=>d.width)
-				.attr('height', 0)
-				.attr('y', this.barHeight/2)
-				.attr('x', d=>d.start)
-				.attr("fill", "#aaaaaa")
-				.transition(d3.transition().duration(750))
-				.attr('y',0)
-				.attr("fill", d=>this.colourScale(d.name[0]))
-				.attr('height', this.barHeight)
 	},
 	watch: {
 		"times.length": function(){
@@ -237,16 +224,48 @@ Vue.component('ysgtb-d3', {
    				.curve(d3.curveMonotoneX)
 			}
 
+			let timesHandler = (selection)=>
+				selection
+				.attr('class', d=>`time ${d.name}`)
+				.attr('width', d=>d.width)
+				.attr('height', 0)
+				.attr('y', this.barHeight/2)
+				.attr('x', d=>d.start)
+				.attr("fill", "#aaaaaa")
+				.transition(d3.transition().duration(750))
+				.attr('y',0)
+				.attr("fill", d=>this.colourScale(d.name[0]))
+				.attr('height', this.barHeight)
+
 			let times = this.svg.selectAll('.time')
 				.data(timeBlocks)
 						
 			times.exit().remove()
 			
-			times.call(this.timesHandler)
+			times.call(timesHandler)
 			
 			times.enter()
 				.append('rect')
-				.call(this.timesHandler)
+				.call(timesHandler)
+
+			let reportersHandler = (selection)=>
+				selection
+				.attr('class', d=>`reporters ${d.name}`)
+				.attr('r', 5)
+				.attr('cy', d=>yScale(d.totals[d.name]))
+				.attr('cx', d=>d.end)
+				.attr("fill", "#aaaaaa")
+			
+			let reporters = this.svg.selectAll('.reporters')
+				.data(timeBlocks)
+
+			reporters.exit().remove()
+
+			reporters.enter()
+				.append('circle')
+				.call(reportersHandler)
+
+			reporters.call(reportersHandler)
 			
 			Object.keys(lastBlock.totals).forEach((name)=>{
 				if(!this.lines[`line-${name}`]) this.lines[`line-${name}`] = this.svg.append("path").datum(timeBlocks)
@@ -256,8 +275,10 @@ Vue.component('ysgtb-d3', {
 					.attr("d", lineGenerator(name))
 					.attr("fill", "none")
 					.attr("stroke", ()=>this.colourScale(name[0]))
-                                        .attr("stroke-width","3px")
+                    .attr("stroke-width","3px")
 			})
+
+
 
 			d3.selectAll("#d3").node()
 				.scrollLeft = this.fullWidth
@@ -298,6 +319,9 @@ var app = new Vue({
 		this.getTimes()
 		this.getAttendee()
 		this.getAttendances()
+		this.listenFor("ATTENDEE",this.getAttendee)
+		this.listenFor("ATTENDANCE",this.getAttendance)
+		this.listenFor("ATTENDEE",this.getTimes)
 	},
 	computed: {
 		orderedAttendances: function(){
