@@ -263,7 +263,7 @@ Vue.component('ysgtb-d3', {
 			
 			let reportersHandler = (selection)=>
 				selection
-				.attr('class', d=>`reporters ${d.name}`)
+				.attr('class', d=>`reporters ${d.reporter}`)
 				.attr('r', 5)
 				.attr('cy', d=>yScale(d.totals[d.name]))
 				.attr('cx', d=>d.end)
@@ -282,7 +282,7 @@ Vue.component('ysgtb-d3', {
 			
 			let reportersTextHandler = (selection)=>
 				selection
-				.attr('class', d=>`reportersText ${d.name}`)
+				.attr('class', d=>`reportersText ${d.reporter}`)
 				.text(d=>d.reporter)
 			
 			let reportersText = reporters.selectAll('.reportersText')
