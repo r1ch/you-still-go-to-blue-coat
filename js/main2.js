@@ -330,8 +330,8 @@ var app = new Vue({
 	methods:{
 		update(){
 			this.getAttendee()
-			.then(getAttendances)
-			.then(getTimes)
+			.then(this.getAttendances)
+			.then(this.getTimes)
 		},
 		getAttendee(){
 			return this.API("GET","/attendees/latest",false,attendee=>{
