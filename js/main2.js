@@ -251,7 +251,18 @@ Vue.component('ysgtb-d3', {
 			times.enter()
 				.append('rect')
 				.call(timesHandler)
-
+			
+			Object.keys(timeBlocks[0].totals).forEach((name)=>{
+				if(!this.lines[`line-${name}`]) this.lines[`line-${name}`] = this.svg.append("path").datum(timeBlocks)
+				
+				this.lines[`line-${name}`]
+					.attr("class", `line line-${name}`)
+					.attr("d", lineGenerator(name))
+					.attr("fill", "none")
+					.attr("stroke", ()=>this.colourScale(name[0]))
+                    			.attr("stroke-width","3px")
+			})
+			
 			let reportersHandler = (selection)=>
 				selection
 				.attr('class', d=>`reporters ${d.name}`)
@@ -268,19 +279,10 @@ Vue.component('ysgtb-d3', {
 			reporters.enter()
 				.append('circle')
 				.call(reportersHandler)
+				.append('text')
+				.text(d=>d.name)
 
 			reporters.call(reportersHandler)
-			
-			Object.keys(timeBlocks[0].totals).forEach((name)=>{
-				if(!this.lines[`line-${name}`]) this.lines[`line-${name}`] = this.svg.append("path").datum(timeBlocks)
-				
-				this.lines[`line-${name}`]
-					.attr("class", `line line-${name}`)
-					.attr("d", lineGenerator(name))
-					.attr("fill", "none")
-					.attr("stroke", ()=>this.colourScale(name[0]))
-                    			.attr("stroke-width","3px")
-			})
 
 
 
