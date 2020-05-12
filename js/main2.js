@@ -266,7 +266,7 @@ Vue.component('ysgtb-d3', {
 				.attr('class', d=>`reporters ${d.reporter}`)
 				.attr('r', 5)
 				.attr('cy', d=>yScale(d.totals[d.name]))
-				.attr('cx', d=>d.end)
+				.attr('cx', d=>d.start)
 				.attr("fill", "#aaaaaa")
 			
 			let reporters = this.svg.selectAll('.reporters')
