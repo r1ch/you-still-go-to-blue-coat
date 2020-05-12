@@ -167,11 +167,7 @@ Vue.component('ysgtb-d3', {
 			.attr("transform", `translate(0,0)`)
 		this.timer && clearInterval(this.timer)
 		this.timer = setInterval(this.draw,10000)
-	},
-	watch : {
-		"times.length": function(){
-			this.draw()
-		}
+		this.draw()
 	},
 	methods: {
 		draw() {
