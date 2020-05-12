@@ -114,7 +114,7 @@ Vue.component('ysgtb-time', {
 
 Vue.component('ysgtb-d3', {
 	mixins:[APIMixin],
-	props:['profile','colourScale','times','attendances'],
+	props:['profile','colourScale','times','attendances','now'],
 	data: function() {
 		let margin = {
 			top: 10,
@@ -165,17 +165,9 @@ Vue.component('ysgtb-d3', {
 			.attr("class", "y axis")
 			.attr("transform", `translate(0,0)`)
 	},
-	watch: {
-		"times.length": function(){
-			this.times && this.times.length > 0 && this.attendances && this.attendances.length > 0 && this.draw()
-		},
-		"attendances.length": function(){
-			this.times && this.times.length > 0 && this.attendances && this.attendances.length > 0 && this.draw()
-		}
-	},
 	methods: {
 		draw() {
-			if (this.times.length == 0) return;
+			if (!this.times || this.times.length == 0 || !this.attendances || this.attendances.length == 0) return;
 			
 			let xScale = d3.scaleTime()
 				.domain([this.times[0].from,this.times[this.times.length-1].to])
@@ -204,21 +196,14 @@ Vue.component('ysgtb-d3', {
 				this.attendances.reduce((accumulator,current)=>{accumulator[current.identifier]=current.record; return accumulator},[])
 			))
 			.filter(output=>output.width>0.05)
-			.reverse()		
+			.reverse()
 
-			
 			let yScale = d3.scaleLinear()
 				.domain([
 					d3.min(Object.values(timeBlocks[0].totalsStart)),
 					d3.max(Object.values(timeBlocks[timeBlocks.length-1].totalsEnd))
 				])
 				.range([this.lineHeight,this.lineOffset])
-			
-			/*let yAxis = d3.axisLeft(yScale)
-			
-			this.svg.select(".y")
-				.transition(d3.transition().duration(750))
-				.call(yAxis)*/
 			
 			let lineGenerator = name => {
 				return d3.line()
@@ -251,8 +236,6 @@ Vue.component('ysgtb-d3', {
 					.attr("stroke", ()=>this.colourScale(name[0]))
 					.attr("stroke-width","3px")
 			})
-			
-
 			
 			let reporters = this.svg.selectAll('.reporters')
 				.data(timeBlocks.filter(block=>block.totalsStart[block.name]))
@@ -345,7 +328,6 @@ var app = new Vue({
 		getTimes(){
 			return this.API("GET","/attendances",false,attendances=>this.attendances=attendances)
 		},
-		
 		startAuthentication(){
 			if(this.profile.ready) return
 			else Authenticator.then(GoogleAuth=>GoogleAuth.signIn())
@@ -359,7 +341,7 @@ var app = new Vue({
 			},attendee=>{
 				this.attendee=attendee
 				this.loadedAttendeeName=attendee.name
-				this.getAttendances()
+				this.update()
 			})
 		},1500),
 		connectSocket(){
