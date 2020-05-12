@@ -3,13 +3,13 @@ var APIMixin = {
 		API(method,URL,body,handler){
 			body = body ? body : undefined;
 			if(method != 'GET'){
-				signedHttpRequest(method, URL, body)
+				return signedHttpRequest(method, URL, body)
 				.then(axios)
 				.then(({data}) => {
 					if(handler) handler(data)
 				})
 			} else {
-				unsignedHttpRequest(method, URL, body)
+				return unsignedHttpRequest(method, URL, body)
 				.then(axios)
 				.then(({data}) => {
 					if(handler) handler(data)
@@ -312,12 +312,9 @@ var app = new Vue({
 		})
 		this.timer && clearInterval(this.timer)
 		this.timer = setInterval(()=>{this.now = (new Date()).getTime()},1000)
-		this.getTimes()
-		this.getAttendee()
-		this.getAttendances()
-		this.listenFor("ATTENDEE",this.getAttendee)
-		this.listenFor("ATTENDANCE",this.getAttendances)
-		this.listenFor("ATTENDEE",this.getTimes)
+		this.update()
+		this.listenFor("ATTENDEE",this.update)
+		this.listenFor("ATTENDANCE",this.update)
 	},
 	computed: {
 		orderedAttendances: function(){
@@ -331,18 +328,17 @@ var app = new Vue({
 		}
 	},
 	methods:{
+		update(){
+			this.API("GET","/attendees/latest",false,attendee=>{
+					this.attendee=attendee
+					this.loadedAttendeeName=this.attendee.name
+			})
+			.then(this.API("GET","/times",false,times=>this.times=times))
+			.then(this.API("GET","/attendances",false,attendances=>this.attendances=attendances))
+		},
 		startAuthentication(){
 			if(this.profile.ready) return
 			else Authenticator.then(GoogleAuth=>GoogleAuth.signIn())
-		},
-		getTimes(){
-			this.API("GET","/times",false,times=>this.times=times)
-		},
-		getAttendee(){
-			this.API("GET","/attendees/latest",false,attendee=>{
-				this.attendee=attendee
-				this.loadedAttendeeName=this.attendee.name
-			})
 		},
 		newAttendee: _.debounce(function(){
 			if(this.attendee.name==this.loadedAttendeeName || ["","You"].includes(this.attendee.name)) return
@@ -356,9 +352,6 @@ var app = new Vue({
 				this.getAttendances()
 			})
 		},1500),
-		getAttendances(){
-			this.API("GET","/attendances",false,attendances=>this.attendances=attendances)
-		},
 		connectSocket(){
 			this.socket = new WebSocket(window.config.socketGatewayUrl + window.config.socketGatewayPath)
 			this.socket.onclose = this.connectSocket
