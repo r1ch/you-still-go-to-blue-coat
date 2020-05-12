@@ -169,6 +169,14 @@ Vue.component('ysgtb-d3', {
 		this.timer = setInterval(this.draw,10000)
 		this.draw()
 	},
+	watch: {
+		"times.length": function(){
+			this.draw()
+		},
+		"attendances.length": function(){
+			this.draw()
+		}
+	},
 	methods: {
 		draw() {
 			if (!this.times || this.times.length == 0 || !this.attendances || this.attendances.length == 0) return false;
