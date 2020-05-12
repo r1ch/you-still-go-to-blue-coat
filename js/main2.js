@@ -257,7 +257,7 @@ Vue.component('ysgtb-d3', {
 			let reporters = this.svg.selectAll('.reporters')
 				.data(timeBlocks)
 				.join(enter=>enter.append('circle'))
-				.attr('class', d=>`reporters ${d.reporter}`)
+				.attr('class','reporters')
 				.attr('r', 5)
 				.attr('cy', d=>yScale(d.totalsStart[d.name]))
 				.attr('cx', d=>d.start)
@@ -266,10 +266,10 @@ Vue.component('ysgtb-d3', {
 			let reportersLabels = this.svg.selectAll('.reportersLabels')
 				.data(timeBlocks)
 				.join(enter=>enter.append('text'))
-				.attr('class', d=>`reportersLabels ${d.reporter}`)
-				.attr('r', 5)
-				.attr('cy', d=>yScale(d.totalsStart[d.name]))
-				.attr('cx', d=>d.start)
+				.text(d=>d.reporter)
+				.attr('class', 'reportersLabels')
+				.attr('y', d=>yScale(d.totalsStart[d.name]))
+				.attr('x', d=>d.start)
 			
 			d3.selectAll("#d3").node()
 				.scrollLeft = this.fullWidth
