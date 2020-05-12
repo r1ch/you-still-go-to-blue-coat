@@ -141,7 +141,8 @@ Vue.component('ysgtb-d3', {
 			barHeight : barHeight,
 			lineOffset: lineOffset,
 			lineHeight: lineHeight,
-			ticks:ticks
+			ticks:ticks,
+			timer:false,
 		}
 	},
 	template: `
@@ -164,6 +165,13 @@ Vue.component('ysgtb-d3', {
 		this.svg.append("g")
 			.attr("class", "y axis")
 			.attr("transform", `translate(0,0)`)
+		this.timer && clearInterval(this.timer)
+		this.timer = setInterval(this.draw,10000)
+	},
+	watch : {
+		"times": function(){
+			this.draw()
+		}
 	},
 	methods: {
 		draw() {
@@ -177,7 +185,6 @@ Vue.component('ysgtb-d3', {
 				.ticks(this.ticks)
 
 			this.svg.select(".x")
-				.transition(d3.transition().duration(750))
 				.call(xAxis);
 			
 			let timeBlocks = this.times.slice(0).reverse().map((totals=>time=>{
@@ -217,14 +224,10 @@ Vue.component('ysgtb-d3', {
 				.join(enter=>enter.append('rect'))
 				.attr('class', d=>`time ${d.name}`)
 				.attr('width', d=>d.width)
-				.attr('height', 0)
-				.attr('y', this.barHeight/2)
+				.attr('height', this.barHeight)
 				.attr('x', d=>d.start)
-				.attr("fill", "#aaaaaa")
-				.transition(d3.transition().duration(750))
 				.attr('y',0)
 				.attr("fill", d=>this.colourScale(d.name[0]))
-				.attr('height', this.barHeight)
 			
 			Object.keys(timeBlocks[0].totalsEnd).forEach((name)=>{
 				if(!this.lines[`line-${name}`]) this.lines[`line-${name}`] = this.svg.append("path").datum(timeBlocks)
