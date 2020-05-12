@@ -329,13 +329,23 @@ var app = new Vue({
 	},
 	methods:{
 		update(){
-			this.API("GET","/attendees/latest",false,attendee=>{
+			this.getAttendee()
+			.then(getAttendances)
+			.then(getTimes)
+		},
+		getAttendee(){
+			return this.API("GET","/attendees/latest",false,attendee=>{
 					this.attendee=attendee
 					this.loadedAttendeeName=this.attendee.name
 			})
-			.then(this.API("GET","/times",false,times=>this.times=times))
-			.then(this.API("GET","/attendances",false,attendances=>this.attendances=attendances))
 		},
+		getAttendances(){
+			return this.API("GET","/times",false,times=>this.times=times)
+		},
+		getTimes(){
+			return this.API("GET","/attendances",false,attendances=>this.attendances=attendances)
+		},
+		
 		startAuthentication(){
 			if(this.profile.ready) return
 			else Authenticator.then(GoogleAuth=>GoogleAuth.signIn())
