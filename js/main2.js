@@ -281,18 +281,19 @@ Vue.component('ysgtb-d3', {
 			
 			let reportersTextHandler = (selection)=>
 				selection
+				.attr('class', d=>`reportersText ${d.name}`)
 				.text(d=>d.reporter)
 			
-			let reporterText = reporters.selectAll('.reportersText')
+			let reportersText = reporters.selectAll('.reportersText')
 				.data(timeBlocks)
 			
-			reporterText.exit().remove()
+			reportersText.exit().remove()
 
-			reporterText.enter()
+			reportersText.enter()
 				.append('text')
 				.call(reportersTextHandler)
 
-			reporterText.call(reportersTextHandler)
+			reportersText.call(reportersTextHandler)
 
 
 
