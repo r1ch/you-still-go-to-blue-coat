@@ -194,10 +194,11 @@ Vue.component('ysgtb-d3', {
 					start: xScale(time.from),
 					reporter: time.reporter,
 					name: time.name,
-					totals: {...totals}
+					totalsEnd: {...totals}
 				}
 				output.width = output.end - output.start
 				if(totals[time.name]) totals[time.name] -= (parseInt(time.to) - parseInt(time.from))
+				output.totalsStart = {...totals}
 				return output
 			})(
 				this.attendances.reduce((accumulator,current)=>{accumulator[current.identifier]=current.record; return accumulator},[])
@@ -208,8 +209,8 @@ Vue.component('ysgtb-d3', {
 			
 			let yScale = d3.scaleLinear()
 				.domain([
-					d3.min(Object.values(timeBlocks[0].totals)),
-					d3.max(Object.values(timeBlocks[timeBlocks.length-1].totals))
+					d3.min(Object.values(timeBlocks[0].totalsStart)),
+					d3.max(Object.values(timeBlocks[timeBlocks.length-1].totalsEnd))
 				])
 				.range([this.lineHeight,this.lineOffset])
 			
@@ -222,7 +223,7 @@ Vue.component('ysgtb-d3', {
 			let lineGenerator = name => {
 				return d3.line()
     				.x(d=>d.end)
-    				.y(d=>yScale(d.totals[name]))
+    				.y(d=>yScale(d.totalsEnd[name]))
    				.curve(d3.curveMonotoneX)
 			}
 
@@ -250,7 +251,7 @@ Vue.component('ysgtb-d3', {
 				.append('rect')
 				.call(timesHandler)
 			
-			Object.keys(timeBlocks[0].totals).forEach((name)=>{
+			Object.keys(timeBlocks[0].totalsEnd).forEach((name)=>{
 				if(!this.lines[`line-${name}`]) this.lines[`line-${name}`] = this.svg.append("path").datum(timeBlocks)
 				
 				this.lines[`line-${name}`]
@@ -265,7 +266,7 @@ Vue.component('ysgtb-d3', {
 				selection
 				.attr('class', d=>`reporters ${d.reporter}`)
 				.attr('r', 5)
-				.attr('cy', d=>yScale(d.totals[d.name]))
+				.attr('cy', d=>yScale(d.totalsStart[d.name]))
 				.attr('cx', d=>d.start)
 				.attr("fill", "#aaaaaa")
 			
