@@ -226,9 +226,10 @@ Vue.component('ysgtb-d3', {
     				.y(d=>yScale(d.totalsEnd[name]))
    				.curve(d3.curveMonotoneX)
 			}
-
-			let timesHandler = (selection)=>
-				selection
+			
+			let times = this.svg.selectAll('.time')
+				.data(timeBlocks)
+				.join(enter=>enter.append('rect'))
 				.attr('class', d=>`time ${d.name}`)
 				.attr('width', d=>d.width)
 				.attr('height', 0)
@@ -239,16 +240,6 @@ Vue.component('ysgtb-d3', {
 				.attr('y',0)
 				.attr("fill", d=>this.colourScale(d.name[0]))
 				.attr('height', this.barHeight)
-
-			let times = this.svg.selectAll('.time')
-				.data(timeBlocks)
-						
-			times.exit().remove()
-			
-			times.enter()
-				.append('rect')
-				.merge(times)
-				.call(timesHandler)
 			
 			Object.keys(timeBlocks[0].totalsEnd).forEach((name)=>{
 				if(!this.lines[`line-${name}`]) this.lines[`line-${name}`] = this.svg.append("path").datum(timeBlocks)
@@ -261,23 +252,16 @@ Vue.component('ysgtb-d3', {
 					.attr("stroke-width","3px")
 			})
 			
-			let reportersHandler = (selection)=>
-				selection
+
+			
+			let reporters = this.svg.selectAll('.reporters')
+				.data(timeBlocks)
+				.join(enter=>enter.append('circle')
 				.attr('class', d=>`reporters ${d.reporter}`)
 				.attr('r', 5)
 				.attr('cy', d=>yScale(d.totalsStart[d.name]))
 				.attr('cx', d=>d.start)
 				.attr("fill", "#aaaaaa")
-			
-			let reporters = this.svg.selectAll('.reporters')
-				.data(timeBlocks)
-
-			reporters.exit().remove()
-
-			reporters.enter()
-				.append('circle')
-				.merge(reporters)
-				.call(reportersHandler)
 			
 			d3.selectAll("#d3").node()
 				.scrollLeft = this.fullWidth
