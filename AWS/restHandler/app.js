@@ -69,6 +69,7 @@ router.post('/attendees', asyncHandler(async (req, res) => {
         times[times.length-1].to = now
         times.push({
             name: attendee.name,
+            reporter: attendee.reporter[0],
             from: now,
             to: now+1
         })
