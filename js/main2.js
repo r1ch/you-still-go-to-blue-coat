@@ -189,6 +189,7 @@ Vue.component('ysgtb-d3', {
 				.call(xAxis);
 			
 			let timeBlocks = this.times.slice(0).reverse().map((totals=>time=>{
+				console.log(`${totals} ${time}`)
 				if(totals[time.name]) totals[time.name] -= (parseInt(time.to) - parseInt(time.from))
 				let output = {
 					end: xScale(time.to),
@@ -196,6 +197,7 @@ Vue.component('ysgtb-d3', {
 					name: time.name,
 					totals: {...totals}
 				}
+				console.log(`${output}`)
 				output.width = output.end - output.start
 				return output
 			})(
