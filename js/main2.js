@@ -188,8 +188,8 @@ Vue.component('ysgtb-d3', {
 				.transition(d3.transition().duration(750))
 				.call(xAxis);
 			
-			let timeBlocks = this.times.map((totals=>time=>{
-				totals[time.name] = (totals[time.name] || 0) + parseInt(time.to) - parseInt(time.from)
+			let timeBlocks = this.times.slice(0).reverse().map((totals=>time=>{
+				if(totals[time.name]) totals[time.name] -= (parseInt(time.to) - parseInt(time.from))
 				let output = {
 					end: xScale(time.to),
 					start: xScale(time.from),
@@ -198,14 +198,17 @@ Vue.component('ysgtb-d3', {
 				}
 				output.width = output.end - output.start
 				return output
-			})({})).filter(output=>output.width>0.05)
-			
-			let lastBlock = timeBlocks[timeBlocks.length-1]
+			})(
+				attendances.reduce((accumulator,current)=>{accumulator[current.identifier]=accumulator.record; return accumulator},[])
+			))
+			.filter(output=>output.width>0.05)
+			.reverse()
+
 			
 			let yScale = d3.scaleLinear()
 				.domain([
-					d3.min(this.attendances.map(attendance=>attendance.record-lastBlock.totals[attendance.identifier])),
-					d3.max(this.attendances.map(attendance=>attendance.record))
+					d3.min(Object.values(timeBlocks[0].totals)),
+					d3.max(Object.values(timeBlocks[timeBlocks.length-1].totals))
 				])
 				.range([this.lineHeight,this.lineOffset])
 			
@@ -216,11 +219,9 @@ Vue.component('ysgtb-d3', {
 				.call(yAxis)*/
 			
 			let lineGenerator = name => {
-				let attendance = this.attendances.find(attendance=>attendance.identifier==name)
-				let unexplained = attendance ? attendance.record - lastBlock.totals[name] : 0
 				return d3.line()
     				.x(d=>d.end)
-    				.y(d=>yScale((d.totals[name] || 0) + unexplained))
+    				.y(d=>yScale(d.totals[name] || 0)
    				.curve(d3.curveMonotoneX)
 			}
 
