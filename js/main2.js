@@ -189,22 +189,23 @@ Vue.component('ysgtb-d3', {
 				.call(xAxis);
 			
 			let timeBlocks = this.times.slice(0).reverse().map((totals=>time=>{
-				console.log(`${JSON.stringify(totals)} ${JSON.stringify(time)}`)
-				if(totals[time.name]) totals[time.name] -= (parseInt(time.to) - parseInt(time.from))
 				let output = {
 					end: xScale(time.to),
 					start: xScale(time.from),
 					name: time.name,
 					totals: {...totals}
 				}
-				console.log(`${JSON.stringify(output)}`)
 				output.width = output.end - output.start
+				if(totals[time.name]) totals[time.name] -= (parseInt(time.to) - parseInt(time.from))
 				return output
 			})(
 				this.attendances.reduce((accumulator,current)=>{accumulator[current.identifier]=current.record; return accumulator},[])
 			))
 			.filter(output=>output.width>0.05)
 			.reverse()
+			
+			timeBlocks[timeBlocks.length] = {... timeBlocks[timeBlocks.length-1]}
+			
 
 			
 			let yScale = d3.scaleLinear()
