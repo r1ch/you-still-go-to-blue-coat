@@ -197,7 +197,7 @@ Vue.component('ysgtb-d3', {
 					name: time.name,
 					totals: {...totals}
 				}
-				console.log(`${JSON.stringify((output)}`)
+				console.log(`${JSON.stringify(output)}`)
 				output.width = output.end - output.start
 				return output
 			})(
