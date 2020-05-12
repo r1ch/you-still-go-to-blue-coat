@@ -221,7 +221,7 @@ Vue.component('ysgtb-d3', {
 			let lineGenerator = name => {
 				return d3.line()
     				.x(d=>d.end)
-    				.y(d=>yScale(d.totals[name] || 0))
+    				.y(d=>yScale(d.totals[name])
    				.curve(d3.curveMonotoneX)
 			}
 
@@ -268,7 +268,7 @@ Vue.component('ysgtb-d3', {
 
 			reporters.call(reportersHandler)
 			
-			Object.keys(lastBlock.totals).forEach((name)=>{
+			Object.keys(timeBlocks[0].totals).forEach((name)=>{
 				if(!this.lines[`line-${name}`]) this.lines[`line-${name}`] = this.svg.append("path").datum(timeBlocks)
 				
 				this.lines[`line-${name}`]
@@ -276,7 +276,7 @@ Vue.component('ysgtb-d3', {
 					.attr("d", lineGenerator(name))
 					.attr("fill", "none")
 					.attr("stroke", ()=>this.colourScale(name[0]))
-                    .attr("stroke-width","3px")
+                    			.attr("stroke-width","3px")
 			})
 
 
