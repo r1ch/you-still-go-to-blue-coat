@@ -192,6 +192,7 @@ Vue.component('ysgtb-d3', {
 				let output = {
 					end: xScale(time.to),
 					start: xScale(time.from),
+					reporter: time.reporter,
 					name: time.name,
 					totals: {...totals}
 				}
@@ -257,7 +258,7 @@ Vue.component('ysgtb-d3', {
 					.attr("d", lineGenerator(name))
 					.attr("fill", "none")
 					.attr("stroke", ()=>this.colourScale(name[0]))
-                    			.attr("stroke-width","3px")
+					.attr("stroke-width","3px")
 			})
 			
 			let reportersHandler = (selection)=>
