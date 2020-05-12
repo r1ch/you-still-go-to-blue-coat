@@ -280,7 +280,7 @@ Vue.component('ysgtb-d3', {
 				.append('circle')
 				.call(reportersHandler)
 				.append('text')
-				.text(d=>d.name)
+				.text(d=>d.reporter)
 
 			reporters.call(reportersHandler)
 
