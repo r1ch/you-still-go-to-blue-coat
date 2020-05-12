@@ -256,7 +256,7 @@ Vue.component('ysgtb-d3', {
 			
 			let reporters = this.svg.selectAll('.reporters')
 				.data(timeBlocks)
-				.join(enter=>enter.append('circle')
+				.join(enter=>enter.append('circle'))
 				.attr('class', d=>`reporters ${d.reporter}`)
 				.attr('r', 5)
 				.attr('cy', d=>yScale(d.totalsStart[d.name]))
