@@ -285,7 +285,7 @@ Vue.component('ysgtb-d3', {
 				.attr('class', d=>`reportersText ${d.reporter}`)
 				.text(d=>d.reporter)
 			
-			let reportersText = reporters.selectAll('.reportersText')
+			let reportersText = reporters.enter().selectAll('.reportersText')
 				.data(timeBlocks)
 			
 			reportersText.exit().remove()
