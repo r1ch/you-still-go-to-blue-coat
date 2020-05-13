@@ -114,7 +114,7 @@ Vue.component('ysgtb-time', {
 
 Vue.component('ysgtb-d3', {
 	mixins:[APIMixin],
-	props:['profile','colourScale','times','attendances','now'],
+	props:['profile','colourScale','times','attendances'],
 	data: function() {
 		let margin = {
 			top: 10,
@@ -141,8 +141,7 @@ Vue.component('ysgtb-d3', {
 			barHeight : barHeight,
 			lineOffset: lineOffset,
 			lineHeight: lineHeight,
-			ticks:ticks,
-			timer:false,
+			ticks:ticks
 		}
 	},
 	template: `
@@ -165,21 +164,18 @@ Vue.component('ysgtb-d3', {
 		this.svg.append("g")
 			.attr("class", "y axis")
 			.attr("transform", `translate(0,0)`)
-		this.timer && clearInterval(this.timer)
-		this.timer = setInterval(this.draw,10000)
-		this.draw()
 	},
 	watch: {
 		"times.length": function(){
-			this.draw()
+			this.times && this.times.length > 0 && this.attendances && this.attendances.length > 0 && this.draw()
 		},
 		"attendances.length": function(){
-			this.draw()
+			this.times && this.times.length > 0 && this.attendances && this.attendances.length > 0 && this.draw()
 		}
 	},
 	methods: {
 		draw() {
-			if (!this.times || this.times.length == 0 || !this.attendances || this.attendances.length == 0) return false;
+			if (this.times.length == 0) return;
 			
 			let xScale = d3.scaleTime()
 				.domain([this.times[0].from,this.times[this.times.length-1].to])
@@ -189,6 +185,7 @@ Vue.component('ysgtb-d3', {
 				.ticks(this.ticks)
 
 			this.svg.select(".x")
+				.transition(d3.transition().duration(750))
 				.call(xAxis);
 			
 			let timeBlocks = this.times.slice(0).reverse().map((totals=>time=>{
@@ -207,8 +204,9 @@ Vue.component('ysgtb-d3', {
 				this.attendances.reduce((accumulator,current)=>{accumulator[current.identifier]=current.record; return accumulator},[])
 			))
 			.filter(output=>output.width>0.05)
-			.reverse()
+			.reverse()		
 
+			
 			let yScale = d3.scaleLinear()
 				.domain([
 					d3.min(Object.values(timeBlocks[0].totalsStart)),
@@ -228,10 +226,14 @@ Vue.component('ysgtb-d3', {
 				.join(enter=>enter.append('rect'))
 				.attr('class', d=>`time ${d.name}`)
 				.attr('width', d=>d.width)
-				.attr('height', this.barHeight)
+				.attr('height', 0)
+				.attr('y', this.barHeight/2)
 				.attr('x', d=>d.start)
+				.attr("fill", "#aaaaaa")
+				.transition(d3.transition().duration(750))
 				.attr('y',0)
 				.attr("fill", d=>this.colourScale(d.name[0]))
+				.attr('height', this.barHeight)
 			
 			Object.keys(timeBlocks[0].totalsEnd).forEach((name)=>{
 				if(!this.lines[`line-${name}`]) this.lines[`line-${name}`] = this.svg.append("path").datum(timeBlocks)
@@ -244,6 +246,8 @@ Vue.component('ysgtb-d3', {
 					.attr("stroke-width","3px")
 			})
 			
+
+			
 			let reporters = this.svg.selectAll('.reporters')
 				.data(timeBlocks.filter(block=>block.totalsStart[block.name]))
 				.join(enter=>enter.append('circle'))
@@ -251,7 +255,7 @@ Vue.component('ysgtb-d3', {
 				.attr('r', 5)
 				.attr('cy', d=>yScale(d.totalsStart[d.name]))
 				.attr('cx', d=>d.start)
-				.attr('fill', '#ffffff')
+				.attr('fill', 'rgba(255,255,255,0.5)')
 				.attr('stroke-width','1px')
 				.attr('stroke',d=>this.colourScale(d.name[0]))
 			
@@ -292,6 +296,7 @@ var app = new Vue({
 		times: [],
 		colourScale: d3.scaleOrdinal("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),d3.schemeCategory10),
 		timer: false,
+		refresher: false,
 		now : (new Date()).getTime()
 	},
 	created: function(){
@@ -303,6 +308,8 @@ var app = new Vue({
 		this.timer && clearInterval(this.timer)
 		this.timer = setInterval(()=>{this.now = (new Date()).getTime()},1000)
 		this.update()
+		this.refresher && clearInterval(this.refresher)
+		this.refresher = setInterval(this.update,5*60*1000)
 		this.listenFor("ATTENDEE",this.update)
 		this.listenFor("ATTENDANCE",this.update)
 	},
@@ -335,6 +342,7 @@ var app = new Vue({
 		getTimes(){
 			return this.API("GET","/attendances",false,attendances=>this.attendances=attendances)
 		},
+		
 		startAuthentication(){
 			if(this.profile.ready) return
 			else Authenticator.then(GoogleAuth=>GoogleAuth.signIn())
