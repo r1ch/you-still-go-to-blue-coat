@@ -197,7 +197,7 @@ Vue.component('ysgtb-d3', {
 				}
 				output.width = output.end - output.start
 				timeLines[0].at = output.end
-				timeLines[0].totals = {..totals}
+				timeLines[0].totals = {...totals}
 				timeLines.unshift({reporter:output.reporter})
 				if(totals[time.name]) totals[time.name] -= (parseInt(time.to) - parseInt(time.from))
 				return output
