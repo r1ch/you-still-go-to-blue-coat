@@ -335,7 +335,7 @@ var app = new Vue({
 			this.getAttendee()
 			.then(this.getAttendances)
 			.then(this.getTimes)
-			.then(this.drawCount++)
+			.then(()=>{this.drawCount++})
 		},
 		getAttendee(){
 			return this.API("GET","/attendees/latest",false,attendee=>{
