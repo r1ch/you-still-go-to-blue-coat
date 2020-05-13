@@ -226,7 +226,7 @@ Vue.component('ysgtb-d3', {
     				.x(d=>d.at)
     				.y(d=>yScale(d.totals[name]))
 				.defined((d,i,A)=>{
-					return on ^ (d.name == name || (A[i+1] && A[i+1].name == name))
+					return !on ^ (d.name == name || (A[i+1] && A[i+1].name == name))
 				})
    				.curve(d3.curveMonotoneX)
 			}
@@ -264,7 +264,7 @@ Vue.component('ysgtb-d3', {
 
 			
 			let reporters = this.svg.selectAll('.reporters')
-				.data(timeLines)
+				.data(timeLines.filter(point=>point.totals[point.name]))
 				.join(enter=>enter.append('circle'))
 				.attr('class',d=>`reporters ${d.name} ${d.reporter}`)
 				.attr('r', 5)
@@ -275,7 +275,7 @@ Vue.component('ysgtb-d3', {
 				.attr('stroke',d=>this.colourScale(d.name[0]))
 			
 			let reportersLabels = this.svg.selectAll('.reportersLabels')
-				.data(timeLines)
+				.data(timeLines.filter(point=>point.totals[point.name]))
 				.join(enter=>enter.append('text'))
 				.text(d=>d.reporter)
 				.attr('class', d=>`reportersLabels ${d.name} ${d.reporter}`)
