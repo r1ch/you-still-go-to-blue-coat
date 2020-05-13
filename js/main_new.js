@@ -247,7 +247,7 @@ Vue.component('ysgtb-d3', {
 					.attr("d", lineGenerator(name))
 					.attr("fill", "none")
 					.attr("stroke", ()=>this.colourScale(name[0]))
-					.attr("stroke-width","1px")
+					.attr("stroke-width","3px")
 			})
 			
 
