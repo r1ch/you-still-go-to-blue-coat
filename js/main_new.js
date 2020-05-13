@@ -173,7 +173,7 @@ Vue.component('ysgtb-d3', {
 	},
 	methods: {
 		draw() {
-			if (this.times.length == 0) return console.log(`Bail : ${JSON.stringify(times)} ${JSON.stringify(attendances)}`);
+			if (this.times.length == 0) return console.log(`Bail`);
 			
 			console.log("Drawing")
 			
