@@ -46,14 +46,12 @@ router.get('/attendances', asyncHandler(async (req, res) => {
     res.json(attendances)
 }))
 
-let times = []
+
 router.get('/times', asyncHandler(async (req, res) => {
-    if(times.length==0){
-        console.log("Cache miss")
-        for await (const attendee of mapper.query(Attendee, {recordType: 'ATTENDEE'}, {scanIndexForward:false, limit: 100})){
-            times.unshift({name: attendee.name, from: attendee.identifier, reporter: attendee.reporter[0]})
-            times[1] && (times[0].to = times[1].from)
-        }
+    let times = []
+    for await (const attendee of mapper.query(Attendee, {recordType: 'ATTENDEE'}, {scanIndexForward:false, limit: 60})){
+        times.unshift({name: attendee.name, from: attendee.identifier, reporter: attendee.reporter[0]})
+        times[1] && (times[0].to = times[1].from)
     }
     times[times.length-1].to = (new Date()).getTime()
     res.json(times)
@@ -64,16 +62,6 @@ router.post('/attendees', asyncHandler(async (req, res) => {
     attendee.identifier = (new Date()).getTime()
     attendee.name = req.body.attendee.name
     attendee.reporter = req.body.reporter.name
-    if(times.length>0){
-        let now = (new Date()).getTime()
-        times[times.length-1].to = now
-        times.push({
-            name: attendee.name,
-            reporter: attendee.reporter[0],
-            from: now,
-            to: now+1
-        })
-    }
     mapper.update(attendee,{onMissing: 'skip'}).then(res.json.bind(res))
 }))
 
