@@ -240,11 +240,11 @@ Vue.component('ysgtb-d3', {
 
 			
 			Object.keys(timeLines[0].totals).forEach((name)=>{
-				if(!this.lines[`line-${name}-on`]) this.lines[`line-${name}-on`] = this.svg.append("path").datum(timeLines)
+				if(!this.lines[`line-${name}`]) this.lines[`line-${name}`] = this.svg.append("path").datum(timeLines)
 				
-				this.lines[`line-${name}-off`]
+				this.lines[`line-${name}`]
 					.attr("class", `line line-${name}`)
-					.attr("d", lineGenerator(name,false))
+					.attr("d", lineGenerator(name))
 					.attr("fill", "none")
 					.attr("stroke", ()=>this.colourScale(name[0]))
 					.attr("stroke-width","1px")
