@@ -221,7 +221,7 @@ Vue.component('ysgtb-d3', {
 				])
 				.range([this.lineHeight,this.lineOffset])
 			
-			let lineGenerator = (name) => {
+			let lineGenerator = name => {
 				return d3.line()
     				.x(d=>d.at)
     				.y(d=>{
@@ -242,17 +242,14 @@ Vue.component('ysgtb-d3', {
 				.attr("fill", d=>this.colourScale(d.name[0]))
 
 			
-			Object.keys(timeLines[0].totals).forEach((name)=>{
-				console.log(`Line for: ${name}`)
-				if(!this.lines[`line-${name}`]) this.lines[`line-${name}`] = this.svg.append("path").datum(timeLines)
-				
-				this.lines[`line-${name}`]
-					.attr("class", `line line-${name}`)
-					.attr("d", lineGenerator(name))
-					.attr("fill", "none")
-					.attr("stroke", ()=>this.colourScale(name[0]))
-					.attr("stroke-width","3px")
-			})
+			let lines = this.svg.selectAll('.lines')
+				.data(timeLines[0].totals)
+				.join(enter=>enter.append('path'))
+				.attr("class", `line line-${name}`)
+				.attr("fill", "none")
+				.attr("stroke", ()=>this.colourScale(name[0]))
+				.attr("stroke-width","3px")
+				.attr("d", lineGenerator(name)(timeLines))
 			
 			let reporters = this.svg.selectAll('.reporters')
 				.data(timeLines.filter(point=>point.totals[point.name]))
