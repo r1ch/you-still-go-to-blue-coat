@@ -206,7 +206,7 @@ Vue.component('ysgtb-d3', {
 			.reverse()
 			
 			timeLines[0].at = timeBlocks[0].start
-			timeLines[0].totals = timeBlocks[0].totals
+			timeLines[0].totals = {...totals}
 
 			
 			let yScale = d3.scaleLinear()
