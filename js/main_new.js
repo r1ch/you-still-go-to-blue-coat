@@ -212,7 +212,6 @@ Vue.component('ysgtb-d3', {
 			
 			timeLines[0].at = timeBlocks[0].start
 			timeLines[0].totals = {...totals}
-
 			
 			let yScale = d3.scaleLinear()
 				.domain([
@@ -249,7 +248,7 @@ Vue.component('ysgtb-d3', {
 				.attr("fill", "none")
 				.attr("stroke", ()=>this.colourScale(name[0]))
 				.attr("stroke-width","3px")
-				.attr("d", lineGenerator(name)(timeLines))
+				.attr("d", lineGenerator(name)([timeLines]))
 			
 			let reporters = this.svg.selectAll('.reporters')
 				.data(timeLines.filter(point=>point.totals[point.name]))
