@@ -114,7 +114,7 @@ Vue.component('ysgtb-time', {
 
 Vue.component('ysgtb-d3', {
 	mixins:[APIMixin],
-	props:['profile','colourScale','times','attendances'],
+	props:['profile','colourScale','times','attendances','drawCount'],
 	data: function() {
 		let margin = {
 			top: 10,
@@ -166,16 +166,16 @@ Vue.component('ysgtb-d3', {
 			.attr("transform", `translate(0,0)`)
 	},
 	watch: {
-		"times.length": function(){
-			this.times && this.times.length > 0 && this.attendances && this.attendances.length > 0 && this.draw()
-		},
-		"attendances.length": function(){
-			this.times && this.times.length > 0 && this.attendances && this.attendances.length > 0 && this.draw()
+		"drawCount": function(){
+			console.log("Trigger")
+			if(this.drawCount > 0) this.draw()
 		}
 	},
 	methods: {
 		draw() {
-			if (this.times.length == 0) return;
+			if (this.times.length == 0) return console.log(`Bail : ${JSON.stringify(times)} ${JSON.stringify(attendances)}`);
+			
+			console.log("Drawing")
 			
 			let xScale = d3.scaleTime()
 				.domain([this.times[0].from,this.times[this.times.length-1].to])
@@ -185,39 +185,46 @@ Vue.component('ysgtb-d3', {
 				.ticks(this.ticks)
 
 			this.svg.select(".x")
-				.transition(d3.transition().duration(750))
 				.call(xAxis);
 			
-			let timeBlocks = this.times.slice(0).reverse().map((totals=>time=>{
+			let timeLines = [{}]
+			let totals = this.attendances.reduce((accumulator,current)=>{accumulator[current.identifier]=current.record; return accumulator},[])
+			
+			let timeBlocks = this.times.slice(0).reverse().map(time=>{
 				let output = {
 					end: xScale(time.to),
 					start: xScale(time.from),
 					reporter: time.reporter,
 					name: time.name,
-					totalsEnd: {...totals}
 				}
 				output.width = output.end - output.start
+				timeLines[0].at = output.end
+				timeLines[0].totals = {...totals}
+				timeLines.unshift({
+					name: output.name,
+					reporter:output.reporter
+				})
 				if(totals[time.name]) totals[time.name] -= (parseInt(time.to) - parseInt(time.from))
-				output.totalsStart = {...totals}
 				return output
-			})(
-				this.attendances.reduce((accumulator,current)=>{accumulator[current.identifier]=current.record; return accumulator},[])
-			))
+			})
 			.filter(output=>output.width>0.05)
-			.reverse()		
+			.reverse()
+			
+			timeLines[0].at = timeBlocks[0].start
+			timeLines[0].totals = {...totals}
 
 			
 			let yScale = d3.scaleLinear()
 				.domain([
-					d3.min(Object.values(timeBlocks[0].totalsStart)),
-					d3.max(Object.values(timeBlocks[timeBlocks.length-1].totalsEnd))
+					d3.min(Object.values(timeLines[0].totals)),
+					d3.max(Object.values(timeLines[timeLines.length-1].totals))
 				])
 				.range([this.lineHeight,this.lineOffset])
 			
 			let lineGenerator = name => {
 				return d3.line()
-    				.x(d=>d.end)
-    				.y(d=>yScale(d.totalsEnd[name]))
+    				.x(d=>d.at)
+    				.y(d=>yScale(d.totals[name]))
    				.curve(d3.curveMonotoneX)
 			}
 			
@@ -226,17 +233,14 @@ Vue.component('ysgtb-d3', {
 				.join(enter=>enter.append('rect'))
 				.attr('class', d=>`time ${d.name}`)
 				.attr('width', d=>d.width)
-				.attr('height', 0)
-				.attr('y', this.barHeight/2)
-				.attr('x', d=>d.start)
-				.attr("fill", "#aaaaaa")
-				.transition(d3.transition().duration(750))
-				.attr('y',0)
-				.attr("fill", d=>this.colourScale(d.name[0]))
 				.attr('height', this.barHeight)
+				.attr('y',0)
+				.attr('x', d=>d.start)
+				.attr("fill", d=>this.colourScale(d.name[0]))
+
 			
-			Object.keys(timeBlocks[0].totalsEnd).forEach((name)=>{
-				if(!this.lines[`line-${name}`]) this.lines[`line-${name}`] = this.svg.append("path").datum(timeBlocks)
+			Object.keys(timeLines[0].totals).forEach((name)=>{
+				if(!this.lines[`line-${name}`]) this.lines[`line-${name}`] = this.svg.append("path").datum(timeLines)
 				
 				this.lines[`line-${name}`]
 					.attr("class", `line line-${name}`)
@@ -249,26 +253,27 @@ Vue.component('ysgtb-d3', {
 
 			
 			let reporters = this.svg.selectAll('.reporters')
-				.data(timeBlocks.filter(block=>block.totalsStart[block.name]))
+				.data(timeLines.filter(block=>block.totals[block.name]))
 				.join(enter=>enter.append('circle'))
 				.attr('class',d=>`reporters ${d.name} ${d.reporter}`)
 				.attr('r', 5)
-				.attr('cy', d=>yScale(d.totalsStart[d.name]))
-				.attr('cx', d=>d.start)
+				.attr('cy', d=>yScale(d.totals[d.name]))
+				.attr('cx', d=>d.at)
 				.attr('fill', 'rgba(255,255,255,0.5)')
 				.attr('stroke-width','1px')
 				.attr('stroke',d=>this.colourScale(d.name[0]))
 			
 			let reportersLabels = this.svg.selectAll('.reportersLabels')
-				.data(timeBlocks.filter(block=>block.totalsStart[block.name]))
+				.data(timeLines.filter(block=>block.totals[block.name]))
 				.join(enter=>enter.append('text'))
 				.text(d=>d.reporter)
 				.attr('class', d=>`reportersLabels ${d.name} ${d.reporter}`)
-				.attr('y', d=>yScale(d.totalsStart[d.name]))
+				.attr('y', d=>yScale(d.totals[d.name]))
+				.attr('x', d=>d.at)
 				.attr('dy', 2.5)
 				.attr('text-anchor','middle')
 				.attr('font-size','8px')
-				.attr('x', d=>d.start)
+
 			
 			d3.selectAll("#d3").node()
 				.scrollLeft = this.fullWidth
@@ -294,6 +299,7 @@ var app = new Vue({
 		loadedAttendeeName: false,
 		attendances: [],
 		times: [],
+		drawCount: 0,
 		colourScale: d3.scaleOrdinal("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),d3.schemeCategory10),
 		timer: false,
 		refresher: false,
@@ -329,6 +335,7 @@ var app = new Vue({
 			this.getAttendee()
 			.then(this.getAttendances)
 			.then(this.getTimes)
+			.then(()=>{this.drawCount++})
 		},
 		getAttendee(){
 			return this.API("GET","/attendees/latest",false,attendee=>{
@@ -415,7 +422,8 @@ var app = new Vue({
 				:times = "times"
 				:attendances = "orderedAttendances"
 				:profile="profile"
-				:colourScale="colourScale">
+				:colourScale="colourScale"
+				:drawCount = "drawCount">
 			</ysgtb-d3>
 		</div>
 	`
