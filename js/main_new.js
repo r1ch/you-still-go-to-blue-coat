@@ -333,7 +333,7 @@ var app = new Vue({
 	methods:{
 		update(){
 			this.getAttendee()
-			this.getAttendances().then(()=>this.drawCount++)
+			this.getAttendances()
 			this.getTimes().then(()=>this.drawCount++)
 		},
 		getAttendee(){
@@ -344,9 +344,11 @@ var app = new Vue({
 		},
 		getAttendances(){
 			return this.API("GET","/times",false,times=>this.times=times)
+			.then(()=>this.drawCount++)
 		},
 		getTimes(){
 			return this.API("GET","/attendances",false,attendances=>this.attendances=attendances)
+			.then(()=>this.drawCount++)
 		},
 		
 		startAuthentication(){
