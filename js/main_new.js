@@ -170,7 +170,8 @@ Vue.component('ysgtb-d3', {
 		this.draw()
 	},
 	watch: {
-		"times.length": function(){
+		"times[times.length-1].from": function(){
+			console.log("times trigger")
 			this.draw()
 		},
 		"attendances.length": function(){
