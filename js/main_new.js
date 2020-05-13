@@ -221,10 +221,11 @@ Vue.component('ysgtb-d3', {
 				])
 				.range([this.lineHeight,this.lineOffset])
 			
-			let lineGenerator = name => {
+			let lineGenerator = (name,on) => {
 				return d3.line()
     				.x(d=>d.at)
     				.y(d=>yScale(d.totals[name]))
+				.defined(d=>on ? d.name==name : d.name!=name)
    				.curve(d3.curveMonotoneX)
 			}
 			
@@ -240,14 +241,22 @@ Vue.component('ysgtb-d3', {
 
 			
 			Object.keys(timeLines[0].totals).forEach((name)=>{
-				if(!this.lines[`line-${name}`]) this.lines[`line-${name}`] = this.svg.append("path").datum(timeLines)
+				if(!this.lines[`line-${name}-on`]) this.lines[`line-${name}-on`] = this.svg.append("path").datum(timeLines)
+				if(!this.lines[`line-${name}-off`]) this.lines[`line-${name}-off`] = this.svg.append("path").datum(timeLines)
 				
-				this.lines[`line-${name}`]
+				this.lines[`line-${name}-on`]
 					.attr("class", `line line-${name}`)
-					.attr("d", lineGenerator(name))
+					.attr("d", lineGenerator(name,true))
 					.attr("fill", "none")
 					.attr("stroke", ()=>this.colourScale(name[0]))
 					.attr("stroke-width","3px")
+				
+				this.lines[`line-${name}-off`]
+					.attr("class", `line line-${name}`)
+					.attr("d", lineGenerator(name,false))
+					.attr("fill", "none")
+					.attr("stroke", ()=>this.colourScale(name[0]))
+					.attr("stroke-width","1px")
 			})
 			
 
