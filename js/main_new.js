@@ -167,12 +167,15 @@ Vue.component('ysgtb-d3', {
 	},
 	watch: {
 		"drawCount": function(){
+			console.log("Trigger")
 			if(this.drawCount > 0) this.draw()
 		}
 	},
 	methods: {
 		draw() {
-			if (this.times.length == 0) return;
+			if (this.times.length == 0) return console.log("Bail");
+			
+			console.log("Drawing")
 			
 			let xScale = d3.scaleTime()
 				.domain([this.times[0].from,this.times[this.times.length-1].to])
