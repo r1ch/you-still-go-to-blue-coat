@@ -50,7 +50,7 @@ let times = []
 router.get('/times', asyncHandler(async (req, res) => {
     if(times.length==0){
         console.log("Cache miss")
-        for await (const attendee of mapper.query(Attendee, {recordType: 'ATTENDEE'}, {scanIndexForward:false, limit: 60})){
+        for await (const attendee of mapper.query(Attendee, {recordType: 'ATTENDEE'}, {scanIndexForward:false, limit: 100})){
             times.unshift({name: attendee.name, from: attendee.identifier, reporter: attendee.reporter[0]})
             times[1] && (times[0].to = times[1].from)
         }
