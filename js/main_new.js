@@ -226,7 +226,7 @@ Vue.component('ysgtb-d3', {
     				.x(d=>d.at)
     				.y(d=>{
 					console.log(`${d.totals[name]}=>${yScale(d.totals[name])}`)
-					yScale(d.totals[name])
+					return yScale(d.totals[name])
 				})
    				.curve(d3.curveMonotoneX)
 			}
@@ -253,8 +253,6 @@ Vue.component('ysgtb-d3', {
 					.attr("stroke", ()=>this.colourScale(name[0]))
 					.attr("stroke-width","3px")
 			})
-			
-
 			
 			let reporters = this.svg.selectAll('.reporters')
 				.data(timeLines.filter(point=>point.totals[point.name]))
