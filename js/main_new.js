@@ -185,7 +185,6 @@ Vue.component('ysgtb-d3', {
 				.ticks(this.ticks)
 
 			this.svg.select(".x")
-				.transition(d3.transition().duration(750))
 				.call(xAxis);
 			
 			let timeLines = [{}]
@@ -234,14 +233,11 @@ Vue.component('ysgtb-d3', {
 				.join(enter=>enter.append('rect'))
 				.attr('class', d=>`time ${d.name}`)
 				.attr('width', d=>d.width)
-				.attr('height', 0)
-				.attr('y', this.barHeight/2)
-				.attr('x', d=>d.start)
-				.attr("fill", "#aaaaaa")
-				.transition(d3.transition().duration(750))
-				.attr('y',0)
-				.attr("fill", d=>this.colourScale(d.name[0]))
 				.attr('height', this.barHeight)
+				.attr('y',0)
+				.attr('x', d=>d.start)
+				.attr("fill", d=>this.colourScale(d.name[0]))
+
 			
 			Object.keys(timeLines[0].totals).forEach((name)=>{
 				if(!this.lines[`line-${name}`]) this.lines[`line-${name}`] = this.svg.append("path").datum(timeLines)
