@@ -220,15 +220,13 @@ Vue.component('ysgtb-d3', {
 				])
 				.range([this.lineHeight,this.lineOffset])
 			
-			let lineGenerator = name => {
-				return d3.line()
+			let lineGenerator = name =>d3.line()
     				.x(d=>d.at)
     				.y(d=>{
 					console.log(`${d.totals[name]}=>${yScale(d.totals[name])}`)
 					return yScale(d.totals[name])
 				})
    				.curve(d3.curveMonotoneX)
-			}
 			
 			let times = this.svg.selectAll('.time')
 				.data(timeBlocks)
@@ -248,7 +246,7 @@ Vue.component('ysgtb-d3', {
 				.attr("fill", "none")
 				.attr("stroke", ()=>this.colourScale(name[0]))
 				.attr("stroke-width","3px")
-				.attr("d", lineGenerator(name)([timeLines]))
+				.attr("d", lineGenerator(name)(timeLines))
 			
 			let reporters = this.svg.selectAll('.reporters')
 				.data(timeLines.filter(point=>point.totals[point.name]))
