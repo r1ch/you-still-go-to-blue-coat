@@ -240,6 +240,7 @@ Vue.component('ysgtb-d3', {
 
 			
 			Object.keys(timeLines[0].totals).forEach((name)=>{
+				console.log(`Line for: ${name}`)
 				if(!this.lines[`line-${name}`]) this.lines[`line-${name}`] = this.svg.append("path").datum(timeLines)
 				
 				this.lines[`line-${name}`]
