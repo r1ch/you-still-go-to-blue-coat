@@ -142,7 +142,7 @@ Vue.component('ysgtb-d3', {
 			lineOffset: lineOffset,
 			lineHeight: lineHeight,
 			ticks:ticks,
-			timer:false,
+			timer:false
 		}
 	},
 	template: `
@@ -170,13 +170,9 @@ Vue.component('ysgtb-d3', {
 		this.draw()
 	},
 	watch: {
-		"times[times.length-1].from": function(){
-			console.log("times trigger")
-			this.draw()
+		"drawCount": function(){
+			if(this.drawCount > 0) this.draw()
 		},
-		"attendances.length": function(){
-			this.draw()
-		}
 	},
 	methods: {
 		draw() {
@@ -209,18 +205,24 @@ Vue.component('ysgtb-d3', {
 			))
 			.filter(output=>output.width>0.05)
 			.reverse()
+			
+			let timeLines = timeBlocks.map(block=>({
+				at: block.start,
+				totals : block.totalsStart	
+			}))
+			timeLines.push({at:timeBlocks[timeBlocks.length-1].end,totals:timeBlocks[timeBlocks.length-1].totalsEnd})
 
 			let yScale = d3.scaleLinear()
 				.domain([
-					d3.min(Object.values(timeBlocks[0].totalsStart)),
-					d3.max(Object.values(timeBlocks[timeBlocks.length-1].totalsEnd))
+					d3.min(Object.values(timeLines[0].totals)),
+					d3.max(Object.values(timeLines[timeLines.length-1].totals))
 				])
 				.range([this.lineHeight,this.lineOffset])
 			
 			let lineGenerator = name => {
 				return d3.line()
-    				.x(d=>d.end)
-    				.y(d=>yScale(d.totalsEnd[name]))
+    				.x(d=>d.at)
+    				.y(d=>yScale(d.totals[name]))
    				.curve(d3.curveMonotoneX)
 			}
 			
@@ -234,8 +236,8 @@ Vue.component('ysgtb-d3', {
 				.attr('y',0)
 				.attr("fill", d=>this.colourScale(d.name[0]))
 			
-			Object.keys(timeBlocks[0].totalsEnd).forEach((name)=>{
-				if(!this.lines[`line-${name}`]) this.lines[`line-${name}`] = this.svg.append("path").datum(timeBlocks)
+			Object.keys(timeLines[0].totals).forEach((name)=>{
+				if(!this.lines[`line-${name}`]) this.lines[`line-${name}`] = this.svg.append("path").datum(timeLines)
 				
 				this.lines[`line-${name}`]
 					.attr("class", `line line-${name}`)
@@ -291,6 +293,7 @@ var app = new Vue({
 		loadedAttendeeName: false,
 		attendances: [],
 		times: [],
+		drawCount: 0,
 		colourScale: d3.scaleOrdinal("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),d3.schemeCategory10),
 		timer: false,
 		now : (new Date()).getTime()
@@ -323,6 +326,7 @@ var app = new Vue({
 			this.getAttendee()
 			.then(this.getAttendances)
 			.then(this.getTimes)
+			.then(()=>{this.drawCount++}
 		},
 		getAttendee(){
 			return this.API("GET","/attendees/latest",false,attendee=>{
@@ -408,7 +412,8 @@ var app = new Vue({
 				:times = "times"
 				:attendances = "orderedAttendances"
 				:profile="profile"
-				:colourScale="colourScale">
+				:colourScale="colourScale"
+				:drawCount="drawCount">
 			</ysgtb-d3>
 		</div>
 	`
