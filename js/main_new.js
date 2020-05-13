@@ -303,6 +303,7 @@ var app = new Vue({
 		colourScale: d3.scaleOrdinal("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),d3.schemeCategory10),
 		timer: false,
 		refresher: false,
+		redrawer: false,
 		now : (new Date()).getTime()
 	},
 	created: function(){
@@ -316,6 +317,8 @@ var app = new Vue({
 		this.update()
 		this.refresher && clearInterval(this.refresher)
 		this.refresher = setInterval(this.update,5*60*1000)
+		this.redrawer && clearInterval(this.redrawer)
+		this.redrawer = setInterval(this.drawCount++,30*1000)
 		this.listenFor("ATTENDEE",this.update)
 		this.listenFor("ATTENDANCE",this.update)
 	},
