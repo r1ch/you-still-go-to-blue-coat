@@ -225,7 +225,7 @@ Vue.component('ysgtb-d3', {
 				return d3.line()
     				.x(d=>d.at)
     				.y(d=>yScale(d.totals[name]))
-				.defined(d=>on ? d.name==name : d.name!=name)
+				.defined(d=>on ? d.name!=name : d.name==name)
    				.curve(d3.curveMonotoneX)
 			}
 			
