@@ -167,17 +167,15 @@ Vue.component('ysgtb-d3', {
 	},
 	watch: {
 		"drawCount": function(){
-			console.log("Trigger")
+			console.log(`Trigger: ${this.drawCount}`)
 			if(this.drawCount > 0) this.draw()
 		}
 	},
 	methods: {
-		draw() {
-			if (this.times.length == 0) return console.log(`Bail`);
-			
+		draw() {		
 			console.log("Drawing")
 			
-			const t = this.svg.transition().duration(this.drawCount > 3 ? 750 : 0)
+			const t = this.svg.transition().duration(this.drawCount >= 8|16|32  ? 750 : 0)
 			
 			let xScale = d3.scaleTime()
 				.domain([this.times[0].from,this.times[this.times.length-1].to])
@@ -356,6 +354,7 @@ var app = new Vue({
 	},
 	methods:{
 		update(){
+			this.drawCount = 0;
 			this.getAttendee()
 			this.getAttendances()
 			this.getTimes()
@@ -365,14 +364,15 @@ var app = new Vue({
 					this.attendee=attendee
 					this.loadedAttendeeName=this.attendee.name
 			})
+			.then(()=>this.drawCount|=8)
 		},
 		getAttendances(){
 			return this.API("GET","/times",false,times=>this.times=times)
-			.then(()=>this.drawCount++)
+			.then(()=>this.drawCount|=16)
 		},
 		getTimes(){
 			return this.API("GET","/attendances",false,attendances=>this.attendances=attendances)
-			.then(()=>this.drawCount++)
+			.then(()=>this.drawCount|=32)
 		},
 		
 		startAuthentication(){
