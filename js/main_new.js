@@ -344,6 +344,7 @@ var app = new Vue({
 	},
 	computed: {
 		orderedAttendances: function(){
+			console.log(`Ordering - ${this.attendee.identifier}`)
 			return this.attendances
 			.map(attendance=>{
 				let a = {...attendance}
