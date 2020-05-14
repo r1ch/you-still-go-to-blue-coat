@@ -168,7 +168,7 @@ Vue.component('ysgtb-d3', {
 	watch: {
 		"drawCount": function(){
 			console.log(`Trigger: ${this.drawCount}`)
-			if(this.drawCount > 0) this.draw()
+			if(this.drawCount >= 8|16|32) this.draw()
 		}
 	},
 	methods: {
@@ -342,7 +342,6 @@ var app = new Vue({
 	},
 	computed: {
 		orderedAttendances: function(){
-			console.log(`Ordering - ${this.attendee.identifier}`)
 			return this.attendances
 			.map(attendance=>{
 				let a = {...attendance}
