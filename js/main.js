@@ -173,7 +173,7 @@ Vue.component('ysgtb-d3', {
 	},
 	methods: {
 		draw() {
-			if (this.times.length == 0) return console.log(`Bail : ${JSON.stringify(times)} ${JSON.stringify(attendances)}`);
+			if (this.times.length == 0) return console.log(`Bail`);
 			
 			console.log("Drawing")
 			
@@ -212,7 +212,18 @@ Vue.component('ysgtb-d3', {
 			
 			timeLines[0].at = timeBlocks[0].start
 			timeLines[0].totals = {...totals}
-
+			
+			let timeSeriesKeys = Object.keys(timeLines[0].totals)
+			let timeSeries = timeSeriesKeys
+			.map(key=>timeLines.reduce(
+				(acc,current)=>{
+					acc.push({
+			    			at:current.at,
+			    			total: current.totals[key]
+					}); 
+					return acc
+				},[])
+			)
 			
 			let yScale = d3.scaleLinear()
 				.domain([
@@ -221,17 +232,15 @@ Vue.component('ysgtb-d3', {
 				])
 				.range([this.lineHeight,this.lineOffset])
 			
-			let lineGenerator = name => {
-				return d3.line()
+			let lineGenerator = d3.line()
     				.x(d=>d.at)
-    				.y(d=>yScale(d.totals[name]))
+    				.y(d=>yScale(d.total))
    				.curve(d3.curveMonotoneX)
-			}
 			
-			let times = this.svg.selectAll('.time')
+			let blocks = this.svg.selectAll('.block')
 				.data(timeBlocks)
 				.join(enter=>enter.append('rect'))
-				.attr('class', d=>`time ${d.name}`)
+				.attr('class', d=>`block ${d.name}`)
 				.attr('width', d=>d.width)
 				.attr('height', this.barHeight)
 				.attr('y',0)
@@ -239,23 +248,19 @@ Vue.component('ysgtb-d3', {
 				.attr("fill", d=>this.colourScale(d.name[0]))
 
 			
-			Object.keys(timeLines[0].totals).forEach((name)=>{
-				if(!this.lines[`line-${name}`]) this.lines[`line-${name}`] = this.svg.append("path").datum(timeLines)
-				
-				this.lines[`line-${name}`]
-					.attr("class", `line line-${name}`)
-					.attr("d", lineGenerator(name))
-					.attr("fill", "none")
-					.attr("stroke", ()=>this.colourScale(name[0]))
-					.attr("stroke-width","3px")
-			})
+			let lines = this.svg.selectAll('.line')
+				.data(timeSeries)
+				.join(enter=>enter.append('path'))
+				.attr("class", (d,i)=>`line ${timeSeriesKeys[i]}`)
+				.attr("fill", "none")
+				.attr("stroke", (d,i)=>this.colourScale(timeSeriesKeys[i][0]))
+				.attr("stroke-width","3px")
+				.attr("d", lineGenerator)
 			
-
-			
-			let reporters = this.svg.selectAll('.reporters')
-				.data(timeLines.filter(block=>block.totals[block.name]))
+			let reporters = this.svg.selectAll('.reporter')
+				.data(timeLines.filter(point=>point.totals[point.name]))
 				.join(enter=>enter.append('circle'))
-				.attr('class',d=>`reporters ${d.name} ${d.reporter}`)
+				.attr('class',d=>`reporter ${d.name} ${d.reporter}`)
 				.attr('r', 5)
 				.attr('cy', d=>yScale(d.totals[d.name]))
 				.attr('cx', d=>d.at)
@@ -263,11 +268,11 @@ Vue.component('ysgtb-d3', {
 				.attr('stroke-width','1px')
 				.attr('stroke',d=>this.colourScale(d.name[0]))
 			
-			let reportersLabels = this.svg.selectAll('.reportersLabels')
-				.data(timeLines.filter(block=>block.totals[block.name]))
+			let reportersLabels = this.svg.selectAll('.reporterLabel')
+				.data(timeLines.filter(point=>point.totals[point.name]))
 				.join(enter=>enter.append('text'))
 				.text(d=>d.reporter)
-				.attr('class', d=>`reportersLabels ${d.name} ${d.reporter}`)
+				.attr('class', d=>`reporterLabel ${d.name} ${d.reporter}`)
 				.attr('y', d=>yScale(d.totals[d.name]))
 				.attr('x', d=>d.at)
 				.attr('dy', 2.5)
@@ -303,6 +308,7 @@ var app = new Vue({
 		colourScale: d3.scaleOrdinal("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),d3.schemeCategory10),
 		timer: false,
 		refresher: false,
+		redrawer: false,
 		now : (new Date()).getTime()
 	},
 	created: function(){
@@ -316,6 +322,8 @@ var app = new Vue({
 		this.update()
 		this.refresher && clearInterval(this.refresher)
 		this.refresher = setInterval(this.update,5*60*1000)
+		this.redrawer && clearInterval(this.redrawer)
+		this.redrawer = setInterval(this.drawCount++,30*1000)
 		this.listenFor("ATTENDEE",this.update)
 		this.listenFor("ATTENDANCE",this.update)
 	},
@@ -333,9 +341,8 @@ var app = new Vue({
 	methods:{
 		update(){
 			this.getAttendee()
-			.then(this.getAttendances)
-			.then(this.getTimes)
-			.then(()=>{this.drawCount++})
+			this.getAttendances()
+			this.getTimes()
 		},
 		getAttendee(){
 			return this.API("GET","/attendees/latest",false,attendee=>{
@@ -345,9 +352,11 @@ var app = new Vue({
 		},
 		getAttendances(){
 			return this.API("GET","/times",false,times=>this.times=times)
+			.then(()=>this.drawCount++)
 		},
 		getTimes(){
 			return this.API("GET","/attendances",false,attendances=>this.attendances=attendances)
+			.then(()=>this.drawCount++)
 		},
 		
 		startAuthentication(){
