@@ -257,6 +257,7 @@ Vue.component('ysgtb-d3', {
 				.attr("class", (d,i)=>`line ${timeSeriesKeys[i]}`)
 				.attr("fill", "none")
 				.attr("stroke-width","3px")
+				.attr("d","")
 				.transition(t)
 				.attr("stroke", (d,i)=>this.colourScale(timeSeriesKeys[i][0]))
 				.attr("d", lineGenerator)
@@ -268,8 +269,8 @@ Vue.component('ysgtb-d3', {
 				.attr('r', 5)
 				.attr('fill', 'rgba(255,255,255,0.5)')
 				.attr('stroke-width','1px')
-				.transition(t)
 				.attr('cy', d=>yScale(d.totals[d.name]))
+				.transition(t)
 				.attr('cx', d=>d.at)
 				.attr('stroke',d=>this.colourScale(d.name[0]))
 			
@@ -281,8 +282,8 @@ Vue.component('ysgtb-d3', {
 				.attr('dy', 2.5)
 				.attr('text-anchor','middle')
 				.attr('font-size','8px')
-				.transition(t)
 				.attr('y', d=>yScale(d.totals[d.name]))
+				.transition(t)
 				.attr('x', d=>d.at)
 
 
