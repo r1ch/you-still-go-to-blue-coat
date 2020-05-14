@@ -253,7 +253,7 @@ Vue.component('ysgtb-d3', {
 				.join(enter=>enter.append('path'))
 				.attr("class", (d,i)=>`line line-${timeSeriesKeys[i]}`)
 				.attr("fill", "none")
-				.attr("stroke", (d,i)=>this.colourScale(timeSeriesKeys[i]))
+				.attr("stroke", (d,i)=>this.colourScale(timeSeriesKeys[i][0]))
 				.attr("stroke-width","3px")
 				.attr("d", lineGenerator)
 			
