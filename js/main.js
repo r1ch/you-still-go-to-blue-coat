@@ -167,15 +167,15 @@ Vue.component('ysgtb-d3', {
 	},
 	watch: {
 		"drawCount": function(){
-			console.log("Trigger")
-			if(this.drawCount > 0) this.draw()
+			console.log(`Trigger: ${this.drawCount}`)
+			if(this.drawCount >= (8|16|32)) this.draw()
 		}
 	},
 	methods: {
-		draw() {
-			if (this.times.length == 0) return console.log(`Bail`);
-			
+		draw() {		
 			console.log("Drawing")
+			
+			const t = this.svg.transition().duration(this.drawCount > (8|16|32)  ? 750 : 0)
 			
 			let xScale = d3.scaleTime()
 				.domain([this.times[0].from,this.times[this.times.length-1].to])
@@ -213,11 +213,11 @@ Vue.component('ysgtb-d3', {
 			timeLines[0].at = timeBlocks[0].start
 			timeLines[0].totals = {...totals}
 			
-			let timeSeriesKeys = Object.keys(timeLines[0].totals)
-			let timeSeries = timeSeriesKeys
+			let timeSeries = Object.keys(timeLines[0].totals)
 			.map(key=>timeLines.reduce(
 				(acc,current)=>{
 					acc.push({
+						name:key,
 			    			at:current.at,
 			    			total: current.totals[key]
 					}); 
@@ -241,9 +241,10 @@ Vue.component('ysgtb-d3', {
 				.data(timeBlocks)
 				.join(enter=>enter.append('rect'))
 				.attr('class', d=>`block ${d.name}`)
-				.attr('width', d=>d.width)
 				.attr('height', this.barHeight)
 				.attr('y',0)
+				.transition(t)
+				.attr('width', d=>d.width)
 				.attr('x', d=>d.start)
 				.attr("fill", d=>this.colourScale(d.name[0]))
 
@@ -251,10 +252,12 @@ Vue.component('ysgtb-d3', {
 			let lines = this.svg.selectAll('.line')
 				.data(timeSeries)
 				.join(enter=>enter.append('path'))
-				.attr("class", (d,i)=>`line ${timeSeriesKeys[i]}`)
+				.attr("class", (d)=>`line ${d[0].name}`)
 				.attr("fill", "none")
-				.attr("stroke", (d,i)=>this.colourScale(timeSeriesKeys[i][0]))
 				.attr("stroke-width","3px")
+				.attr("d","")
+				.transition(t)
+				.attr("stroke", (d,i)=>this.colourScale(d[0].name[0]))
 				.attr("d", lineGenerator)
 			
 			let reporters = this.svg.selectAll('.reporter')
@@ -262,10 +265,11 @@ Vue.component('ysgtb-d3', {
 				.join(enter=>enter.append('circle'))
 				.attr('class',d=>`reporter ${d.name} ${d.reporter}`)
 				.attr('r', 5)
-				.attr('cy', d=>yScale(d.totals[d.name]))
-				.attr('cx', d=>d.at)
 				.attr('fill', 'rgba(255,255,255,0.5)')
 				.attr('stroke-width','1px')
+				.attr('cy', d=>yScale(d.totals[d.name]))
+				.transition(t)
+				.attr('cx', d=>d.at)
 				.attr('stroke',d=>this.colourScale(d.name[0]))
 			
 			let reportersLabels = this.svg.selectAll('.reporterLabel')
@@ -273,11 +277,13 @@ Vue.component('ysgtb-d3', {
 				.join(enter=>enter.append('text'))
 				.text(d=>d.reporter)
 				.attr('class', d=>`reporterLabel ${d.name} ${d.reporter}`)
-				.attr('y', d=>yScale(d.totals[d.name]))
-				.attr('x', d=>d.at)
 				.attr('dy', 2.5)
 				.attr('text-anchor','middle')
 				.attr('font-size','8px')
+				.attr('y', d=>yScale(d.totals[d.name]))
+				.transition(t)
+				.attr('x', d=>d.at)
+
 
 			
 			d3.selectAll("#d3").node()
@@ -323,7 +329,7 @@ var app = new Vue({
 		this.refresher && clearInterval(this.refresher)
 		this.refresher = setInterval(this.update,5*60*1000)
 		this.redrawer && clearInterval(this.redrawer)
-		this.redrawer = setInterval(this.drawCount++,30*1000)
+		this.redrawer = setInterval(()=>this.drawCount++,30*1000)
 		this.listenFor("ATTENDEE",this.update)
 		this.listenFor("ATTENDANCE",this.update)
 	},
@@ -340,6 +346,7 @@ var app = new Vue({
 	},
 	methods:{
 		update(){
+			this.drawCount = 0;
 			this.getAttendee()
 			this.getAttendances()
 			this.getTimes()
@@ -349,14 +356,15 @@ var app = new Vue({
 					this.attendee=attendee
 					this.loadedAttendeeName=this.attendee.name
 			})
+			.then(()=>this.drawCount|=8)
 		},
 		getAttendances(){
 			return this.API("GET","/times",false,times=>this.times=times)
-			.then(()=>this.drawCount++)
+			.then(()=>this.drawCount|=16)
 		},
 		getTimes(){
 			return this.API("GET","/attendances",false,attendances=>this.attendances=attendances)
-			.then(()=>this.drawCount++)
+			.then(()=>this.drawCount|=32)
 		},
 		
 		startAuthentication(){
