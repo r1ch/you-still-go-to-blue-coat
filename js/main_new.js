@@ -192,6 +192,8 @@ Vue.component('ysgtb-d3', {
 			let timeLines = [{}]
 			let totals = this.attendances.reduce((accumulator,current)=>{accumulator[current.identifier]=current.record; return accumulator},[])
 			
+			console.log(`Original totals: ${totals}`)
+			
 			let timeBlocks = this.times.slice(0).reverse().map(time=>{
 				let output = {
 					end: xScale(time.to),
@@ -212,20 +214,24 @@ Vue.component('ysgtb-d3', {
 			.filter(output=>output.width>0.05)
 			.reverse()
 			
+			console.log(`Final totals: ${totals}`)
+			
 			timeLines[0].at = timeBlocks[0].start
 			timeLines[0].totals = {...totals}
 			
-			let timeSeriesKeys = Object.keys(timeLines[0].totals)
-			let timeSeries = timeSeriesKeys
+			let timeSeries = Object.keys(timeLines[0].totals)
 			.map(key=>timeLines.reduce(
 				(acc,current)=>{
 					acc.push({
+						name:key,
 			    			at:current.at,
 			    			total: current.totals[key]
 					}); 
 					return acc
 				},[])
 			)
+			
+			console.log(`timeSeries: ${timeSeries[0]}`)
 			
 			let yScale = d3.scaleLinear()
 				.domain([
@@ -254,12 +260,12 @@ Vue.component('ysgtb-d3', {
 			let lines = this.svg.selectAll('.line')
 				.data(timeSeries)
 				.join(enter=>enter.append('path'))
-				.attr("class", (d,i)=>`line ${timeSeriesKeys[i]}`)
+				.attr("class", (d)=>`line ${d[0].name}`)
 				.attr("fill", "none")
 				.attr("stroke-width","3px")
 				.attr("d","")
 				.transition(t)
-				.attr("stroke", (d,i)=>this.colourScale(timeSeriesKeys[i][0]))
+				.attr("stroke", (d,i)=>this.colourScale(d[0].name[0]))
 				.attr("d", lineGenerator)
 			
 			let reporters = this.svg.selectAll('.reporter')
