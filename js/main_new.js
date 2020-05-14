@@ -177,6 +177,8 @@ Vue.component('ysgtb-d3', {
 			
 			console.log("Drawing")
 			
+			const t = svg.transition().duration(750)
+			
 			let xScale = d3.scaleTime()
 				.domain([this.times[0].from,this.times[this.times.length-1].to])
 				.range([0, this.width])
@@ -241,9 +243,10 @@ Vue.component('ysgtb-d3', {
 				.data(timeBlocks)
 				.join(enter=>enter.append('rect'))
 				.attr('class', d=>`block ${d.name}`)
-				.attr('width', d=>d.width)
 				.attr('height', this.barHeight)
 				.attr('y',0)
+				.transition(t)
+				.attr('width', d=>d.width)
 				.attr('x', d=>d.start)
 				.attr("fill", d=>this.colourScale(d.name[0]))
 
@@ -253,8 +256,9 @@ Vue.component('ysgtb-d3', {
 				.join(enter=>enter.append('path'))
 				.attr("class", (d,i)=>`line ${timeSeriesKeys[i]}`)
 				.attr("fill", "none")
-				.attr("stroke", (d,i)=>this.colourScale(timeSeriesKeys[i][0]))
 				.attr("stroke-width","3px")
+				.transition(t)
+				.attr("stroke", (d,i)=>this.colourScale(timeSeriesKeys[i][0]))
 				.attr("d", lineGenerator)
 			
 			let reporters = this.svg.selectAll('.reporter')
@@ -262,10 +266,11 @@ Vue.component('ysgtb-d3', {
 				.join(enter=>enter.append('circle'))
 				.attr('class',d=>`reporter ${d.name} ${d.reporter}`)
 				.attr('r', 5)
-				.attr('cy', d=>yScale(d.totals[d.name]))
-				.attr('cx', d=>d.at)
 				.attr('fill', 'rgba(255,255,255,0.5)')
 				.attr('stroke-width','1px')
+				.transition(t)
+				.attr('cy', d=>yScale(d.totals[d.name]))
+				.attr('cx', d=>d.at)
 				.attr('stroke',d=>this.colourScale(d.name[0]))
 			
 			let reportersLabels = this.svg.selectAll('.reporterLabel')
@@ -273,11 +278,13 @@ Vue.component('ysgtb-d3', {
 				.join(enter=>enter.append('text'))
 				.text(d=>d.reporter)
 				.attr('class', d=>`reporterLabel ${d.name} ${d.reporter}`)
-				.attr('y', d=>yScale(d.totals[d.name]))
-				.attr('x', d=>d.at)
 				.attr('dy', 2.5)
 				.attr('text-anchor','middle')
 				.attr('font-size','8px')
+				.transition(t)
+				.attr('y', d=>yScale(d.totals[d.name]))
+				.attr('x', d=>d.at)
+
 
 			
 			d3.selectAll("#d3").node()
