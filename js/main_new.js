@@ -177,7 +177,7 @@ Vue.component('ysgtb-d3', {
 			
 			console.log("Drawing")
 			
-			const t = svg.transition().duration(750)
+			const t = this.svg.transition().duration(750)
 			
 			let xScale = d3.scaleTime()
 				.domain([this.times[0].from,this.times[this.times.length-1].to])
