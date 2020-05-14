@@ -190,9 +190,6 @@ Vue.component('ysgtb-d3', {
 			let timeLines = [{}]
 			let totals = this.attendances.reduce((accumulator,current)=>{accumulator[current.identifier]=current.record; return accumulator},[])
 			
-			console.log(`Attendances: ${JSON.stringify(this.attendances)}`)
-			console.log(`Original totals: ${JSON.stringify(totals)}`)
-			
 			let timeBlocks = this.times.slice(0).reverse().map(time=>{
 				let output = {
 					end: xScale(time.to),
@@ -213,8 +210,6 @@ Vue.component('ysgtb-d3', {
 			.filter(output=>output.width>0.05)
 			.reverse()
 			
-			console.log(`Final totals: ${JSON.stringify(totals)}`)
-			
 			timeLines[0].at = timeBlocks[0].start
 			timeLines[0].totals = {...totals}
 			
@@ -229,8 +224,6 @@ Vue.component('ysgtb-d3', {
 					return acc
 				},[])
 			)
-			
-			console.log(`timeSeries: ${JSON.stringify(timeSeries[0])}`)
 			
 			let yScale = d3.scaleLinear()
 				.domain([
