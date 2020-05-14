@@ -213,6 +213,18 @@ Vue.component('ysgtb-d3', {
 			timeLines[0].at = timeBlocks[0].start
 			timeLines[0].totals = {...totals}
 			
+			let timeSeriesKeys = Object.keys(timeLines[0].totals)
+			let timeSeries = timeSeriesKeys
+			.map(key=>timeLines.reduce(
+				(acc,current)=>{
+					acc.push({
+			    			at:current.at,
+			    			total: current.totals[key]
+					}); 
+					return acc
+				},[])
+			)
+			
 			let yScale = d3.scaleLinear()
 				.domain([
 					d3.min(Object.values(timeLines[0].totals)),
@@ -220,12 +232,9 @@ Vue.component('ysgtb-d3', {
 				])
 				.range([this.lineHeight,this.lineOffset])
 			
-			let lineGenerator = name =>d3.line()
+			let lineGenerator = d3.line()
     				.x(d=>d.at)
-    				.y(d=>{
-					console.log(`${d.totals[name]}=>${yScale(d.totals[name])}`)
-					return yScale(d.totals[name])
-				})
+    				.y(d=>yScale(d.total))
    				.curve(d3.curveMonotoneX)
 			
 			let times = this.svg.selectAll('.time')
@@ -240,13 +249,13 @@ Vue.component('ysgtb-d3', {
 
 			
 			let lines = this.svg.selectAll('.lines')
-				.data(timeLines[0].totals)
+				.data(timeSeries)
 				.join(enter=>enter.append('path'))
-				.attr("class", `line line-${name}`)
+				.attr("class", (d,i)=>`line line-${timeSeriesKeys[i]}`)
 				.attr("fill", "none")
-				.attr("stroke", ()=>this.colourScale(name[0]))
+				.attr("stroke", (d,i)=>this.colourScale(timeSeriesKeys[i]))
 				.attr("stroke-width","3px")
-				.attr("d", lineGenerator(name)(timeLines))
+				.attr("d", lineGenerator)
 			
 			let reporters = this.svg.selectAll('.reporters')
 				.data(timeLines.filter(point=>point.totals[point.name]))
