@@ -260,7 +260,7 @@ Vue.component('ysgtb-d3', {
 				.attr("stroke", (d,i)=>this.colourScale(d[0].name[0]))
 				.attr("d", lineGenerator)
 			
-			let lineNames = this.svg.selectAll('.lineName')
+			lines.selectAll('.lineName')
 				.data(timeSeries)
 				.join(enter=>enter
 				      .append('text')
