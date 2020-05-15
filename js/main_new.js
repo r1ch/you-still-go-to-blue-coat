@@ -264,6 +264,7 @@ Vue.component('ysgtb-d3', {
 				.data(timeSeries)
 				.join(enter=>enter
 				      .append('text')
+				      .attr("class", d=>`lineName ${d[0].name}`)
 				      .attr('font-size','6px')
 				      .append('textPath')
 				      )
