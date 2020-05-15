@@ -264,12 +264,13 @@ Vue.component('ysgtb-d3', {
 				.data(timeSeries)
 				.join(enter=>enter
 				      .append('text')
-				      .attr('font-size','4px')
+				      .attr('font-size','6px')
+				      .attr('dy','1.5')
 				      .append('textPath')
 				      )
 				.attr('xlink:href',d=>`#line-${d[0].name}`)
 				.text(d=>`line-${d[0].name}`)
-				.attr('text-anchor','end')
+				.attr('text-anchor','start')
 				.attr('startOffset','100%')
 			
 			let reporters = this.svg.selectAll('.reporter')
