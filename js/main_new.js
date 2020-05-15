@@ -270,7 +270,7 @@ Vue.component('ysgtb-d3', {
 				.attr('xlink:href',d=>`#line-${d[0].name}`)
 				.text(d=>d[0].name)
 				.attr('alignment-baseline','center')
-				.attr('text-anchor','start')
+				.attr('text-anchor','end')
 				.attr('startOffset','100%')
 			
 			let reporters = this.svg.selectAll('.reporter')
