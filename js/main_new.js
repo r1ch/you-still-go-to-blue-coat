@@ -265,11 +265,11 @@ Vue.component('ysgtb-d3', {
 				.join(enter=>enter
 				      .append('text')
 				      .attr('font-size','6px')
-				      .attr('dy','1.5')
 				      .append('textPath')
 				      )
 				.attr('xlink:href',d=>`#line-${d[0].name}`)
-				.text(d=>`line-${d[0].name}`)
+				.text(d=>d[0].name)
+				.attr('alignment-baseline','center')
 				.attr('text-anchor','start')
 				.attr('startOffset','100%')
 			
