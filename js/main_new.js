@@ -247,18 +247,30 @@ Vue.component('ysgtb-d3', {
 				.attr('width', d=>d.width)
 				.attr('x', d=>d.start)
 				.attr("fill", d=>this.colourScale(d.name[0]))
-
 			
 			let lines = this.svg.selectAll('.line')
 				.data(timeSeries)
 				.join(enter=>enter.append('path'))
-				.attr("class", (d)=>`line ${d[0].name}`)
+				.attr("class", d=>`line ${d[0].name}`)
+				.attr("id", d=>`line-${d[0].name}`)
 				.attr("fill", "none")
 				.attr("stroke-width","3px")
 				.attr("d","")
 				.transition(t)
 				.attr("stroke", (d,i)=>this.colourScale(d[0].name[0]))
 				.attr("d", lineGenerator)
+			
+			let lineNames = this.svg.selectAll('.lineName')
+				.data(timeSeries)
+				.join(enter=>enter
+				      .append('text')
+				      .append('textPath')
+				      )
+				.attr('xlink:href',d=>`line-${d[0].name}`)
+				.text(d=>`line-${d[0].name}`)
+				.attr('text-anchor','end')
+				.attr('startOffset','100%')
+				.attr('font-size','4px')
 			
 			let reporters = this.svg.selectAll('.reporter')
 				.data(timeLines.filter(point=>point.totals[point.name]))
@@ -283,8 +295,6 @@ Vue.component('ysgtb-d3', {
 				.attr('y', d=>yScale(d.totals[d.name]))
 				.transition(t)
 				.attr('x', d=>d.at)
-
-
 			
 			d3.selectAll("#d3").node()
 				.scrollLeft = this.fullWidth
@@ -293,8 +303,6 @@ Vue.component('ysgtb-d3', {
 		}
 	}
 })
-
-
 
 
 var app = new Vue({
