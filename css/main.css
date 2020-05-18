@@ -19,3 +19,31 @@
   overflow:scroll;
   text-align:center;
 }
+
+.lineOn {
+  fill:none;
+  stroke-width:3px
+}
+
+.lineOff {
+  fill:none;
+  stroke-width:3px
+}
+
+.lineLabel {
+  font-size:3px;
+	alignment-baseline:center;
+  fill:#ffffff;
+  text-anchor:end;
+  startOffset:100%;
+}
+
+.reporters {
+  fill:rgba(255,255,255,0.5);
+  stroke-width:1px;
+}
+
+.reporterLabels {
+  text-anchor:middle;
+  font-size:8px;
+}
