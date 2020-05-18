@@ -259,8 +259,11 @@ Vue.component('ysgtb-d3', {
 				.transition(t)
 				.attr("stroke", (d,i)=>this.colourScale(d[0].name[0]))
 				.attr("d", lineGenerator)
-				.append('text')
-				.attr("class", d=>`lineName ${d[0].name}`)
+			
+			let lineLabels = this.svg.selectAll('.lineLabel')
+				.data(timeSeries)
+				.join(enter=>enter.append('text'))
+				.attr("class", d=>`lineLabel ${d[0].name}`)
 				.attr('font-size','6px')
 				.append('textPath')
 				.attr('xlink:href',d=>`#line-${d[0].name}`)
