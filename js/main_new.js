@@ -248,6 +248,17 @@ Vue.component('ysgtb-d3', {
 				.attr('x', d=>d.start)
 				.attr("fill", d=>this.colourScale(d.name[0]))
 			
+			let clips = this.svg.selectAll('.clip')
+				.data(Object.keys(timeBlocks[0].totals))
+				.join(enter=>enter.append('clipPath').attr('class', d=>`clip ${d.name}`))
+				.data(d=>timeBlocks.filter(block=>block.name==d))
+				.join(enter=>enter.append('rect').attr('class', d=>`clipRect ${d.name}`))
+				.attr('height', this.lineHeight)
+				.attr('y',this.lineOffset)
+				.attr('width',(d,i)=>timeBlocks[i].width)
+				.attr('x', (d,i)=>timeBlocks[i].start)
+				.attr("fill", "white")
+			
 			let lines = this.svg.selectAll('.line')
 				.data(timeSeries)
 				.join(enter=>enter.append('path'))
