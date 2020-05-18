@@ -253,7 +253,7 @@ Vue.component('ysgtb-d3', {
 				.join(enter=>enter.append("clipPath").attr("class",d=>`clip ${d}`).attr("id",d=>`clip-${d}`))
 				.selectAll(".clipRect")
 				.data(d=>timeBlocks.filter(block=>block.name==d))
-				.join(enter=>enter.append("rect").attr("class",d=>`clipRect ${d[0].name}`))
+				.join(enter=>enter.append("rect").attr("class",d=>`clipRect ${d.name}`))
 				.attr("width",d=>d.width)
 				.attr("height",this.lineHeight)
 				.attr("x",d=>d.start)
