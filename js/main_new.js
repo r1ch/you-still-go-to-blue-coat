@@ -258,10 +258,22 @@ Vue.component('ysgtb-d3', {
 				.attr("x",d=>d.start)
 				.attr("y",this.lineOffset)
 			
-			let lines = this.svg.selectAll('.line')
+			let linesOff = this.svg.selectAll('.lineOff')
 				.data(timeSeries)
 				.join(enter=>enter.append('path'))
-				.attr("class", d=>`line ${d[0].name}`)
+				.attr("class", d=>`lineOff ${d[0].name}`)
+				.attr("id", d=>`line-${d[0].name}`)
+				.attr("fill", "none")
+				.attr("stroke-width","1px")
+				.attr("d","")
+				.transition(t)
+				.attr("stroke", (d,i)=>this.colourScale(d[0].name[0]))
+				.attr("d", lineGenerator)
+			
+			let linesOn = this.svg.selectAll('.lineOn')
+				.data(timeSeries)
+				.join(enter=>enter.append('path'))
+				.attr("class", d=>`lineOn ${d[0].name}`)
 				.attr("clip-path", d=>`url(#clip-${d[0].name})`)
 				.attr("id", d=>`line-${d[0].name}`)
 				.attr("fill", "none")
@@ -270,6 +282,8 @@ Vue.component('ysgtb-d3', {
 				.transition(t)
 				.attr("stroke", (d,i)=>this.colourScale(d[0].name[0]))
 				.attr("d", lineGenerator)
+			
+
 			
 			let lineLabels = this.svg.selectAll('.lineLabel')
 				.data(timeSeries)
