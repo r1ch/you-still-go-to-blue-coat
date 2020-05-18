@@ -249,7 +249,7 @@ Vue.component('ysgtb-d3', {
 				.attr("fill", d=>this.colourScale(d.name[0]))
 			
 			let clips = this.svg.selectAll('.clip')
-				.data(Object.keys(timeBlocks[0].totals))
+				.data(Object.keys(timeLines[0].totals))
 				.join(enter=>enter.append('clipPath').attr('class', d=>`clip ${d.name}`))
 				.data(d=>timeBlocks.filter(block=>block.name==d))
 				.join(enter=>enter.append('rect').attr('class', d=>`clipRect ${d.name}`))
