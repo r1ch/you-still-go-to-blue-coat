@@ -34,8 +34,6 @@
 	alignment-baseline:center;
 	font-size: 3rem;
 	fill:#ffffff;
-	text-anchor:end;
-	startOffset:100%;
 }
 
 .reporter {
