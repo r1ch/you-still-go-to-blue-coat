@@ -253,7 +253,7 @@ Vue.component('ysgtb-d3', {
 				.join(enter=>enter.append("clipPath").attr("class",d=>`clip ${d}`).attr("id",d=>`clip-${d}`))
 				.selectAll(".clipRect")
 				.data(d=>timeBlocks.filter(block=>block.name==d))
-				.join(enter=>enter.append("rect").attr("class",d=>`clipRect ${d}`))
+				.join(enter=>enter.append("rect").attr("class",d=>`clipRect ${d[0].name}`))
 				.attr("width",d=>d.width)
 				.attr("height",this.lineHeight)
 				.attr("x",d=>d.start)
@@ -263,7 +263,7 @@ Vue.component('ysgtb-d3', {
 				.data(timeSeries)
 				.join(enter=>enter.append('path'))
 				.attr("class", d=>`lineOff ${d[0].name}`)
-				.attr("stroke", (d,i)=>this.colourScale(d[0].name[0]))
+				.attr("stroke", (d,i)=>this.colourScale(d[0].name))
 				.attr("d", lineGenerator)
 			
 			let linesOn = this.svg.selectAll('.lineOn')
@@ -272,7 +272,7 @@ Vue.component('ysgtb-d3', {
 				.attr("class", d=>`lineOn ${d[0].name}`)
 				.attr("clip-path", d=>`url(#clip-${d[0].name})`)
 				.attr("id", d=>`line-${d[0].name}`)
-				.attr("stroke", (d,i)=>this.colourScale(d[0].name[0]))
+				.attr("stroke", (d,i)=>this.colourScale(d[0].name))
 				.attr("d", lineGenerator)
 			
 
