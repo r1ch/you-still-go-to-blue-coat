@@ -38,12 +38,12 @@
   startOffset:100%;
 }
 
-.reporters {
+.reporter {
   fill:rgba(255,255,255,0.5);
   stroke-width:1px;
 }
 
-.reporterLabels {
+.reporterLabel {
   text-anchor:middle;
   font-size:8px;
 }
