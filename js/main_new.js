@@ -265,7 +265,9 @@ Vue.component('ysgtb-d3', {
 				.join(enter=>enter
 					.append('text')
 					.attr("class", d=>`lineLabel ${d[0].name}`)
-					.attr('font-size','6px')
+					.attr('font-size','3px')
+				        .attr('dy','1.5')
+				      	.attr('fill','white')
 					.append('textPath')
 					.attr('xlink:href',d=>`#line-${d[0].name}`)
 					.text(d=>d[0].name)
