@@ -265,7 +265,6 @@ Vue.component('ysgtb-d3', {
 				.attr("id", d=>`line-${d[0].name}`)
 				.attr("fill", "none")
 				.attr("stroke-width","3px")
-				.attr("stroke-dasharray","1 1")
 				.attr("d","")
 				.transition(t)
 				.attr("stroke", (d,i)=>this.colourScale(d[0].name[0]))
