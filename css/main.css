@@ -1,49 +1,49 @@
 .abcRioButtonBlue {
-  margin: 0px auto 0 auto;
+	margin: 0px auto 0 auto;
 }
 
 .attendee-name {
-  display:inline;
-  font-size: 2.5rem;
+	display:inline;
+	font-size: 2.5rem;
 }
 
 .image-background {
-  background-image: url("/img/logo.png");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 2.5rem;
+	background-image: url("/img/logo.png");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 2.5rem;
 }
 
 
 .svgHolder {
-  overflow:scroll;
-  text-align:center;
+	overflow:scroll;
+	text-align:center;
 }
 
 .lineOn {
-  fill:none;
-  stroke-width:3px
+	fill:none;
+	stroke-width:3px
 }
 
 .lineOff {
-  fill:none;
-  stroke-width:3px
+	fill:none;
+	stroke-width:3px
 }
 
 .lineLabel {
-  font-size:3px;
 	alignment-baseline:center;
-  fill:#ffffff;
-  text-anchor:end;
-  startOffset:100%;
+	font-size: 3rem;
+	fill:#ffffff;
+	text-anchor:end;
+	startOffset:100%;
 }
 
 .reporter {
-  fill:rgba(255,255,255,0.5);
-  stroke-width:1px;
+	fill:rgba(255,255,255,0.5);
+	stroke-width:1px;
 }
 
 .reporterLabel {
-  text-anchor:middle;
-  font-size:8px;
+	text-anchor:middle;
+	font-size:8px;
 }
