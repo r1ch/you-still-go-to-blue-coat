@@ -277,7 +277,7 @@ Vue.component('ysgtb-d3', {
 			
 
 			
-			let lineLabels = this.svg.selectAll('.lineLabel')
+			/*let lineLabels = this.svg.selectAll('.lineLabel')
 				.data(timeSeries)
 				.join(enter=>enter
 					.append('text')
@@ -287,7 +287,7 @@ Vue.component('ysgtb-d3', {
 					.attr('xlink:href',d=>`#line-${d[0].name}`)
 					.text(d=>d[0].name)
 				      	.attr("startOffset","100%")
-				 )
+				 )*/
 			
 			let reporters = this.svg.selectAll('.reporter')
 				.data(timeLines.filter(point=>point.totals[point.name]))
