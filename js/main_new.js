@@ -282,9 +282,11 @@ Vue.component('ysgtb-d3', {
 				.join(enter=>enter
 					.append('text')
 					.attr("class", d=>`lineLabel ${d[0].name}`)
+				   	.attr("text-anchor","end")
 					.append('textPath')
 					.attr('xlink:href',d=>`#line-${d[0].name}`)
 					.text(d=>d[0].name)
+				      	.attr("startOffset","100%")
 				 )
 			
 			let reporters = this.svg.selectAll('.reporter')
