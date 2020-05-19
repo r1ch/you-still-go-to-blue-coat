@@ -168,6 +168,9 @@ Vue.component('ysgtb-d3', {
 		this.svg.append("g")
 			.attr("class", "y axis")
 			.attr("transform", `translate(0,0)`)
+		
+		d3.selectAll("#d3").node()
+			.scrollLeft = this.fullWidth
 	},
 	watch: {
 		"drawCount": function(){
@@ -310,9 +313,6 @@ Vue.component('ysgtb-d3', {
 				.attr('dy', 2.5)
 				.attr('y', d=>yScale(d.totals[d.name]))
 				.attr('x', d=>d.at)
-			
-			d3.selectAll("#d3").node()
-				.scrollLeft = this.fullWidth
 
 			return true;
 		}
