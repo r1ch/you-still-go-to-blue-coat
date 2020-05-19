@@ -31,7 +31,7 @@ Vue.component('ysgtb-jumbotron',{
 					<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
 					<br><br>
 					<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
-					<small v-if = "attendee.identifier">It's been over <ysgtb-time :short="false" :millis="now-attendee.identifier"></ysgtb-time> now</small>
+					<small v-if = "attendee.identifier">It's been over <ysgtb-time :mode="long" :millis="now-attendee.identifier"></ysgtb-time> now</small>
 				</div>
 			</div>
 			<div class = "container" v-if = "attendances.length > 0">
@@ -41,11 +41,11 @@ Vue.component('ysgtb-jumbotron',{
 						<div class="d-flex w-100 justify-content-between">
 							<h5 class="mb-1"><span :style="{color:colourScale(attendance.identifier[0])}">•</span>&nbsp;{{attendance.identifier}}</h5>
 							<!--<span class="badge badge-pill badge-dark d-none d-sm-block">{{["Mr Inches' favourite","",""][index]}}</span>-->
-							<ysgtb-time :short = "true" :millis = "attendance.record"></ysgtb-time>
+							<ysgtb-time :mode = "short" :millis = "attendance.record"></ysgtb-time>
 						</div>
 						<div class="d-flex w-100 justify-content-between">
-							<small><b>Longest: </b><ysgtb-time :short = "true" :millis = "attendance.longest"></ysgtb-time></small>
-							<small v-if = "attendee.name != attendance.identifier"><b>Lead: </b><ysgtb-time :short = "true" :millis = "attendance.record - attendances.find(attendance=>attendance.identifier==attendee.name).record"></ysgtb-time></small>
+							<small><b>Longest: </b><ysgtb-time :mode = "short" :millis = "attendance.longest"></ysgtb-time></small>
+							<small v-if = "attendee.name != attendance.identifier"><b>Lead: </b><ysgtb-time :mode = "lead" :millis = "attendance.record - attendances.find(attendance=>attendance.identifier==attendee.name).record"></ysgtb-time></small>
 						</div>
 					</li>
 				</ul>
@@ -71,7 +71,7 @@ Vue.component('ysgtb-jumbotron',{
 })
 
 Vue.component('ysgtb-time', {
-	props: ['millis','short'],
+	props: ['millis','mode'],
 	data: ()=>({
 		bands:[
 			{millis:1000*60*60*24*365,measure:"year"},
@@ -84,8 +84,8 @@ Vue.component('ysgtb-time', {
 	}),
 	computed: {
 		time: function(){
-			let sign = Math.sign(this.millis) > 0 ? "" : "-"
-			let m = Math.abs(this.millis)
+			let sign = this.mode == "lead" ? Math.sign(this.millis) > 0 ? "+" : "-" : ""
+			let m = this.mode == "lead" ? Math.abs(this.millis) : Math.max(0,this.millis)
 			let parts = this.bands.map(band=>{	
 				let rawCount = m / band.millis
 				rawCount = band.number ? rawCount % band.number : rawCount
@@ -110,7 +110,7 @@ Vue.component('ysgtb-time', {
 			}
 		}
 	},
-	template:`<span v-if = "millis" v-html="short?time.html:time.text"></span>`
+	template:`<span v-if = "millis" v-html="mode!=='long'?time.html:time.text" :style= "{green: millis>0 && mode=='lead', red: millis<0 && mode == 'lead'}"></span>`
 })
 
 
