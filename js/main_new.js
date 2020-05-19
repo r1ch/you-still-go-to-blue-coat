@@ -110,7 +110,7 @@ Vue.component('ysgtb-time', {
 			}
 		}
 	},
-	template:`<span v-if = "millis" v-html="mode!=='long'?time.html:time.text" :style= "{green: millis>0 && mode=='lead', red: millis<0 && mode == 'lead'}"></span>`
+	template:`<span v-if = "millis" v-html="mode!=='long'?time.html:time.text" :class= "{green: millis>0 && mode=='lead', red: millis<0 && mode == 'lead'}"></span>`
 })
 
 
