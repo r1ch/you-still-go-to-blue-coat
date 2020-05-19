@@ -84,7 +84,7 @@ Vue.component('ysgtb-time', {
 	}),
 	computed: {
 		time: function(){
-			let sign = this.mode == "lead" ? Math.sign(this.millis) > 0 ? ["+"] : ["-"] : []
+			let sign = this.mode == "lead" ? this.millis > 0 ? ["+"] : ["-"] : []
 			let m = this.mode == "lead" ? Math.abs(this.millis) : Math.max(0,this.millis)
 			let parts = this.bands.map(band=>{	
 				let rawCount = m / band.millis
