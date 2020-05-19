@@ -86,7 +86,7 @@ Vue.component('ysgtb-time', {
 		time: function(){
 			let parts = this.bands.map(band=>{
 				let rawCount = this.millis / band.millis
-				if(!unpinned) rawCount = Math.max(0,rawCount)
+				if(typeof(unpinned)!=='undefined') rawCount = Math.max(0,rawCount)
 				rawCount = band.number ? rawCount % band.number : rawCount
 				return {
 					measure: band.measure,
