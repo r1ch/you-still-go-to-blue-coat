@@ -259,9 +259,9 @@ Vue.component('ysgtb-d3', {
 				.data(d=>timeBlocks.filter(block=>block.name==d))
 				.join(enter=>enter.append("rect").attr("class",d=>`clipRect ${d.name}`))
 				.attr("width",d=>d.width)
-				.attr("height",this.lineHeight)
+				.attr("height",this.lineHeight+5)
 				.attr("x",d=>d.start)
-				.attr("y",this.lineOffset)
+				.attr("y",this.lineOffset-5)
 			
 			let linesOff = this.svg.selectAll('.lineOff')
 				.data(timeSeries)
