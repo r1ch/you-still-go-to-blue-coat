@@ -45,7 +45,7 @@ Vue.component('ysgtb-jumbotron',{
 						</div>
 						<div class="d-flex w-100 justify-content-between">
 							<small><b>Longest: </b><ysgtb-time :short = "true" :millis = "attendance.longest"></ysgtb-time></small>
-							<small v-if = "attendee.name != attendance.identifier"><b>Lead: </b><ysgtb-time :unpinned = "true" :short = "true" :millis = "attendances.find(attendance=>attendance.identifier==attendee.name).record - attendance.record"></ysgtb-time></small>
+							<small v-if = "attendee.name != attendance.identifier"><b>Lead: </b><ysgtb-time :short = "true" :millis = "attendances.find(attendance=>attendance.identifier==attendee.name).record - attendance.record"></ysgtb-time></small>
 						</div>
 					</li>
 				</ul>
@@ -71,7 +71,7 @@ Vue.component('ysgtb-jumbotron',{
 })
 
 Vue.component('ysgtb-time', {
-	props: ['millis','short','unpinned'],
+	props: ['millis','short'],
 	data: ()=>({
 		bands:[
 			{millis:1000*60*60*24*365,measure:"year"},
@@ -84,9 +84,10 @@ Vue.component('ysgtb-time', {
 	}),
 	computed: {
 		time: function(){
-			let parts = this.bands.map(band=>{
-				let rawCount = this.millis / band.millis
-				if(typeof(unpinned)!=='undefined') rawCount = Math.max(0,rawCount)
+			let sign = Math.sign(this.millis) > 0 ? "" : "-"
+			let m = Math.abs(this.millis)
+			let parts = this.bands.map(band=>{	
+				let rawCount = m / band.millis
 				rawCount = band.number ? rawCount % band.number : rawCount
 				return {
 					measure: band.measure,
@@ -102,7 +103,7 @@ Vue.component('ysgtb-time', {
 			let andAHalf = long.measure != "second" && (long.fractionalCount >= 0.5) ? " and a half " : " "
 			let before = long.count > 1 ? andAHalf : " "
 			let after = long.count == 1 ? andAHalf : " "
-			let html = parts.map(part=>`${part.count}<sup>${part.shortMeasure}</sup>`).join(" ")
+			let html = parts.map(part=>`${sign}${part.count}<sup>${part.shortMeasure}</sup>`).join(" ")
 			return {
 				html: html,
 				text: `${duration}${before}${long.displayMeasure}${after}`
