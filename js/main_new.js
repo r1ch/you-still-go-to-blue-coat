@@ -103,14 +103,16 @@ Vue.component('ysgtb-time', {
 			let andAHalf = longest.measure != "second" && (longest.fractionalCount >= 0.5) ? " and a half " : " "
 			let before = longest.count > 1 ? andAHalf : " "
 			let after = longest.count == 1 ? andAHalf : " "
+			let clazz = this.mode == 'lead' ? millis > 0 'green' : 'red' : false
 			return {
 				lead: `${sign}${longest.count}<sup>${longest.shortMeasure}</sup>`,
 				short: parts.map(part=>`${part.count}<sup>${part.shortMeasure}</sup>`).join(" "),
-				text: `${duration}${before}${longest.displayMeasure}${after}`
+				text: `${duration}${before}${longest.displayMeasure}${after}`,
+				clazz: clazz 
 			}
 		}
 	},
-	template:`<span v-if = "millis" v-html="time[mode]" :class= "{green: millis>0 && mode=='lead', red: millis<0 && mode == 'lead'}"></span>`
+	template:`<span v-if = "millis" v-html="time[mode]" :class= "clazz"></span>`
 })
 
 
