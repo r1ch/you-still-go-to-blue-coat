@@ -45,7 +45,7 @@ Vue.component('ysgtb-jumbotron',{
 						</div>
 						<div class="d-flex w-100 justify-content-between">
 							<small><b>Longest: </b><ysgtb-time :mode = "short" :millis = "attendance.longest"></ysgtb-time></small>
-							<small v-if = "attendee.name != attendance.identifier"><b>Lead: </b><ysgtb-time :mode = "lead" :millis = "attendance.record - attendances.find(attendance=>attendance.identifier==attendee.name).record"></ysgtb-time></small>
+							<small v-if = "attendee.name != attendance.identifier"><ysgtb-time :mode = "lead" :millis = "attendance.record - attendances.find(attendance=>attendance.identifier==attendee.name).record"></ysgtb-time></small>
 						</div>
 					</li>
 				</ul>
