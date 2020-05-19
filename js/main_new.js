@@ -45,7 +45,7 @@ Vue.component('ysgtb-jumbotron',{
 						</div>
 						<div class="d-flex w-100 justify-content-between">
 							<small><b>Longest: </b><ysgtb-time :short = "true" :millis = "attendance.longest"></ysgtb-time></small>
-							<small v-if = "attendee.name != attendance.identifier"><b>Lead: </b><ysgtb-time :short = "true" :millis = "attendances.find(attendance=>attendance.identifier==attendee.name).record - attendance.record"></ysgtb-time></small>
+							<small v-if = "attendee.name != attendance.identifier"><b>Lead: </b><ysgtb-time :short = "true" :millis = "attendance.record - attendances.find(attendance=>attendance.identifier==attendee.name).record"></ysgtb-time></small>
 						</div>
 					</li>
 				</ul>
@@ -103,7 +103,7 @@ Vue.component('ysgtb-time', {
 			let andAHalf = long.measure != "second" && (long.fractionalCount >= 0.5) ? " and a half " : " "
 			let before = long.count > 1 ? andAHalf : " "
 			let after = long.count == 1 ? andAHalf : " "
-			let html = parts.map(part=>`${sign}${part.count}<sup>${part.shortMeasure}</sup>`).join(" ")
+			let html = sign+parts.map(part=>`${part.count}<sup>${part.shortMeasure}</sup>`).join(" ")
 			return {
 				html: html,
 				text: `${duration}${before}${long.displayMeasure}${after}`
