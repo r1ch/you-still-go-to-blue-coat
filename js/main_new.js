@@ -31,7 +31,7 @@ Vue.component('ysgtb-jumbotron',{
 					<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
 					<br><br>
 					<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
-					<small v-if = "attendee.identifier">It's been over <ysgtb-time :mode="'long'" :millis="now-attendee.identifier"></ysgtb-time> now</small>
+					<small v-if = "attendee.identifier">It's been over <ysgtb-time :mode="'text'" :millis="now-attendee.identifier"></ysgtb-time> now</small>
 				</div>
 			</div>
 			<div class = "container" v-if = "attendances.length > 0">
@@ -84,10 +84,10 @@ Vue.component('ysgtb-time', {
 	}),
 	computed: {
 		time: function(){
-			let sign = this.mode == "lead" ? this.millis > 0 ? ["+"] : ["-"] : []
-			let m = this.mode == "lead" ? Math.abs(this.millis) : Math.max(0,this.millis)
+			let sign = this.millis > 0 ? "+" : "-"
+			let millis = this.mode == "lead" ? Math.abs(this.millis) : Math.max(0,this.millis)
 			let parts = this.bands.map(band=>{	
-				let rawCount = m / band.millis
+				let rawCount = millis / band.millis
 				rawCount = band.number ? rawCount % band.number : rawCount
 				return {
 					measure: band.measure,
@@ -98,19 +98,19 @@ Vue.component('ysgtb-time', {
 					count : rawCount|0
 				}
 			}).filter(part=>part.count>0 || part.measure == "second")
-			let long = parts[0]
-			let duration = long.count == 1 ? (long.measure == "hour" ? 'an' : 'a') : long.count
-			let andAHalf = long.measure != "second" && (long.fractionalCount >= 0.5) ? " and a half " : " "
-			let before = long.count > 1 ? andAHalf : " "
-			let after = long.count == 1 ? andAHalf : " "
-			let html = [...sign, ...parts.map(part=>`${part.count}<sup>${part.shortMeasure}</sup>`)].join(" ")
+			let longest = parts[0]
+			let duration = longest.count == 1 ? (longest.measure == "hour" ? 'an' : 'a') : longest.count
+			let andAHalf = longest.measure != "second" && (longest.fractionalCount >= 0.5) ? " and a half " : " "
+			let before = longest.count > 1 ? andAHalf : " "
+			let after = longest.count == 1 ? andAHalf : " "
 			return {
-				html: html,
-				text: `${duration}${before}${long.displayMeasure}${after}`
+				lead: `${sign}${longest.count}<sup>${longest.shortMeasure}</sup>`,
+				short: parts.map(part=>`${part.count}<sup>${part.shortMeasure}</sup>`).join(" "),
+				text: `${duration}${before}${longest.displayMeasure}${after}`
 			}
 		}
 	},
-	template:`<span v-if = "millis" v-html="mode!=='long'?time.html:time.text" :class= "{green: millis>0 && mode=='lead', red: millis<0 && mode == 'lead'}"></span>`
+	template:`<span v-if = "millis" v-html="time[mode]" :class= "{green: millis>0 && mode=='lead', red: millis<0 && mode == 'lead'}"></span>`
 })
 
 
