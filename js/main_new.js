@@ -112,7 +112,7 @@ Vue.component('ysgtb-time', {
 			}
 		}
 	},
-	template:`<span v-if = "millis" v-html="time[mode]" :class= "clazz"></span>`
+	template:`<span v-if = "millis" v-html="time[mode]" :class= "time.clazz"></span>`
 })
 
 
