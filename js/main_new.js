@@ -84,7 +84,7 @@ Vue.component('ysgtb-time', {
 	}),
 	computed: {
 		time: function(){
-			let sign = this.mode == "lead" ? Math.sign(this.millis) > 0 ? "+" : "-" : ""
+			let sign = this.mode == "lead" ? Math.sign(this.millis) > 0 ? ["+"] : ["-"] : []
 			let m = this.mode == "lead" ? Math.abs(this.millis) : Math.max(0,this.millis)
 			let parts = this.bands.map(band=>{	
 				let rawCount = m / band.millis
@@ -103,7 +103,7 @@ Vue.component('ysgtb-time', {
 			let andAHalf = long.measure != "second" && (long.fractionalCount >= 0.5) ? " and a half " : " "
 			let before = long.count > 1 ? andAHalf : " "
 			let after = long.count == 1 ? andAHalf : " "
-			let html = sign+parts.map(part=>`${part.count}<sup>${part.shortMeasure}</sup>`).join(" ")
+			let html = [...sign, ...parts.map(part=>`${part.count}<sup>${part.shortMeasure}</sup>`)].join(" ")
 			return {
 				html: html,
 				text: `${duration}${before}${long.displayMeasure}${after}`
