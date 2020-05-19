@@ -45,7 +45,7 @@ Vue.component('ysgtb-jumbotron',{
 						</div>
 						<div class="d-flex w-100 justify-content-between">
 							<small><b>Longest: </b><ysgtb-time :short = "true" :millis = "attendance.longest"></ysgtb-time></small>
-							<small><b>Lead: </b><ysgtb-time :short = "true" :millis = "attendances.find(attendance=>attendance.identifier==attendee.name).record - attendance.record"></ysgtb-time></small>
+							<small v-if = "attendee.name != attendance.identifier"><b>Lead: </b><ysgtb-time :unpinned = "true" :short = "true" :millis = "attendances.find(attendance=>attendance.identifier==attendee.name).record - attendance.record"></ysgtb-time></small>
 						</div>
 					</li>
 				</ul>
@@ -71,7 +71,7 @@ Vue.component('ysgtb-jumbotron',{
 })
 
 Vue.component('ysgtb-time', {
-	props: ['millis','short'],
+	props: ['millis','short','unpinned'],
 	data: ()=>({
 		bands:[
 			{millis:1000*60*60*24*365,measure:"year"},
@@ -85,7 +85,8 @@ Vue.component('ysgtb-time', {
 	computed: {
 		time: function(){
 			let parts = this.bands.map(band=>{
-				let rawCount = Math.max(0,this.millis) / band.millis
+				let rawCount = this.millis / band.millis
+				if(!unpinned) rawCount = Math.max(0,rawCount)
 				rawCount = band.number ? rawCount % band.number : rawCount
 				return {
 					measure: band.measure,
