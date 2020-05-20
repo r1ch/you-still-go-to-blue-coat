@@ -358,7 +358,7 @@ var app = new Vue({
 	},
 	computed: {
 		orderedAttendances: function(){
-			let currentAttendance = this.attendances.find(attendance=>attendance.identifier==this.attendee.name)
+			let currentAttendance = this.attendances.find(attendance=>attendance.identifier==this.attendee.name) || {}
 			currentAttendance.record += this.now-this.attendee.identifier
 			return this.attendances
 			.map(attendance=>{
