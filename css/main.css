@@ -22,12 +22,14 @@
 
 .lineOn {
 	fill:none;
-	stroke-width:3px
+	stroke-width:1px;
+	stroke-dasharray: 1 2;
 }
 
 .lineOff {
 	fill:none;
-	stroke-width:3px
+	stroke-width:3px;
+	opacity: 0.7;
 }
 
 .lineLabel {

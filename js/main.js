@@ -31,21 +31,21 @@ Vue.component('ysgtb-jumbotron',{
 					<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
 					<br><br>
 					<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
-					<small v-if = "attendee.identifier">It's been over <ysgtb-time :short="false" :millis="now-attendee.identifier"></ysgtb-time> now</small>
+					<small v-if = "attendee.identifier">It's been over <ysgtb-time :mode="'text'" :millis="now-attendee.identifier"></ysgtb-time> now</small>
 				</div>
 			</div>
 			<div class = "container" v-if = "attendances.length > 0">
-				<h4>Grew in grace</h4>
+				<h6>Grew in grace</h6>
 				<ul class="list-group">
 					<li class="list-group-item flex-column align-items-start" v-for = "(attendance, index) in attendances" :class= "{active:attendee.name == attendance.identifier, 'image-background':attendee.name == attendance.identifier}">
 						<div class="d-flex w-100 justify-content-between">
 							<h5 class="mb-1"><span :style="{color:colourScale(attendance.identifier[0])}">•</span>&nbsp;{{attendance.identifier}}</h5>
 							<!--<span class="badge badge-pill badge-dark d-none d-sm-block">{{["Mr Inches' favourite","",""][index]}}</span>-->
-							<ysgtb-time :short = "true" :millis = "attendance.record"></ysgtb-time>
+							<ysgtb-time :mode = "'short'" :millis = "attendance.record"></ysgtb-time>
 						</div>
 						<div class="d-flex w-100 justify-content-between">
-							<small><b>Longest: </b><ysgtb-time :short = "true" :millis = "attendance.longest"></ysgtb-time></small>
-							<small><b>Shortest: </b><ysgtb-time :short = "true" :millis = "attendance.shortest"></ysgtb-time></small>
+							<small><b>Longest: </b><ysgtb-time :mode = "'short'" :millis = "attendance.longest"></ysgtb-time></small>
+							<small v-if = "attendee.name != attendance.identifier"><b>Lead: </b><ysgtb-time :mode = "'lead'" :millis = "attendances.find(attendance=>attendance.identifier==attendee.name).record - attendance.record"></ysgtb-time></small>
 						</div>
 					</li>
 				</ul>
@@ -71,7 +71,7 @@ Vue.component('ysgtb-jumbotron',{
 })
 
 Vue.component('ysgtb-time', {
-	props: ['millis','short'],
+	props: ['millis','mode'],
 	data: ()=>({
 		bands:[
 			{millis:1000*60*60*24*365,measure:"year"},
@@ -84,8 +84,10 @@ Vue.component('ysgtb-time', {
 	}),
 	computed: {
 		time: function(){
-			let parts = this.bands.map(band=>{
-				let rawCount = Math.max(0,this.millis) / band.millis
+			let sign = this.millis > 0 ? "+" : "-"
+			let millis = this.mode == "lead" ? Math.abs(this.millis) : Math.max(0,this.millis)
+			let parts = this.bands.map(band=>{	
+				let rawCount = millis / band.millis
 				rawCount = band.number ? rawCount % band.number : rawCount
 				return {
 					measure: band.measure,
@@ -96,19 +98,21 @@ Vue.component('ysgtb-time', {
 					count : rawCount|0
 				}
 			}).filter(part=>part.count>0 || part.measure == "second")
-			let long = parts[0]
-			let duration = long.count == 1 ? (long.measure == "hour" ? 'an' : 'a') : long.count
-			let andAHalf = long.measure != "second" && (long.fractionalCount >= 0.5) ? " and a half " : " "
-			let before = long.count > 1 ? andAHalf : " "
-			let after = long.count == 1 ? andAHalf : " "
-			let html = parts.map(part=>`${part.count}<sup>${part.shortMeasure}</sup>`).join(" ")
+			let longest = parts[0]
+			let duration = longest.count == 1 ? (longest.measure == "hour" ? 'an' : 'a') : longest.count
+			let andAHalf = longest.measure != "second" && (longest.fractionalCount >= 0.5) ? " and a half " : " "
+			let before = longest.count > 1 ? andAHalf : " "
+			let after = longest.count == 1 ? andAHalf : " "
+			let clazz = this.mode == 'lead' ? this.millis > 0 ? 'green' : 'red' : false
 			return {
-				html: html,
-				text: `${duration}${before}${long.displayMeasure}${after}`
+				lead: `${sign}${longest.count}<sup>${longest.shortMeasure}</sup>`,
+				short: parts.map(part=>`${part.count}<sup>${part.shortMeasure}</sup>`).join(" "),
+				text: `${duration}${before}${longest.displayMeasure}${after}`,
+				clazz: clazz 
 			}
 		}
 	},
-	template:`<span v-if = "millis" v-html="short?time.html:time.text"></span>`
+	template:`<span v-if = "millis" v-html="time[mode]" :class= "time.clazz"></span>`
 })
 
 
@@ -164,6 +168,9 @@ Vue.component('ysgtb-d3', {
 		this.svg.append("g")
 			.attr("class", "y axis")
 			.attr("transform", `translate(0,0)`)
+		
+		d3.selectAll("#d3").node()
+			.scrollLeft = this.fullWidth
 	},
 	watch: {
 		"drawCount": function(){
@@ -247,28 +254,54 @@ Vue.component('ysgtb-d3', {
 				.attr('width', d=>d.width)
 				.attr('x', d=>d.start)
 				.attr("fill", d=>this.colourScale(d.name[0]))
-
 			
-			let lines = this.svg.selectAll('.line')
+			let clips = this.svg.selectAll(".clip")
+				.data(Object.keys(timeLines[0].totals))
+				.join(enter=>enter.append("clipPath").attr("class",d=>`clip ${d}`).attr("id",d=>`clip-${d}`))
+				.selectAll(".clipRect")
+				.data(d=>timeBlocks.filter(block=>block.name==d))
+				.join(enter=>enter.append("rect").attr("class",d=>`clipRect ${d.name}`))
+				.attr("width",d=>d.width)
+				.attr("height",this.lineHeight+5)
+				.attr("x",d=>d.start)
+				.attr("y",this.lineOffset-5)
+			
+			let linesOff = this.svg.selectAll('.lineOff')
 				.data(timeSeries)
 				.join(enter=>enter.append('path'))
-				.attr("class", (d)=>`line ${d[0].name}`)
-				.attr("fill", "none")
-				.attr("stroke-width","3px")
-				.attr("d","")
-				.transition(t)
+				.attr("class", d=>`lineOff ${d[0].name}`)
 				.attr("stroke", (d,i)=>this.colourScale(d[0].name[0]))
 				.attr("d", lineGenerator)
+			
+			let linesOn = this.svg.selectAll('.lineOn')
+				.data(timeSeries)
+				.join(enter=>enter.append('path'))
+				.attr("class", d=>`lineOn ${d[0].name}`)
+				.attr("clip-path", d=>`url(#clip-${d[0].name})`)
+				.attr("id", d=>`line-${d[0].name}`)
+				.attr("stroke", (d,i)=>this.colourScale(d[0].name[0]))
+				.attr("d", lineGenerator)
+			
+
+			
+			/*let lineLabels = this.svg.selectAll('.lineLabel')
+				.data(timeSeries)
+				.join(enter=>enter
+					.append('text')
+					.attr("class", d=>`lineLabel ${d[0].name}`)
+				   	.attr("text-anchor","end")
+					.append('textPath')
+					.attr('xlink:href',d=>`#line-${d[0].name}`)
+					.text(d=>d[0].name)
+				      	.attr("startOffset","100%")
+				 )*/
 			
 			let reporters = this.svg.selectAll('.reporter')
 				.data(timeLines.filter(point=>point.totals[point.name]))
 				.join(enter=>enter.append('circle'))
 				.attr('class',d=>`reporter ${d.name} ${d.reporter}`)
 				.attr('r', 5)
-				.attr('fill', 'rgba(255,255,255,0.5)')
-				.attr('stroke-width','1px')
 				.attr('cy', d=>yScale(d.totals[d.name]))
-				.transition(t)
 				.attr('cx', d=>d.at)
 				.attr('stroke',d=>this.colourScale(d.name[0]))
 			
@@ -278,23 +311,13 @@ Vue.component('ysgtb-d3', {
 				.text(d=>d.reporter)
 				.attr('class', d=>`reporterLabel ${d.name} ${d.reporter}`)
 				.attr('dy', 2.5)
-				.attr('text-anchor','middle')
-				.attr('font-size','8px')
 				.attr('y', d=>yScale(d.totals[d.name]))
-				.transition(t)
 				.attr('x', d=>d.at)
-
-
-			
-			d3.selectAll("#d3").node()
-				.scrollLeft = this.fullWidth
 
 			return true;
 		}
 	}
 })
-
-
 
 
 var app = new Vue({
@@ -350,6 +373,9 @@ var app = new Vue({
 			this.getAttendee()
 			this.getAttendances()
 			this.getTimes()
+		},
+		postVisit(){
+			return this.API("POST","/visits",this.profile)
 		},
 		getAttendee(){
 			return this.API("GET","/attendees/latest",false,attendee=>{
@@ -410,6 +436,7 @@ var app = new Vue({
 			this.profile.url = basicProfile.getImageUrl();
 			this.profile.token = event.getAuthResponse().id_token
 			this.profile.ready = true
+			this.postVisit()
 		},
 		listenFor(key,handler){
 			this.socket.addEventListener("message",event=>{
