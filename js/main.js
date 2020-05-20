@@ -359,11 +359,12 @@ var app = new Vue({
 	computed: {
 		orderedAttendances: function(){
 			let currentAttendance = this.attendances.find(attendance=>attendance.identifier==this.attendee.name)
+			console.log(JSON.stringify(currentAttendance))
 			return this.attendances
 			.map(attendance=>{
 				let a = {...attendance}
-				a.record += (this.attendee.name == a.identifier ? this.now-this.attendee.identifier : 0)
-				if(currentAttendance && this.attendee.name != a.identifier) a.lead = a.record - currentAttendance.record
+				a.record += (this.attendee.name == attendance.identifier ? this.now-this.attendee.identifier : 0)
+				if(currentAttendance && this.attendee.name != attendance.identifier) a.lead = attendance.record - currentAttendance.record
 				return a
 			})
 			.sort((a,b)=>b.record-a.record)
