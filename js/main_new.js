@@ -45,7 +45,7 @@ Vue.component('ysgtb-jumbotron',{
 						</div>
 						<div class="d-flex w-100 justify-content-between">
 							<small><b>Longest: </b><ysgtb-time :mode = "'short'" :millis = "attendance.longest"></ysgtb-time></small>
-							<small v-if = "attendee.name != attendance.identifier"><b>Lead: </b><ysgtb-time :mode = "'lead'" :millis = "attendances.find(attendance=>attendance.identifier==attendee.name).record - attendance.record"></ysgtb-time></small>
+							<small v-if = "attendance.lead"><b>Lead: </b><ysgtb-time :mode = "'lead'" :millis = "attendance.lead"></ysgtb-time></small>
 						</div>
 					</li>
 				</ul>
@@ -358,10 +358,12 @@ var app = new Vue({
 	},
 	computed: {
 		orderedAttendances: function(){
+			let currentAttendance = this.attendances.find(attendance=>attendance.identifier==this.attendee.name)
 			return this.attendances
 			.map(attendance=>{
 				let a = {...attendance}
 				a.record += (this.attendee.name == a.identifier ? this.now-this.attendee.identifier : 0)
+				a.lead = this.attendee.name == a.identifier ? false : a.record - currentAttendance.record 
 				return a
 			})
 			.sort((a,b)=>b.record-a.record)
