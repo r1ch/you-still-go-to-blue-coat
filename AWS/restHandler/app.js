@@ -67,9 +67,17 @@ router.post('/attendees', asyncHandler(async (req, res) => {
 
 router.post('/visits', asyncHandler(async (req, res) => {
     let visit = new Visit();
-    visit.identifier = (new Date()).getTime()
-    visit.name = req.body.name
+    visit.identifier = req.body.name
+    visit.time = (new Date()).getTime()
     mapper.update(visit,{onMissing: 'skip'}).then(res.json.bind(res))
+}))
+
+router.get('/visits', asyncHandler(async (req, res) => {
+    let visits = []
+    for await (const visit of mapper.query(Visit, {recordType: 'VISIT'}, {scanIndexForward:false, limit:3})){
+        visits.push(visit)
+    }
+    res.json(visits)
 }))
 
 app.use('/', router)
@@ -158,7 +166,7 @@ Object.defineProperties(Visit.prototype, {
                   keyType: 'RANGE',
                   defaultProvider: v4
             },
-            name: {type: 'String'},
+            time: {type: 'String'},
             TTL: {type : 'Number'}
         },
     },
