@@ -35,7 +35,6 @@ Vue.component('ysgtb-jumbotron',{
 				</div>
 			</div>
 			<div class = "container" v-if = "attendances.length > 0">
-				<h4>Grew in grace</h4>
 				<ul class="list-group">
 					<li class="list-group-item flex-column align-items-start" v-for = "(attendance, index) in attendances" :class= "{active:attendee.name == attendance.identifier, 'image-background':attendee.name == attendance.identifier}">
 						<div class="d-flex w-100 justify-content-between">
