@@ -35,7 +35,7 @@ Vue.component('ysgtb-jumbotron',{
 				</div>
 			</div>
 			<div class = "container" v-if = "attendances.length > 0">
-				<h4>Grew in grace</h4>
+				<h6>Grew in grace</h6>
 				<ul class="list-group">
 					<li class="list-group-item flex-column align-items-start" v-for = "(attendance, index) in attendances" :class= "{active:attendee.name == attendance.identifier, 'image-background':attendee.name == attendance.identifier}">
 						<div class="d-flex w-100 justify-content-between">
@@ -168,6 +168,9 @@ Vue.component('ysgtb-d3', {
 		this.svg.append("g")
 			.attr("class", "y axis")
 			.attr("transform", `translate(0,0)`)
+		
+		d3.selectAll("#d3").node()
+			.scrollLeft = this.fullWidth
 	},
 	watch: {
 		"drawCount": function(){
@@ -259,9 +262,9 @@ Vue.component('ysgtb-d3', {
 				.data(d=>timeBlocks.filter(block=>block.name==d))
 				.join(enter=>enter.append("rect").attr("class",d=>`clipRect ${d.name}`))
 				.attr("width",d=>d.width)
-				.attr("height",this.lineHeight)
+				.attr("height",this.lineHeight+5)
 				.attr("x",d=>d.start)
-				.attr("y",this.lineOffset)
+				.attr("y",this.lineOffset-5)
 			
 			let linesOff = this.svg.selectAll('.lineOff')
 				.data(timeSeries)
@@ -310,9 +313,6 @@ Vue.component('ysgtb-d3', {
 				.attr('dy', 2.5)
 				.attr('y', d=>yScale(d.totals[d.name]))
 				.attr('x', d=>d.at)
-			
-			d3.selectAll("#d3").node()
-				.scrollLeft = this.fullWidth
 
 			return true;
 		}
@@ -374,6 +374,9 @@ var app = new Vue({
 			this.getAttendances()
 			this.getTimes()
 		},
+		postVisit(){
+			return this.API("POST","/visits",this.profile)
+		},
 		getAttendee(){
 			return this.API("GET","/attendees/latest",false,attendee=>{
 					this.attendee=attendee
@@ -433,6 +436,7 @@ var app = new Vue({
 			this.profile.url = basicProfile.getImageUrl();
 			this.profile.token = event.getAuthResponse().id_token
 			this.profile.ready = true
+			this.postVisit()
 		},
 		listenFor(key,handler){
 			this.socket.addEventListener("message",event=>{
