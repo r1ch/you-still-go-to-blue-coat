@@ -355,15 +355,17 @@ var app = new Vue({
 		this.redrawer = setInterval(()=>this.drawCount++,30*1000)
 		this.listenFor("ATTENDEE",this.update)
 		this.listenFor("ATTENDANCE",this.update)
+		this.postVisit()
 	},
 	computed: {
 		orderedAttendances: function(){
-			let currentAttendance = this.attendances.find(attendance=>attendance.identifier==this.attendee.name)
+			let currentAttendance = {... this.attendances.find(attendance=>attendance.identifier==this.attendee.name)}
+			currentAttendance.record += this.now - this.attendee.identifier
 			return this.attendances
 			.map(attendance=>{
 				let a = {...attendance}
-				a.record += (this.attendee.name == a.identifier ? this.now-this.attendee.identifier : 0)
-				if(currentAttendance && this.attendee.name != a.identifier) a.lead = a.record - currentAttendance.record
+				if(attendance.identifier == currentAttendance.identifier) a.record = currentAttendance.record
+				else a.lead = currentAttendance.record - a.record
 				return a
 			})
 			.sort((a,b)=>b.record-a.record)
