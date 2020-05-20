@@ -74,7 +74,7 @@ router.post('/visits', asyncHandler(async (req, res) => {
 
 router.get('/visits', asyncHandler(async (req, res) => {
     let visits = []
-    for await (const visit of mapper.query(Visit, {recordType: 'VISIT'}, {scanIndexForward:false, limit:3})){
+    for await (const visit of mapper.query(Visit, {recordType: 'VISIT'}, {scanIndexForward:false, limit:10})){
         visits.push(visit)
     }
     res.json(visits)
