@@ -374,6 +374,9 @@ var app = new Vue({
 			this.getAttendances()
 			this.getTimes()
 		},
+		postVisit(){
+			return this.API("POST","/visits",this.profile)
+		},
 		getAttendee(){
 			return this.API("GET","/attendees/latest",false,attendee=>{
 					this.attendee=attendee
@@ -433,6 +436,7 @@ var app = new Vue({
 			this.profile.url = basicProfile.getImageUrl();
 			this.profile.token = event.getAuthResponse().id_token
 			this.profile.ready = true
+			this.postVisit()
 		},
 		listenFor(key,handler){
 			this.socket.addEventListener("message",event=>{
