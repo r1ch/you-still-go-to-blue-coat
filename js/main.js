@@ -355,6 +355,7 @@ var app = new Vue({
 		this.redrawer = setInterval(()=>this.drawCount++,30*1000)
 		this.listenFor("ATTENDEE",this.update)
 		this.listenFor("ATTENDANCE",this.update)
+		this.postVisit()
 	},
 	computed: {
 		orderedAttendances: function(){
