@@ -364,7 +364,7 @@ var app = new Vue({
 			.map(attendance=>{
 				let a = {...attendance}
 				if(attendance.identifier == currentAttendance.identifier) a.record = currentAttendance.record
-				else a.lead = a.record - currentAttendance.record
+				else a.lead = currentAttendance.record - a.record
 				return a
 			})
 			.sort((a,b)=>b.record-a.record)
