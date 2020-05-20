@@ -360,10 +360,11 @@ var app = new Vue({
 		orderedAttendances: function(){
 			let currentAttendance = this.attendances.find(attendance=>attendance.identifier==this.attendee.name)
 			if(!currentAttendance) return []
+			currentAttendance.record += this.now - this.attendee.identifier
 			return this.attendances
 			.map(attendance=>{
 				let a = {...attendance}
-				if(attendance.identifier == this.attendee.name) a.record = currentAttendance.record
+				if(attendance.identifier == currentAttendance.identifier) a.record = currentAttendance.record
 				else a.lead = a.record - currentAttendance.record
 				return a
 			})
