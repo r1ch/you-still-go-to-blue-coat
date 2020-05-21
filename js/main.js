@@ -350,11 +350,11 @@ var app = new Vue({
 		this.timer = setInterval(()=>{this.now = (new Date()).getTime()},1000)
 		this.update()
 		this.refresher && clearInterval(this.refresher)
-		this.refresher = setInterval(this.update,5*60*1000)
+		this.refresher = setInterval(this.refresh,5*60*1000)
 		this.redrawer && clearInterval(this.redrawer)
-		this.redrawer = setInterval(()=>this.drawCount++,30*1000)
-		this.listenFor("ATTENDEE",this.update)
-		this.listenFor("ATTENDANCE",this.update)
+		this.redrawer = setInterval(()=>this.drawCount++,10*1000)
+		this.listenFor("ATTENDEE",this.refresh)
+		this.listenFor("ATTENDANCE",this.refresh)
 	},
 	computed: {
 		orderedAttendances: function(){
@@ -376,6 +376,12 @@ var app = new Vue({
 			this.getAttendee()
 			this.getAttendances()
 			this.getTimes()
+		},
+		refresh(){
+			this.drawCount = 0;
+			this.getAttendee()
+			.then(this.getAttendances)
+			.then(this.getTimes)
 		},
 		postVisit(){
 			return this.API("POST","/visits",this.profile)
@@ -409,7 +415,7 @@ var app = new Vue({
 			},attendee=>{
 				this.attendee=attendee
 				this.loadedAttendeeName=attendee.name
-				this.update()
+				this.refresh()
 			})
 		},1500),
 		connectSocket(){
