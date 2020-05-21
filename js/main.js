@@ -214,7 +214,6 @@ Vue.component('ysgtb-d3', {
 				if(totals[time.name]) totals[time.name] -= (parseInt(time.to) - parseInt(time.from))
 				return output
 			})
-			.filter(output=>output.width>0.05)
 			.reverse()
 			
 			timeLines[0].at = timeBlocks[0].start
