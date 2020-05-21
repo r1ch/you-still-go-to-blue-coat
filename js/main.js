@@ -187,6 +187,7 @@ Vue.component('ysgtb-d3', {
 			let xScale = d3.scaleTime()
 				.domain([this.times[0].from,this.times[this.times.length-1].to])
 				.range([0, this.width])
+				.nice()
 
 			let xAxis = d3.axisBottom(xScale)
 				.ticks(this.ticks)
