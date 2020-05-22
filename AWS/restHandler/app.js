@@ -29,6 +29,37 @@ router.use(bodyParser.json())
 router.use(bodyParser.urlencoded({ extended: true }))
 router.use(awsServerlessExpressMiddleware.eventContext())
 
+const getLatestAttendee = async()=>{
+    let attendees = []
+    for await (const attendee of mapper.query(Attendee, {recordType: 'ATTENDEE'}, {scanIndexForward:false, limit:1})){
+        attendees.push(attendee)
+    }
+    return attendees[0]
+}
+
+const getAttendances = async()=>{
+    let attendances = []
+    for await (const attendance of mapper.query(Attendance, {recordType: 'ATTENDANCE'}, {indexName: 'index', scanIndexForward:false, limit:3})){
+        attendances.push(attendance)
+    }
+    return attendances
+}
+
+const getTimes = async()=>{
+    let times = []
+    for await (const attendee of mapper.query(Attendee, {recordType: 'ATTENDEE'}, {scanIndexForward:false, limit: 60})){
+        times.unshift({name: attendee.name, from: attendee.identifier, reporter: attendee.reporter[0]})
+        times[1] && (times[0].to = times[1].from)
+    }
+    times[times.length-1].to = (new Date()).getTime()
+    return times
+}
+
+router.get('/all', asyncHandler(async (req, res) => {
+    Promise.all([getLatestAttendee(),getAttendances(),getTimes()])
+    .then(res.json.bind(res))
+}))
+
 router.get('/attendees/latest', asyncHandler(async (req, res) => {
     let attendees = []
     for await (const attendee of mapper.query(Attendee, {recordType: 'ATTENDEE'}, {scanIndexForward:false, limit:1})){

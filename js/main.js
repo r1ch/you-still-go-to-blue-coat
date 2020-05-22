@@ -174,15 +174,14 @@ Vue.component('ysgtb-d3', {
 	},
 	watch: {
 		"drawCount": function(){
-			console.log(`Trigger: ${this.drawCount}`)
-			if(this.drawCount >= (8|16|32)) this.draw()
+			this.draw()
 		}
 	},
 	methods: {
 		draw() {		
 			console.log("Drawing")
 			
-			const t = this.svg.transition().duration(this.drawCount > (8|16|32)  ? 750 : 0)
+			const t = this.svg.transition().duration(this.drawCount >= 1  ? 750 : 0)
 			
 			let xScale = d3.scaleTime()
 				.domain([this.times[0].from,this.times[this.times.length-1].to])
@@ -349,11 +348,11 @@ var app = new Vue({
 		this.timer = setInterval(()=>{this.now = (new Date()).getTime()},1000)
 		this.update()
 		this.refresher && clearInterval(this.refresher)
-		this.refresher = setInterval(this.refresh,5*60*1000)
+		this.refresher = setInterval(this.update,5*60*1000)
 		this.redrawer && clearInterval(this.redrawer)
 		this.redrawer = setInterval(()=>this.drawCount++,10*1000)
-		this.listenFor("ATTENDEE",this.refresh)
-		this.listenFor("ATTENDANCE",this.refresh)
+		this.listenFor("ATTENDEE",this.update)
+		this.listenFor("ATTENDANCE",this.update)
 	},
 	computed: {
 		orderedAttendances: function(){
@@ -371,36 +370,20 @@ var app = new Vue({
 	},
 	methods:{
 		update(){
-			this.drawCount = 0;
-			this.getAttendee()
-			this.getAttendances()
-			this.getTimes()
-		},
-		refresh(){
-			this.drawCount = 0;
-			this.getAttendee()
-			.then(this.getAttendances)
-			.then(this.getTimes)
+			this.getAll()
 		},
 		postVisit(){
 			return this.API("POST","/visits",this.profile)
 		},
-		getAttendee(){
-			return this.API("GET","/attendees/latest",false,attendee=>{
-					this.attendee=attendee
-					this.loadedAttendeeName=this.attendee.name
+		getAll(){
+			return this.API("GET","/all",false,([attendee,attendances,times])=>{
+				this.attendee = attendee
+				this.loadedAttendeeName=this.attendee.name
+				this.attendances = attendances
+				this.times = times
+				this.drawCount++
 			})
-			.then(()=>this.drawCount|=8)
 		},
-		getAttendances(){
-			return this.API("GET","/times",false,times=>this.times=times)
-			.then(()=>this.drawCount|=16)
-		},
-		getTimes(){
-			return this.API("GET","/attendances",false,attendances=>this.attendances=attendances)
-			.then(()=>this.drawCount|=32)
-		},
-		
 		startAuthentication(){
 			if(this.profile.ready) return
 			else Authenticator.then(GoogleAuth=>GoogleAuth.signIn())
@@ -411,11 +394,7 @@ var app = new Vue({
 			this.API("POST","/attendees",{
 				attendee:this.attendee,
 				reporter:this.profile
-			},attendee=>{
-				this.attendee=attendee
-				this.loadedAttendeeName=attendee.name
-				this.refresh()
-			})
+			},this.getAll)
 		},1500),
 		connectSocket(){
 			this.socket = new WebSocket(window.config.socketGatewayUrl + window.config.socketGatewayPath)
