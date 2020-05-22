@@ -369,9 +369,9 @@ var app = new Vue({
 		}
 	},
 	methods:{
-		update(){
+		update:  _.debounce(function(){
 			this.getAll()
-		},
+		},1000),
 		postVisit(){
 			return this.API("POST","/visits",this.profile)
 		},
