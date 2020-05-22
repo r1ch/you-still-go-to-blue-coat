@@ -370,7 +370,7 @@ var app = new Vue({
 	},
 	methods:{
 		update(){
-			this.drawCount = 0;
+			this.getAll()
 		},
 		postVisit(){
 			return this.API("POST","/visits",this.profile)
@@ -394,9 +394,7 @@ var app = new Vue({
 			this.API("POST","/attendees",{
 				attendee:this.attendee,
 				reporter:this.profile
-			},()=>{
-				this.getAll()
-			})
+			},this.getAll)
 		},1500),
 		connectSocket(){
 			this.socket = new WebSocket(window.config.socketGatewayUrl + window.config.socketGatewayPath)
