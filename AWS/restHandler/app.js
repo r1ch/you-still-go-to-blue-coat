@@ -61,31 +61,17 @@ router.get('/all', asyncHandler(async (req, res) => {
 }))
 
 router.get('/attendees/latest', asyncHandler(async (req, res) => {
-    let attendees = []
-    for await (const attendee of mapper.query(Attendee, {recordType: 'ATTENDEE'}, {scanIndexForward:false, limit:1})){
-        attendees.push(attendee)
-    }
-    res.json(attendees[0])
+    getLatestAttendee().then(res.json.bind(res))
 }))
 
 
 router.get('/attendances', asyncHandler(async (req, res) => {
-    let attendances = []
-    for await (const attendance of mapper.query(Attendance, {recordType: 'ATTENDANCE'}, {indexName: 'index', scanIndexForward:false, limit:3})){
-        attendances.push(attendance)
-    }
-    res.json(attendances)
+    getAttendances().then(res.json.bind(res))
 }))
 
 
 router.get('/times', asyncHandler(async (req, res) => {
-    let times = []
-    for await (const attendee of mapper.query(Attendee, {recordType: 'ATTENDEE'}, {scanIndexForward:false, limit: 60})){
-        times.unshift({name: attendee.name, from: attendee.identifier, reporter: attendee.reporter[0]})
-        times[1] && (times[0].to = times[1].from)
-    }
-    times[times.length-1].to = (new Date()).getTime()
-    res.json(times)
+    getTimes().then(res.json.bind(res))
 }))
 
 router.post('/attendees', asyncHandler(async (req, res) => {
