@@ -174,15 +174,14 @@ Vue.component('ysgtb-d3', {
 	},
 	watch: {
 		"drawCount": function(){
-			console.log(`Trigger: ${this.drawCount}`)
-			if(this.drawCount >= (8|16|32)) this.draw()
+			this.draw()
 		}
 	},
 	methods: {
 		draw() {		
 			console.log("Drawing")
 			
-			const t = this.svg.transition().duration(this.drawCount > (8|16|32)  ? 750 : 0)
+			const t = this.svg.transition().duration(this.drawCount >= 1  ? 750 : 0)
 			
 			let xScale = d3.scaleTime()
 				.domain([this.times[0].from,this.times[this.times.length-1].to])
@@ -214,7 +213,6 @@ Vue.component('ysgtb-d3', {
 				if(totals[time.name]) totals[time.name] -= (parseInt(time.to) - parseInt(time.from))
 				return output
 			})
-			.filter(output=>output.width>0.05)
 			.reverse()
 			
 			timeLines[0].at = timeBlocks[0].start
@@ -352,18 +350,19 @@ var app = new Vue({
 		this.refresher && clearInterval(this.refresher)
 		this.refresher = setInterval(this.update,5*60*1000)
 		this.redrawer && clearInterval(this.redrawer)
-		this.redrawer = setInterval(()=>this.drawCount++,30*1000)
+		this.redrawer = setInterval(()=>this.drawCount++,10*1000)
 		this.listenFor("ATTENDEE",this.update)
 		this.listenFor("ATTENDANCE",this.update)
 	},
 	computed: {
 		orderedAttendances: function(){
-			let currentAttendance = this.attendances.find(attendance=>attendance.identifier==this.attendee.name)
+			let currentAttendance = {... this.attendances.find(attendance=>attendance.identifier==this.attendee.name)}
+			currentAttendance.record += this.now - this.attendee.identifier
 			return this.attendances
 			.map(attendance=>{
 				let a = {...attendance}
-				a.record += (this.attendee.name == a.identifier ? this.now-this.attendee.identifier : 0)
-				if(currentAttendance && this.attendee.name != a.identifier) a.lead = a.record - currentAttendance.record
+				if(attendance.identifier == currentAttendance.identifier) a.record = currentAttendance.record
+				else a.lead = currentAttendance.record - a.record
 				return a
 			})
 			.sort((a,b)=>b.record-a.record)
@@ -372,29 +371,19 @@ var app = new Vue({
 	methods:{
 		update(){
 			this.drawCount = 0;
-			this.getAttendee()
-			this.getAttendances()
-			this.getTimes()
 		},
 		postVisit(){
 			return this.API("POST","/visits",this.profile)
 		},
-		getAttendee(){
-			return this.API("GET","/attendees/latest",false,attendee=>{
-					this.attendee=attendee
-					this.loadedAttendeeName=this.attendee.name
+		getAll(){
+			return this.API("GET","/all",false,([attendee,attendances,times])=>{
+				this.attendee = attendee
+				this.loadedAttendeeName=this.attendee.name
+				this.attendances = attendances
+				this.times = times
+				this.drawCount++
 			})
-			.then(()=>this.drawCount|=8)
 		},
-		getAttendances(){
-			return this.API("GET","/times",false,times=>this.times=times)
-			.then(()=>this.drawCount|=16)
-		},
-		getTimes(){
-			return this.API("GET","/attendances",false,attendances=>this.attendances=attendances)
-			.then(()=>this.drawCount|=32)
-		},
-		
 		startAuthentication(){
 			if(this.profile.ready) return
 			else Authenticator.then(GoogleAuth=>GoogleAuth.signIn())
@@ -405,10 +394,8 @@ var app = new Vue({
 			this.API("POST","/attendees",{
 				attendee:this.attendee,
 				reporter:this.profile
-			},attendee=>{
-				this.attendee=attendee
-				this.loadedAttendeeName=attendee.name
-				this.update()
+			},()=>{
+				this.getAll()
 			})
 		},1500),
 		connectSocket(){
