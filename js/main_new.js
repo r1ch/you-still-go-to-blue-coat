@@ -369,7 +369,7 @@ var app = new Vue({
 		}
 	},
 	methods:{
-		update:  _.debounce(function(){
+		update:  _.throttle(function(){
 			this.getAll()
 		},1000),
 		postVisit(){
