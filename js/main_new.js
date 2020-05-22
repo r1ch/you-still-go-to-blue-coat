@@ -394,7 +394,7 @@ var app = new Vue({
 			this.API("POST","/attendees",{
 				attendee:this.attendee,
 				reporter:this.profile
-			},this.getAll)
+			},this.update)
 		},1500),
 		connectSocket(){
 			this.socket = new WebSocket(window.config.socketGatewayUrl + window.config.socketGatewayPath)
