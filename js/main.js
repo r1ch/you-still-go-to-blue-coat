@@ -35,7 +35,6 @@ Vue.component('ysgtb-jumbotron',{
 				</div>
 			</div>
 			<div class = "container" v-if = "attendances.length > 0">
-				<h6>Grew in grace</h6>
 				<ul class="list-group">
 					<li class="list-group-item flex-column align-items-start" v-for = "(attendance, index) in attendances" :class= "{active:attendee.name == attendance.identifier, 'image-background':attendee.name == attendance.identifier}">
 						<div class="d-flex w-100 justify-content-between">
@@ -369,9 +368,9 @@ var app = new Vue({
 		}
 	},
 	methods:{
-		update(){
+		update:  _.throttle(function(){
 			this.getAll()
-		},
+		},1000),
 		postVisit(){
 			return this.API("POST","/visits",this.profile)
 		},
@@ -394,7 +393,7 @@ var app = new Vue({
 			this.API("POST","/attendees",{
 				attendee:this.attendee,
 				reporter:this.profile
-			},this.getAll)
+			},this.update)
 		},1500),
 		connectSocket(){
 			this.socket = new WebSocket(window.config.socketGatewayUrl + window.config.socketGatewayPath)
@@ -458,4 +457,4 @@ var app = new Vue({
 			</ysgtb-d3>
 		</div>
 	`
-})	
+})
