@@ -6,10 +6,6 @@
 	margin-bottom: 10px;
 }
 
-.leaderLabel{
-	font-size: 0.5rem;
-}
-
 .attendee-name {
 	display:inline;
 	font-size: 2.5rem;
@@ -41,9 +37,7 @@
 }
 
 .lineLabel {
-	alignment-baseline:center;
-	font-size: 3rem;
-	fill:#ffffff;
+	font-size: .5rem;
 }
 
 .reporter {
