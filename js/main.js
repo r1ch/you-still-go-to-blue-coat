@@ -286,6 +286,7 @@ Vue.component('ysgtb-d3', {
 				.join(enter=>enter
 					.append('text')
 					.attr("class", d=>`lineLabel ${d[0].name}`)
+				      	.attr("dy", -2)
 				        .attr("fill", (d,i)=>this.colourScale(d[0].name[0]))
 				   	.attr("text-anchor","end")
 					.append('textPath')
