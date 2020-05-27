@@ -281,17 +281,18 @@ Vue.component('ysgtb-d3', {
 			
 
 			
-			/*let lineLabels = this.svg.selectAll('.lineLabel')
+			let lineLabels = this.svg.selectAll('.lineLabels')
 				.data(timeSeries)
 				.join(enter=>enter
 					.append('text')
 					.attr("class", d=>`lineLabel ${d[0].name}`)
+				        .attr("fill", (d,i)=>this.colourScale(d[0].name[0]))
 				   	.attr("text-anchor","end")
 					.append('textPath')
 					.attr('xlink:href',d=>`#line-${d[0].name}`)
-					.text(d=>d[0].name)
+					.text((d,i)=>i>0?"":d[0].name)
 				      	.attr("startOffset","100%")
-				 )*/
+				 )
 			
 			let reporters = this.svg.selectAll('.reporter')
 				.data(timeLines.filter(point=>point.totals[point.name]))
