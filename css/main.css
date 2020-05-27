@@ -2,6 +2,10 @@
 	margin: 0px auto 0 auto;
 }
 
+.jumbotron{
+	margin-bottom: 10px;
+}
+
 .attendee-name {
 	display:inline;
 	font-size: 2.5rem;
