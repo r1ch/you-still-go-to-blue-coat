@@ -281,7 +281,7 @@ Vue.component('ysgtb-d3', {
 			
 
 			
-			let lineLabels = this.svg.selectAll('.lineLabels')
+			let lineLabels = this.svg.selectAll('.lineLabel')
 				.data(timeSeries)
 				.join(enter=>enter
 					.append('text')
