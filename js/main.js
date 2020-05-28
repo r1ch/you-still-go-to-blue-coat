@@ -267,6 +267,7 @@ Vue.component('ysgtb-d3', {
 				.data(timeSeries)
 				.join(enter=>enter.append('path'))
 				.attr("class", d=>`lineOff ${d[0].name}`)
+				.attr("id", d=>`lineOff-${d[0].name}`)
 				.attr("stroke", (d,i)=>this.colourScale(d[0].name[0]))
 				.attr("d", lineGenerator)
 			
@@ -275,7 +276,7 @@ Vue.component('ysgtb-d3', {
 				.join(enter=>enter.append('path'))
 				.attr("class", d=>`lineOn ${d[0].name}`)
 				.attr("clip-path", d=>`url(#clip-${d[0].name})`)
-				.attr("id", d=>`line-${d[0].name}`)
+				.attr("id", d=>`lineOn-${d[0].name}`)
 				.attr("stroke", (d,i)=>this.colourScale(d[0].name[0]))
 				.attr("d", lineGenerator)
 			
@@ -290,8 +291,8 @@ Vue.component('ysgtb-d3', {
 				        .attr("fill", (d,i)=>this.colourScale(d[0].name[0]))
 				   	.attr("text-anchor","end")
 					.append('textPath')
-					.attr('xlink:href',d=>`#line-${d[0].name}`)
-					.text((d,i)=>i>0?"":`${d[0].name} : growing in grace`)
+					.attr('xlink:href',d=>`#lineOn-${d[0].name}`)
+					.text((d,i)=>i>0?`${d[0].name}`:`${d[0].name} : growing in grace`)
 				      	.attr("startOffset","0%")
 				        .call(enter => enter.transition(d3.transition().duration(7500).ease(d3.easeCubicOut)).attr("startOffset","100%"))
 				 )
