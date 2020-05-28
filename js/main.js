@@ -293,7 +293,7 @@ Vue.component('ysgtb-d3', {
 					.attr('xlink:href',d=>`#line-${d[0].name}`)
 					.text((d,i)=>i>0?"":`${d[0].name} : growing in grace`)
 				      	.attr("startOffset","0%")
-				        .call(enter => enter.transition(d3.transition().duration(7500)).attr("startOffset","100%"))
+				        .call(enter => enter.transition(d3.transition().duration(7500).ease(d3.easeCubicOut)).attr("startOffset","100%"))
 				 )
 			
 			let reporters = this.svg.selectAll('.reporter')
