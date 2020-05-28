@@ -291,7 +291,7 @@ Vue.component('ysgtb-d3', {
 				   	.attr("text-anchor","end")
 					.append('textPath')
 					.attr('xlink:href',d=>`#line-${d[0].name}`)
-					.text((d,i)=>i>0?"":d[0].name)
+					.text((d,i)=>i>0?"":`Grow in Grace ${d[0].name}`)
 				      	.attr("startOffset","100%")
 				 )
 			
