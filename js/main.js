@@ -292,6 +292,8 @@ Vue.component('ysgtb-d3', {
 					.append('textPath')
 					.attr('xlink:href',d=>`#line-${d[0].name}`)
 					.text((d,i)=>i>0?"":`${d[0].name} : growing in grace`)
+				      	.attr("startOffset","0%")
+				      	.transition(d3.transition.duration(3000))
 				      	.attr("startOffset","100%")
 				 )
 			
