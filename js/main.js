@@ -369,12 +369,7 @@ var app = new Vue({
 				return a
 			})
 			.sort((a,b)=>b.record-a.record)
-		},
-		adjustedTimes : function(){
-			let times = this.times.slice(0)
-			times[times.length-1].to = this.now
-			return times
-		}
+		}	
 	},
 	methods:{
 		update:  _.throttle(function(){
@@ -458,7 +453,7 @@ var app = new Vue({
 				:colourScale="colourScale">
 			</ysgtb-jumbotron>
 			<ysgtb-d3 
-				:times = "adjustedTimes"
+				:times = "times"
 				:attendances = "orderedAttendances"
 				:profile="profile"
 				:colourScale="colourScale"
