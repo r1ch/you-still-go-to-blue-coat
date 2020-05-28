@@ -369,7 +369,11 @@ var app = new Vue({
 				return a
 			})
 			.sort((a,b)=>b.record-a.record)
-		}	
+		},
+		adjustedTimes: function(){
+			return this.times.length == 0 ? [] : this.times[this.times.length-1].to = this.now
+			
+		}
 	},
 	methods:{
 		update:  _.throttle(function(){
