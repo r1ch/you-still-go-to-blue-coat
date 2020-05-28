@@ -348,7 +348,7 @@ var app = new Vue({
 			else GoogleAuth.currentUser.listen(this.userReady)		
 		})
 		this.timer && clearInterval(this.timer)
-		this.timer = setInterval(()=>{this.now = (new Date()).getTime()},1000)
+		this.timer = setInterval(this.tick,1000)
 		this.update()
 		this.refresher && clearInterval(this.refresher)
 		this.refresher = setInterval(this.update,5*60*1000)
@@ -369,13 +369,13 @@ var app = new Vue({
 				return a
 			})
 			.sort((a,b)=>b.record-a.record)
-		},
-		adjustedTimes: function(){
-			return this.times.length == 0 ? [] : this.times[this.times.length-1].to = this.now
-			
 		}
 	},
 	methods:{
+		tick(){
+			this.now = (new Date()).getTime()
+			this.times && this.times[this.times.length-1] && this.times[this.times.length-1].to = this.now
+		},
 		update:  _.throttle(function(){
 			this.getAll()
 		},1000),
