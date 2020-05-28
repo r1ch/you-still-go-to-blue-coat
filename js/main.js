@@ -374,6 +374,7 @@ var app = new Vue({
 	methods:{
 		tick(){
 			this.now = (new Date()).getTime()
+			this.times && this.times[this.times.length-1] && (this.times[this.times.length-1].to = this.now)
 		},
 		update:  _.throttle(function(){
 			this.getAll()
