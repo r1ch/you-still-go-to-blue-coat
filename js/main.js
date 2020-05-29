@@ -30,8 +30,7 @@ Vue.component('ysgtb-jumbotron',{
 					<input @keyup = "newAttendee" class="form-control form-control-lg col-6 col-md-3 attendee-name" type="text" v-model="attendee.name" @click = "startAuthentication" :class = "{'btn-outline-success':!profile.ready}">
 					<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
 					<br><br>
-					<p class="lead" v-if = "attendee.reporter"><i>... according to {{attendee.reporter}}</i></p>
-					<small v-if = "attendee.identifier">It's been over <ysgtb-time :mode="'text'" :millis="now-attendee.identifier"></ysgtb-time> now</small>
+					<p class="lead" v-if = "attendee.reporter"><i>... according to {{attendee.reporter}}, over <ysgtb-time :mode="'text'" :millis="now-attendee.identifier"> ago</ysgtb-time></i><p>
 				</div>
 			</div>
 			<div class = "container" v-if = "attendances.length > 0">
