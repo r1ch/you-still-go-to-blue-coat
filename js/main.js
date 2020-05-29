@@ -102,7 +102,7 @@ Vue.component('ysgtb-time', {
 			let before = longest.count > 1 ? andAHalf : " "
 			let after = longest.count == 1 ? andAHalf : " "
 			let clazz = this.mode == 'lead' ? this.millis > 0 ? 'green' : 'red' : false
-			let itsNow = longest.measure == "seconds" && longest.count < 1
+			let itsNow = longest.measure == "second" && longest.count < 1
 			return {
 				lead: `${sign}${longest.count}<sup>${longest.shortMeasure}</sup>`,
 				short: parts.map(part=>`${part.count}<sup>${part.shortMeasure}</sup>`).join(" "),
