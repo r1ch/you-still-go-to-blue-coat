@@ -288,18 +288,21 @@ Vue.component('ysgtb-d3', {
 					.append('text')
 					.attr("class", d=>`lineLabel ${d[0].name}`)
 					.attr("dy",-2)
-					.attr("fill", d=>this.colourScale(d[0].name[0]))
 					.attr("text-anchor","end")
 					.append('textPath')
+				      	.attr("startOffset","0%")
+				      	.attr("fill", d=>this.colourScale(d[0].name[0]))
 					.attr('xlink:href',d=>`#lineOff-${d[0].name}`)
-					.attr("startOffset","0%")
 				      	.text((d,i)=>i>0?"":`${d[0].name} : growing in grace`)
 					.call(
 						enter=>enter
 						.transition(d3.transition().duration(7500).ease(d3.easeCubicOut))
 						.attr("startOffset","100%")
 					),
-				      update=>update.text((d,i)=>i>0?"":`${d[0].name} : growing in grace`)
+				      update=>update
+					.attr("fill", d=>this.colourScale(d[0].name[0]))
+					.attr('xlink:href',d=>`#lineOff-${d[0].name}`)
+					.text((d,i)=>i>0?"":`${d[0].name} : growing in grace`)
 				 )
 			
 			let reporters = this.svg.selectAll('.reporter')
