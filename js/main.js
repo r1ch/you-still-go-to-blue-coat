@@ -30,7 +30,7 @@ Vue.component('ysgtb-jumbotron',{
 					<input @keyup = "newAttendee" class="form-control form-control-lg col-6 col-md-3 attendee-name" type="text" v-model="attendee.name" @click = "startAuthentication" :class = "{'btn-outline-success':!profile.ready}">
 					<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
 					<br><br>
-					<p class="lead" v-if = "attendee.reporter"><i>... according to {{attendee.reporter}}, over <ysgtb-time :mode="'text'" :millis="now-attendee.identifier"> ago</ysgtb-time></i><p>
+					<p class="lead" v-if = "attendee.reporter"><i>... according to {{attendee.reporter}}, <ysgtb-time :mode="'text'" :millis="now-attendee.identifier"></ysgtb-time></i><p>
 				</div>
 			</div>
 			<div class = "container" v-if = "attendances.length > 0">
@@ -102,10 +102,11 @@ Vue.component('ysgtb-time', {
 			let before = longest.count > 1 ? andAHalf : " "
 			let after = longest.count == 1 ? andAHalf : " "
 			let clazz = this.mode == 'lead' ? this.millis > 0 ? 'green' : 'red' : false
+			let itsNow = longest.measure == "seconds" && longest.count < 1
 			return {
 				lead: `${sign}${longest.count}<sup>${longest.shortMeasure}</sup>`,
 				short: parts.map(part=>`${part.count}<sup>${part.shortMeasure}</sup>`).join(" "),
-				text: `${duration}${before}${longest.displayMeasure}${after}`,
+				text: itsNow ? "now" : `over ${duration}${before}${longest.displayMeasure}${after} ago`,
 				clazz: clazz 
 			}
 		}
