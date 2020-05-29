@@ -290,12 +290,15 @@ Vue.component('ysgtb-d3', {
 				      	.attr("dy",-2)
 				        .attr("fill", d=>this.colourScale(d[0].name[0]))
 				   	.attr("text-anchor","end")
-					.append('textPath')
-				      	.attr('xlink:href',d=>`#lineOff-${d[0].name}`)
-				      	.attr("startOffset","0%")
-				        .call(enter => enter.transition(d3.transition().duration(7500).ease(d3.easeCubicOut)).attr("startOffset",(d,i)=>i>0?"95%":"100%"))
-				 )
-				.text((d,i)=>i>0?"":`${d[0].name} : growing in grace`)
+				      	.call(
+						enter=>enter
+						.append('textPath')
+						.attr('xlink:href',d=>`#lineOff-${d[0].name}`)
+				      		.attr("startOffset","0%")
+						.transition(d3.transition().duration(7500).ease(d3.easeCubicOut))
+						.attr("startOffset","100%")
+					)
+				 ).text((d,i)=>i>0?"":`${d[0].name} : growing in grace`)
 			
 			let reporters = this.svg.selectAll('.reporter')
 				.data(timeLines.filter(point=>point.totals[point.name]))
