@@ -106,7 +106,7 @@ Vue.component('ysgtb-time', {
 			return {
 				lead: `${sign}${longest.count}<sup>${longest.shortMeasure}</sup>`,
 				short: parts.map(part=>`${part.count}<sup>${part.shortMeasure}</sup>`).join(" "),
-				text: itsNow ? "now" : `over ${duration}${before}${longest.displayMeasure}${after} ago`,
+				text: itsNow ? "just now" : `over ${duration}${before}${longest.displayMeasure}${after} ago`,
 				clazz: clazz 
 			}
 		}
