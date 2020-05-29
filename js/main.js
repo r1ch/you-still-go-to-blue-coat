@@ -286,7 +286,7 @@ Vue.component('ysgtb-d3', {
 				.data(timeSeries)
 				.join(enter=>enter
 					.append('text')
-					.attr("class", d=>`lineLabel ${d[0].name}`)
+					.attr("class", d=>`lineLabel`)
 					.attr("dy",-2)
 					.attr("text-anchor","end")
 					.append('textPath')
