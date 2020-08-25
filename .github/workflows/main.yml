@@ -27,3 +27,5 @@ jobs:
       run: |
         sudo apt-get install -y curl
         curl https://xyrm1h5e1h.execute-api.eu-west-1.amazonaws.com/prod/attendees/latest -o _data/latest.json
+        git commit -m "Add changes" -a
+        git push
