@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <title>{{site.data.name}} still goes to Blue Coat</title>
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
         <meta charset="UTF-8">
         <meta name="google-signin-scope" content="profile">
         <meta name="google-signin-client_id"
             content="953648658436-1bql4k0mhfaiqe8p141c4rs0sgsjbcut.apps.googleusercontent.com">
+        <meta property="og:title" content="{{site.data.name}} still goes to Blue Coat" />
+        <meta property="og:description" content="Some things just never change." />
         <script src="https://apis.google.com/js/platform.js?onload=initGoogleAuthentication" async defer></script>
         <script src="https://sdk.amazonaws.com/js/aws-sdk-2.488.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -20,7 +23,6 @@
             let version = {{randomNumber}};
             let revision =  "{{site.github.build_revision}}";
         </script>
-        {% seo %}
     </head>
     <body>
         {{content}}
