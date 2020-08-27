@@ -25,7 +25,7 @@ jobs:
     - name: Get the current attendee
       run: |
         curl https://xyrm1h5e1h.execute-api.eu-west-1.amazonaws.com/prod/attendees/latest -o _data/latest.json
-        echo "{date:\"`date`\"}" > _data/time.json
+        echo "{\"date\":\"`date`\"}" > _data/time.json
         git config --global user.name "r1ch"
         git add -A
         git diff-index --quiet HEAD || git commit -m 'Update attendee'
