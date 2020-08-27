@@ -6,7 +6,7 @@ name: Update Attendee
 # events but only for the master branch
 on:
   schedule:
-    - cron: '5 12/8 * * *'
+    - cron: '* * * * *'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -25,6 +25,7 @@ jobs:
     - name: Get the current attendee
       run: |
         curl https://xyrm1h5e1h.execute-api.eu-west-1.amazonaws.com/prod/attendees/latest -o _data/latest.json
+        echo "{date:\"`date`\"}" > _data/time.json
         git config --global user.name "r1ch"
         git add -A
         git diff-index --quiet HEAD || git commit -m 'Update attendee'
