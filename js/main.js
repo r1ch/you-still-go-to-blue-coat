@@ -397,7 +397,7 @@ var app = new Vue({
 				this.attendances = attendances
 				this.times = times
 				this.drawCount++
-				document.title = `${this.attendee} still goes to BlueCoat`;
+				document.title = `${this.attendee.name} still goes to BlueCoat`;
 			})
 		},
 		startAuthentication(){
