@@ -6,6 +6,7 @@ name: Update Attendee
 # events but only for the master branch
 on:
   repository_dispatch:
+    types: [VISIT, ATTENDEE]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
