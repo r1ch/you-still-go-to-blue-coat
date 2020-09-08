@@ -1,6 +1,7 @@
 'use strict'
 //AWS Setup
 const AWS = require('aws-sdk');
+const https = require('https');
 
 //Dynamo Setup
 const {
@@ -18,6 +19,7 @@ const {
 } = require('@aws/dynamodb-expressions')
 const { v4 } = require('uuid');
 const DynamoDB = require('aws-sdk/clients/dynamodb');
+const { runInNewContext } = require('vm');
 
 const client = new DynamoDB({region: 'eu-west-1'});
 const mapper = new DataMapper({client});
@@ -80,10 +82,38 @@ Object.defineProperties(Attendance.prototype, {
     },
 });
 
-
+//Git handler
+const trigger = (eventType) => new Promise((resolve,reject)=>{
+    const req = https.request(
+        {
+            protocol : 'https',
+            hostname : 'api.github.com',
+            port : 443, 
+            path: '/repos/r1ch/you-still-go-to-blue-coat/dispatches',
+            headers : {
+                'Authorization' : process.env['GITHUB_TOKEN'] || 'no_token'
+            }
+        }, console.log)
+        .on("error",err=>reject(err));
+    req.write(`{"event_type" : ${eventType} }`)
+    resolve(req.end())
+})
 
 
 exports.handler = async (event, context) => {
+    //tell git the record type
+    if(
+        event.Records &&
+        event.Records[0] &&
+        event.Records[0].dynamodb &&
+        event.Records[0].dynamodb.NewImage && 
+        event.Records[0].dynamodb.NewImage.recordType &&
+        event.Records[0].dynamodb.NewImage.recordType.S
+    ){ 
+        let resp = await trigger(event.Records[0].dynamodb.NewImage.recordType.S);
+        console.log(resp)
+    }
+
     //am I interested?
     if(
         event.Records &&
