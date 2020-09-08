@@ -14,7 +14,7 @@ paths:
       - application/json
       responses:
         200:
-          description: 200 response
+          description: 200 Response
           schema:
             $ref: "#/definitions/Empty"
       x-amazon-apigateway-integration:
