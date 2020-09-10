@@ -22,7 +22,7 @@
     background-position: center;
     background-repeat: no-repeat;
     background-size: 4rem;
-    filter: brightness(0.5) sepia(1) hue-rotate(-167deg) saturate(6);
+    mix-blend-mode: soft-light;
 }
 
 .svgHolder {
