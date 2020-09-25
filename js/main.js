@@ -342,6 +342,7 @@ var app = new Vue({
 		loadedAttendeeName: false,
 		attendances: [],
 		times: [],
+		visits: [],
 		drawCount: 0,
 		colourScale: d3.scaleOrdinal("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),d3.schemeCategory10),
 		timer: false,
