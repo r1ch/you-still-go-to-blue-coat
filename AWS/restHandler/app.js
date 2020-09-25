@@ -55,15 +55,22 @@ const getTimes = async()=>{
     return times
 }
 
+const getVisits = async()=>{
+    let visits = []
+    for await (const visit of mapper.query(Visit, {recordType: 'VISIT'}, {scanIndexForward:false, limit:10})){
+        visits.push(visit)
+    }
+    return visits
+}
+
 router.get('/all', asyncHandler(async (req, res) => {
-    Promise.all([getLatestAttendee(),getAttendances(),getTimes()])
+    Promise.all([getLatestAttendee(),getAttendances(),getTimes(),getVisits()])
     .then(res.json.bind(res))
 }))
 
 router.get('/attendees/latest', asyncHandler(async (req, res) => {
     getLatestAttendee().then(res.json.bind(res))
 }))
-
 
 router.get('/attendances', asyncHandler(async (req, res) => {
     getAttendances().then(res.json.bind(res))
@@ -72,6 +79,10 @@ router.get('/attendances', asyncHandler(async (req, res) => {
 
 router.get('/times', asyncHandler(async (req, res) => {
     getTimes().then(res.json.bind(res))
+}))
+
+router.get('/visits', asyncHandler(async (req, res) => {
+    getVisits().then(res.json.bind(res))
 }))
 
 router.post('/attendees', asyncHandler(async (req, res) => {
@@ -87,14 +98,6 @@ router.post('/visits', asyncHandler(async (req, res) => {
     visit.identifier = req.body.name
     visit.time = (new Date()).getTime()
     mapper.update(visit,{onMissing: 'skip'}).then(res.json.bind(res))
-}))
-
-router.get('/visits', asyncHandler(async (req, res) => {
-    let visits = []
-    for await (const visit of mapper.query(Visit, {recordType: 'VISIT'}, {scanIndexForward:false, limit:10})){
-        visits.push(visit)
-    }
-    res.json(visits)
 }))
 
 app.use('/', router)
