@@ -323,6 +323,15 @@ Vue.component('ysgtb-d3', {
 				.attr('y', d=>yScale(d.totals[d.name]))
 				.attr('x', d=>d.at)
 
+			let visitLabels = this.svg.selectAll('.visitLabel')
+				.data(this.visits)
+				.join(enter=>enter.append('circle'))
+				.attr('class', d=>`visitLabel ${d.identifier}`)
+				.attr('r', 2.5)
+                .attr('fill',d=>this.colourScale(d.identifier[0]))
+				.attr('cy', this.barHeight)
+				.attr('cx', d=>xScale(d.time))
+
 			return true;
 		}
 	}
