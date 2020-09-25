@@ -391,11 +391,12 @@ var app = new Vue({
 			return this.API("POST","/visits",this.profile)
 		},
 		getAll(){
-			return this.API("GET","/all",false,([attendee,attendances,times])=>{
+			return this.API("GET","/all",false,([attendee,attendances,times,visits])=>{
 				this.attendee = attendee
 				this.loadedAttendeeName=this.attendee.name
 				this.attendances = attendances
 				this.times = times
+				this.visits = visits
 				this.drawCount++
 				document.title = `${this.attendee.name} still goes to Blue Coat`;
 			})
