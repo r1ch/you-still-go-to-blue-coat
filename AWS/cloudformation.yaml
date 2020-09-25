@@ -45,7 +45,7 @@ Resources:
       TableName: "bluecoat"
       TimeToLiveSpecification:
         AttributeName : "TTL"
-        Enabled : true
+        Enabled : false
       AttributeDefinitions: 
         - 
           AttributeName: "recordType"
@@ -95,7 +95,7 @@ Resources:
         Fn::Transform:
           Name: AWS::Include
           Parameters:
-            Location: ./simple-proxy-api.yaml
+            Location: ./proxy-api.yaml
       StageName: prod
 
   APIHandlerExecutionRole:

@@ -84,19 +84,37 @@ Object.defineProperties(Attendance.prototype, {
 
 //Git handler
 const trigger = (eventType) => new Promise((resolve,reject)=>{
-    const req = https.request(
-        {
-            protocol : 'https',
-            hostname : 'api.github.com',
-            port : 443, 
-            path: '/repos/r1ch/you-still-go-to-blue-coat/dispatches',
-            headers : {
-                'Authorization' : process.env['GITHUB_TOKEN'] || 'no_token'
-            }
-        }, console.log)
-        .on("error",err=>reject(err));
-    req.write(`{"event_type" : ${eventType} }`)
-    resolve(req.end())
+    let responseString = ""
+    let requestString = JSON.stringify({event_type:eventType})
+    let options =  {
+        protocol : 'https:',
+        port: '443',
+        hostname : 'api.github.com',
+        method : 'POST',
+        path: '/repos/r1ch/you-still-go-to-blue-coat/dispatches',
+        headers : {
+            'Authorization' : `Bearer ${process.env['GITHUB_TOKEN']}`,
+            'User-Agent': 'covidnineteen'
+        }
+    }
+
+    console.log(options)
+
+    const req = https.request(options, (res)=>{
+            console.log(`GitHub Status: ${res.statusCode}`)
+            res.on("data",function(chunk){
+                console.log(chunk)
+                responseString+=chunk
+            })
+            res.on("end", ()=>resolve(`GitHub : ${requestString} -> ${responseString}`))
+            res.on("error",err=>reject(err))
+        })
+    .on("error",err=>reject(err))
+
+    console.log(req)
+    
+    req.write(requestString)
+    req.end()  
 })
 
 
@@ -110,7 +128,7 @@ exports.handler = async (event, context) => {
         event.Records[0].dynamodb.NewImage.recordType &&
         event.Records[0].dynamodb.NewImage.recordType.S
     ){ 
-        let resp = await trigger(event.Records[0].dynamodb.NewImage.recordType.S);
+        let resp = await trigger(event.Records[0].dynamodb.NewImage.recordType.S).catch(console.error)
         console.log(resp)
     }
 
