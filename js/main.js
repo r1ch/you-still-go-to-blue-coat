@@ -329,7 +329,7 @@ Vue.component('ysgtb-d3', {
 				.attr('class', d=>`visitLabel ${d.identifier}`)
 				.attr('r', 2.5)
                 .attr('fill',d=>this.colourScale(d.identifier[0]))
-				.attr('cy', this.barHeight)
+				.attr('cy', this.barHeight+5)
 				.attr('cx', d=>xScale(d.time))
 
 			return true;
