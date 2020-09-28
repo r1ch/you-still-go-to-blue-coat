@@ -399,7 +399,7 @@ var app = new Vue({
 			this.getAll()
 		},1000),
 		postVisit(anonymous){
-			return this.API("POST","/visits",this.profile,false,anonymous)
+			return this.API(anonymous ? "PATCH" :  "POST","/visits",this.profile)
 		},
 		getAll(){
 			return this.API("GET","/all",false,([attendee,attendances,times,visits])=>{
