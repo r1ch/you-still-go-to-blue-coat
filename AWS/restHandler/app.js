@@ -63,6 +63,13 @@ const getVisits = async()=>{
     return visits
 }
 
+const storeVisit = async(req)=>{
+    let visit = new Visit();
+    visit.identifier = req.body.name || "Guest"
+    visit.time = (new Date()).getTime()
+    return mapper.update(visit,{onMissing: 'skip'})
+}
+
 router.get('/all', asyncHandler(async (req, res) => {
     Promise.all([getLatestAttendee(),getAttendances(),getTimes(),getVisits()])
     .then(res.json.bind(res))
@@ -94,11 +101,13 @@ router.post('/attendees', asyncHandler(async (req, res) => {
 }))
 
 router.post('/visits', asyncHandler(async (req, res) => {
-    let visit = new Visit();
-    visit.identifier = req.body.name || "Guest"
-    visit.time = (new Date()).getTime()
-    mapper.update(visit,{onMissing: 'skip'}).then(res.json.bind(res))
+    storeVisit(req).then(res.json.bind(res))
 }))
+
+router.patch('/visits', asyncHandler(async (req, res) => {
+    storeVisit(req).then(res.json.bind(res))
+}))
+
 
 app.use('/', router)
 

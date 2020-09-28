@@ -1,15 +1,15 @@
 var APIMixin = {
 	methods: {
-		API(method,URL,body,handler,forceUnsigned = false){
+		API(method,URL,body,handler){
 			body = body ? body : undefined;
-			if(method != 'GET' && !forceUnsigned){
-				return signedHttpRequest(method, URL, body)
+			if(method == 'GET' || method == 'PATCH'){
+				return unsignedHttpRequest(method, URL, body)
 				.then(axios)
 				.then(({data}) => {
 					if(handler) handler(data)
 				})
 			} else {
-				return unsignedHttpRequest(method, URL, body)
+				return signedHttpRequest(method, URL, body)
 				.then(axios)
 				.then(({data}) => {
 					if(handler) handler(data)

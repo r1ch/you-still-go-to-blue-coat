@@ -89,6 +89,22 @@ paths:
          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RestAPIHandler.Arn}/invocations"
         httpMethod: POST
         type: aws_proxy
+    patch:
+      x-amazon-apigateway-auth:
+        type: None
+      produces:
+      - application/json
+      parameters:
+      - name: proxy
+        in: path
+        required: true
+        type: string
+      responses: {}
+      x-amazon-apigateway-integration:
+        uri: 
+         Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RestAPIHandler.Arn}/invocations"
+        httpMethod: POST
+        type: aws_proxy
     options:
       consumes:
       - application/json
