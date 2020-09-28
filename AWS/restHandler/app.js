@@ -95,7 +95,7 @@ router.post('/attendees', asyncHandler(async (req, res) => {
 
 router.post('/visits', asyncHandler(async (req, res) => {
     let visit = new Visit();
-    visit.identifier = req.body.name
+    visit.identifier = req.body.name || "Guest"
     visit.time = (new Date()).getTime()
     mapper.update(visit,{onMissing: 'skip'}).then(res.json.bind(res))
 }))
