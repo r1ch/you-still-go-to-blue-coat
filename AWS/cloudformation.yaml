@@ -45,7 +45,7 @@ Resources:
       TableName: "bluecoat"
       TimeToLiveSpecification:
         AttributeName : "TTL"
-        Enabled : false
+        Enabled : true
       AttributeDefinitions: 
         - 
           AttributeName: "recordType"
