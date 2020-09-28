@@ -2,7 +2,7 @@ var APIMixin = {
 	methods: {
 		API(method,URL,body,handler,forceUnsigned = false){
 			body = body ? body : undefined;
-			if(method != 'GET' || forceUnsigned){
+			if(method != 'GET' && !forceUnsigned){
 				return signedHttpRequest(method, URL, body)
 				.then(axios)
 				.then(({data}) => {
