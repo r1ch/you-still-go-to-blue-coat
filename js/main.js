@@ -1,8 +1,8 @@
 var APIMixin = {
 	methods: {
-		API(method,URL,body,handler){
+		API(method,URL,body,handler,forceUnsigned = false){
 			body = body ? body : undefined;
-			if(method != 'GET'){
+			if(method != 'GET' || forceUnsigned){
 				return signedHttpRequest(method, URL, body)
 				.then(axios)
 				.then(({data}) => {
@@ -374,7 +374,7 @@ var app = new Vue({
 		this.redrawer = setInterval(()=>this.drawCount++,10*1000)
 		this.listenFor("ATTENDEE",this.update)
 		this.listenFor("ATTENDANCE",this.update)
-		this.postVisit()
+		this.postVisit(true)
 	},
 	computed: {
 		orderedAttendances: function(){
@@ -398,8 +398,8 @@ var app = new Vue({
 		update:  _.throttle(function(){
 			this.getAll()
 		},1000),
-		postVisit(){
-			return this.API("POST","/visits",this.profile)
+		postVisit(anonymous){
+			return this.API("POST","/visits",this.profile,false,anonymous)
 		},
 		getAll(){
 			return this.API("GET","/all",false,([attendee,attendances,times,visits])=>{
@@ -451,7 +451,7 @@ var app = new Vue({
 			this.profile.url = basicProfile.getImageUrl();
 			this.profile.token = event.getAuthResponse().id_token
 			this.profile.ready = true
-			this.postVisit()
+			this.postVisit(false)
 		},
 		listenFor(key,handler){
 			this.socket.addEventListener("message",event=>{
