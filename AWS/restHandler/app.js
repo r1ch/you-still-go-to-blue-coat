@@ -66,6 +66,7 @@ const getVisits = async()=>{
 const storeVisit = async(req)=>{
     let visit = new Visit();
     visit.identifier = req.body.name || "Guest"
+    if(visit.identifier.indexOf("Guest") === -1) delete visit.TTL
     visit.time = (new Date()).getTime()
     return mapper.update(visit,{onMissing: 'skip'})
 }
