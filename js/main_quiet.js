@@ -2,14 +2,14 @@ var APIMixin = {
 	methods: {
 		API(method,URL,body,handler){
 			body = body ? body : undefined;
-			if(method != 'GET'){
-				return signedHttpRequest(method, URL, body)
+			if(method == 'GET' || method == 'PATCH'){
+				return unsignedHttpRequest(method, URL, body)
 				.then(axios)
 				.then(({data}) => {
 					if(handler) handler(data)
 				})
 			} else {
-				return unsignedHttpRequest(method, URL, body)
+				return signedHttpRequest(method, URL, body)
 				.then(axios)
 				.then(({data}) => {
 					if(handler) handler(data)
@@ -30,8 +30,7 @@ Vue.component('ysgtb-jumbotron',{
 					<input @keyup = "newAttendee" class="form-control form-control-lg col-6 col-md-3 attendee-name" type="text" v-model="attendee.name" @click = "startAuthentication" :class = "{'btn-outline-success':!profile.ready}">
 					<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
 					<br><br>
-					<p class="lead" v-if = "attendee.reporter">Thanks for letting us know {{attendee.reporter}}</p>
-					<small v-if = "attendee.identifier">It's been over <ysgtb-time :mode="'text'" :millis="now-attendee.identifier"></ysgtb-time> now</small>
+					<p class="lead" v-if = "attendee.reporter"><i>according to {{attendee.reporter}}, <ysgtb-time :mode="'text'" :millis="now-attendee.identifier"></ysgtb-time></i></p>
 				</div>
 			</div>
 			<div class = "container" v-if = "attendances.length > 0">
@@ -103,10 +102,11 @@ Vue.component('ysgtb-time', {
 			let before = longest.count > 1 ? andAHalf : " "
 			let after = longest.count == 1 ? andAHalf : " "
 			let clazz = this.mode == 'lead' ? this.millis > 0 ? 'green' : 'red' : false
+			let itsNow = longest.measure == "second" && longest.count < 1
 			return {
 				lead: `${sign}${longest.count}<sup>${longest.shortMeasure}</sup>`,
 				short: parts.map(part=>`${part.count}<sup>${part.shortMeasure}</sup>`).join(" "),
-				text: `${duration}${before}${longest.displayMeasure}${after}`,
+				text: itsNow ? "just now" : `over ${duration}${before}${longest.displayMeasure}${after} ago`,
 				clazz: clazz 
 			}
 		}
@@ -117,7 +117,7 @@ Vue.component('ysgtb-time', {
 
 Vue.component('ysgtb-d3', {
 	mixins:[APIMixin],
-	props:['profile','colourScale','times','attendances','drawCount'],
+	props:['profile','colourScale','times','attendances','visits','drawCount'],
 	data: function() {
 		let margin = {
 			top: 10,
@@ -126,7 +126,7 @@ Vue.component('ysgtb-d3', {
 			bottom: 10,
 			left: 25
 		};
-		let fullWidth = 1800
+		let fullWidth = 3600
 		let ticks = fullWidth/90
 		let fullHeight = 300
 		let barHeight = 20
@@ -267,6 +267,7 @@ Vue.component('ysgtb-d3', {
 				.data(timeSeries)
 				.join(enter=>enter.append('path'))
 				.attr("class", d=>`lineOff ${d[0].name}`)
+				.attr("id", d=>`lineOff-${d[0].name}`)
 				.attr("stroke", (d,i)=>this.colourScale(d[0].name[0]))
 				.attr("d", lineGenerator)
 			
@@ -275,23 +276,34 @@ Vue.component('ysgtb-d3', {
 				.join(enter=>enter.append('path'))
 				.attr("class", d=>`lineOn ${d[0].name}`)
 				.attr("clip-path", d=>`url(#clip-${d[0].name})`)
-				.attr("id", d=>`line-${d[0].name}`)
+				.attr("id", d=>`lineOn-${d[0].name}`)
 				.attr("stroke", (d,i)=>this.colourScale(d[0].name[0]))
 				.attr("d", lineGenerator)
 			
 
 			
-			/*let lineLabels = this.svg.selectAll('.lineLabel')
+			let lineLabels = this.svg.selectAll('text.lineLabel > textPath')
 				.data(timeSeries)
 				.join(enter=>enter
 					.append('text')
-					.attr("class", d=>`lineLabel ${d[0].name}`)
-				   	.attr("text-anchor","end")
+					.attr("class", "lineLabel")
+					.attr("dy",-2)
+					.attr("text-anchor","end")
 					.append('textPath')
-					.attr('xlink:href',d=>`#line-${d[0].name}`)
-					.text(d=>d[0].name)
-				      	.attr("startOffset","100%")
-				 )*/
+				      	.attr("startOffset","0%")
+				      	.attr("fill", d=>this.colourScale(d[0].name[0]))
+					.attr('xlink:href',d=>`#lineOff-${d[0].name}`)
+				      	.text((d,i)=>i>0?"":`${d[0].name} : growing in grace`)
+					.call(
+						enter=>enter
+						.transition(d3.transition().duration(7500).ease(d3.easeCubicOut))
+						.attr("startOffset","100%")
+					),
+				      update=>update
+					.attr("fill", d=>this.colourScale(d[0].name[0]))
+					.attr('xlink:href',d=>`#lineOff-${d[0].name}`)
+					.text((d,i)=>i>0?"":`${d[0].name} : growing in grace`)
+				 )
 			
 			let reporters = this.svg.selectAll('.reporter')
 				.data(timeLines.filter(point=>point.totals[point.name]))
@@ -311,6 +323,15 @@ Vue.component('ysgtb-d3', {
 				.attr('y', d=>yScale(d.totals[d.name]))
 				.attr('x', d=>d.at)
 
+			let visitLabels = this.svg.selectAll('.visitLabel')
+				.data(this.visits)
+				.join(enter=>enter.append('circle'))
+				.attr('class', d=>`visitLabel ${d.identifier}`)
+				.attr('r', 2.5)
+                .attr('fill',d=>this.colourScale(d.identifier[0]))
+				.attr('cy', this.barHeight+5)
+				.attr('cx', d=>xScale(d.time))
+
 			return true;
 		}
 	}
@@ -321,7 +342,7 @@ var app = new Vue({
 	el: '#app',
 	mixins: [APIMixin],
 	data: {
-		profile: {ready:false},
+		profile: {ready:false, name:`${Math.random()*10|0}-Guest`},
 		pingInterval : false,
 		pongTimeout : false,
 		version:version,
@@ -330,6 +351,7 @@ var app = new Vue({
 		loadedAttendeeName: false,
 		attendances: [],
 		times: [],
+		visits: [],
 		drawCount: 0,
 		colourScale: d3.scaleOrdinal("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),d3.schemeCategory10),
 		timer: false,
@@ -344,7 +366,7 @@ var app = new Vue({
 			else GoogleAuth.currentUser.listen(this.userReady)		
 		})
 		this.timer && clearInterval(this.timer)
-		this.timer = setInterval(()=>{this.now = (new Date()).getTime()},1000)
+		this.timer = setInterval(this.tick,1000)
 		this.update()
 		this.refresher && clearInterval(this.refresher)
 		this.refresher = setInterval(this.update,5*60*1000)
@@ -352,6 +374,7 @@ var app = new Vue({
 		this.redrawer = setInterval(()=>this.drawCount++,10*1000)
 		this.listenFor("ATTENDEE",this.update)
 		this.listenFor("ATTENDANCE",this.update)
+		//this.postVisit(true)
 	},
 	computed: {
 		orderedAttendances: function(){
@@ -368,19 +391,25 @@ var app = new Vue({
 		}
 	},
 	methods:{
+		tick(){
+			this.now = (new Date()).getTime()
+			this.times && this.times[this.times.length-1] && (this.times[this.times.length-1].to = this.now)
+		},
 		update:  _.throttle(function(){
 			this.getAll()
 		},1000),
-		postVisit(){
-			return this.API("POST","/visits",this.profile)
+		postVisit(anonymous){
+			return this.API(anonymous ? "PATCH" :  "POST","/visits",this.profile)
 		},
 		getAll(){
-			return this.API("GET","/all",false,([attendee,attendances,times])=>{
+			return this.API("GET","/all",false,([attendee,attendances,times,visits])=>{
 				this.attendee = attendee
 				this.loadedAttendeeName=this.attendee.name
 				this.attendances = attendances
 				this.times = times
+				this.visits = visits
 				this.drawCount++
+				document.title = `${this.attendee.name} still goes to Blue Coat`;
 			})
 		},
 		startAuthentication(){
@@ -422,7 +451,7 @@ var app = new Vue({
 			this.profile.url = basicProfile.getImageUrl();
 			this.profile.token = event.getAuthResponse().id_token
 			this.profile.ready = true
-			this.postVisit()
+			this.postVisit(false)
 		},
 		listenFor(key,handler){
 			this.socket.addEventListener("message",event=>{
@@ -451,10 +480,11 @@ var app = new Vue({
 			<ysgtb-d3 
 				:times = "times"
 				:attendances = "orderedAttendances"
+				:visits = "visits"
 				:profile="profile"
 				:colourScale="colourScale"
 				:drawCount = "drawCount">
 			</ysgtb-d3>
 		</div>
 	`
-})	
+})
