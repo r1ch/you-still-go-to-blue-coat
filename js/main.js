@@ -328,7 +328,9 @@ Vue.component('ysgtb-d3', {
 				.join(enter=>enter.append('circle'))
 				.attr('class', d=>`visitLabel ${d.identifier}`)
 				.attr('r', 2.5)
-                .attr('fill',d=>this.colourScale(d.identifier[0]))
+				.attr('fill',d=>d.identifier.indexOf("Guest") == -1 ? this.colourScale(d.identifier[0]) : "none")
+                                .attr('stroke',d=>d.identifier.indexOf("Guest") > -1 ? this.colourScale(d.identifier[0]) : "none")
+				.attr('stroke-width',d=>d.identifier.indexOf("Guest") > -1 ? "1px" : 0)
 				.attr('cy', this.barHeight+5)
 				.attr('cx', d=>xScale(d.time))
 
