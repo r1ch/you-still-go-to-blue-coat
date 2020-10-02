@@ -1,0 +1,1 @@
+window.config.QUIET = true
