@@ -327,7 +327,7 @@ Vue.component('ysgtb-d3', {
 				.data(this.visits)
 				.join(enter=>enter.append('circle'))
 				.attr('class', d=>`visitLabel ${d.identifier}`)
-				.attr('r',d=>d.identifier.indexOf("Guest") > 0 ? 2 : 4)
+				.attr('r',d=>d.identifier.indexOf("Guest") > 0 ? 1.5 : 2.5)
 				.attr('fill',d=>this.colourScale(d.identifier[0]))
 				.attr('cy', d=>4 + this.barHeight)
 				.attr('cx', d=>xScale(d.time))
