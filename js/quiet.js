@@ -7,7 +7,7 @@ const checkVersion = ()=>{
       .then(text=>{
       if(text!==window.config.version){
         console.log(`${text}!=${window.config.version}`)
-        location.reload();
+        //location.reload();
       }
     })
   })
