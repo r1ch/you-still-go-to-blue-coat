@@ -1,12 +1,12 @@
 window.config.QUIET = true
 
 const checkVersion = ()=>{
-  fetch(`https://ysgtb.bradi.sh/version?${Date.now()}`)
+  fetch(`https://ysgtb.bradi.sh/revision?${Date.now()}`)
   .then(response=>{
     response.text()
-      .then(text=>{
-      if(text!==window.config.version){
-        console.log(`${text}!=${window.config.version}`)
+      .then(latestRevision=>{
+      if(latestRevision!==revision){
+        console.log(`${latestRevision}!=${revision}`)
         //location.reload();
       }
     })
