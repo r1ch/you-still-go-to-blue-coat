@@ -6,7 +6,7 @@ const checkVersion = ()=>{
     response.text()
       .then(latestRevision=>{
       if(latestRevision.trim()!=revision){
-        console.log(`${latestRevision}!=${revision}`)
+        console.log(`Different version detected : ${latestRevision} v.s. ${revision}`)
         location.reload();
       }
     })
