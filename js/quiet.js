@@ -5,9 +5,9 @@ const checkVersion = ()=>{
   .then(response=>{
     response.text()
       .then(latestRevision=>{
-      if(latestRevision!==revision){
+      if(latestRevision.trim()!=revision){
         console.log(`${latestRevision}!=${revision}`)
-        //location.reload();
+        location.reload();
       }
     })
   })
