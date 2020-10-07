@@ -3,10 +3,16 @@ window.config.QUIET = true
 const checkVersion = ()=>{
   fetch(`https://ysgtb.bradi.sh/version?${Date.now()}`)
   .then(response=>{
-    console.log(response.status)
-    response.text().then(console.log)
+    response.text()
+      .then(text=>{
+      if(text!==window.config.version){
+        location.reload();
+      }
+    })
   })
-  .catch(err=>console.error(err))
+  .catch(err=>{
+    clearInterval(checker)
+  })
 }
 
-setInterval(checkVersion,500)
+const checker = setInterval(checkVersion,500)
