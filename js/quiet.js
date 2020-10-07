@@ -1,7 +1,7 @@
 window.config.QUIET = true
 
 const checkVersion = ()=>{
-  fetch("https://ysgtb.bradi.sh/version.json")
+  fetch("https://ysgtb.bradi.sh/version")
   .then(console.log)
 }
 
