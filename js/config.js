@@ -5,5 +5,6 @@ window.config = {
     apiGatewayUrl : "https://xyrm1h5e1h.execute-api.eu-west-1.amazonaws.com",
     apiGatewayPath : "/prod",
     socketGatewayUrl : "wss://oqir9akoel.execute-api.eu-west-1.amazonaws.com",
-    socketGatewayPath : "/prod"
+    socketGatewayPath : "/prod",
+    version: "{{site.github.build_revision}}"
 }
