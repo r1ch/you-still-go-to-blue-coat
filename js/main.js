@@ -342,7 +342,7 @@ var app = new Vue({
 	el: '#app',
 	mixins: [APIMixin],
 	data: {
-		profile: {ready:false, name:`${Math.random()*10|0}-Guest`},
+		profile: {ready:false, name:`${Math.random()*99|0}-Guest`},
 		pingInterval : false,
 		pongTimeout : false,
 		version:version,
