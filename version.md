@@ -1,4 +1,3 @@
 ---
-layout: none
+layout: version
 ---
-{{site.github.build_revision}}
