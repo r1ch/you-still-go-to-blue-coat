@@ -12,8 +12,9 @@ const checkVersion = ()=>{
     })
   })
   .catch(err=>{
+    console.log(`Version checking is broken: ${err}`)
     clearInterval(checker)
   })
 }
 
-const checker = setInterval(checkVersion,500)
+const checker = setInterval(checkVersion,30*1000)
