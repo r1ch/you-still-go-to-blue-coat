@@ -128,7 +128,7 @@ Vue.component('ysgtb-d3', {
 		};
 		let fullWidth = 3600
 		let ticks = fullWidth/90
-		let fullHeight = 300
+		let fullHeight = 600
 		let barHeight = 20
 		let lineOffset = margin.top + margin.middle + barHeight
 		let lineHeight = fullHeight - lineOffset - margin.bottom
