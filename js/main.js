@@ -375,7 +375,7 @@ var app = new Vue({
 		this.listenFor("ATTENDEE",this.update)
 		this.listenFor("ATTENDANCE",this.update)
 		if(!window.config.QUIET) this.postVisit(true)
-		Authenticator.then(userReady)
+		Authenticator.then(this.userReady)
 	},
 	computed: {
 		orderedAttendances: function(){
