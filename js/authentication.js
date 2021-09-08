@@ -21,7 +21,7 @@ google.accounts.id.initialize({client_id: config.googleClientId, callback: authe
 
 function authenticationCallback(CredentialResponse) {
     console.log("Callback")
-    Authenticator.setObject(JSON.parse(btoa(CredentialResponse.credetial.split(".")[1])))
+    Authenticator.setObject(JSON.parse(btoa(CredentialResponse.credential.split(".")[1])))
     Authenticator.resolve()
     getIdToken(CredentialResponse)
         .then(AWSSTSSignIn)
