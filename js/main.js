@@ -184,8 +184,6 @@ Vue.component('ysgtb-d3', {
 	},
 	methods: {
 		draw() {		
-			console.log("Drawing")
-			
 			const t = this.svg.transition().duration(this.drawCount >= 1  ? 750 : 0)
 			
 			let xScale = d3.scaleTime()
@@ -367,7 +365,6 @@ var app = new Vue({
 	},
 	created: function(){
 		//this.connectSocket()
-		setupAuthenticator(window.config.googleClientId)
 		this.timer && clearInterval(this.timer)
 		this.timer = setInterval(this.tick,1000)
 		this.update()
@@ -402,7 +399,7 @@ var app = new Vue({
 			this.getAll()
 		},1000),
 		postVisit(anonymous){
-			return this.API(anonymous ? "PATCH" :  "POST","/visits",this.profile)
+			return this.API(anonymous ? "PATCH" :  "POST","/visits", this.profile)
 		},
 		getAll(){
 			return this.API("GET","/all",false,([attendee,attendances,times,visits])=>{
@@ -417,7 +414,10 @@ var app = new Vue({
 		},
 		startAuthentication(){
 			if(this.profile.ready) return
-			else Authenticator.then(_=>google.accounts.id.prompt())
+			else {
+				setupAuthenticator(window.config.googleClientId)
+				Authenticator.then(_=>google.accounts.id.prompt())
+			}
 		},
 		newAttendee: _.debounce(function(){
 			if(this.attendee.name==this.loadedAttendeeName || ["","You"].includes(this.attendee.name)) return
