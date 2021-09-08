@@ -25,7 +25,7 @@ function authenticationCallback(CredentialResponse) {
         .catch(handleError);
 };
 
-function getIdToken(id_token) {
+function getIdToken(CredentialResponse) {
     const id_token = CredentialResponse.credential
     console.log(id_token)
     Credentials.setObject(id_token)
