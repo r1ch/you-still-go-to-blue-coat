@@ -26,7 +26,7 @@ Vue.component('ysgtb-jumbotron',{
 	template:`
 		<div>
 			<div class="jumbotron" v-if = "attendee">
-				<div class="container" id="jumbotronContainer">
+				<div class="container">
 					<input 
 						@keyup = "newAttendee"
 						class="form-control form-control-lg col-6 col-md-3 attendee-name"
@@ -34,6 +34,7 @@ Vue.component('ysgtb-jumbotron',{
 						@click = "startAuthentication"
 						:class = "{'btn-outline-success':!profile.ready}"
 					>
+					<div id="buttonContainer" v-if = "!profile.ready"></div>
 					<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
 					<br><br>
 					<p class="lead" v-if = "attendee.reporter"><i>according to {{attendee.reporter}}, <ysgtb-time :mode="'text'" :millis="now-attendee.identifier"></ysgtb-time></i></p>
@@ -416,11 +417,11 @@ var app = new Vue({
 		startAuthentication(){
 			if(this.profile.ready) return
 			else {
-				google.accounts.id.renderButton(document.getElementById("jumbotronContainer"), {
+				google.accounts.id.renderButton(document.getElementById("buttonContainer"), {
 				      theme: 'outline',
 				      size: 'large',
 				 });
-				google.accounts.id.prompt(console.log)
+				//google.accounts.id.prompt(console.log)
 			}
 		},
 		newAttendee: _.debounce(function(){
