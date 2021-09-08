@@ -18,14 +18,16 @@ let Credentials = Deferred()
 let Authenticator = Deferred()
 
 
-function authenticationCallback(id_token) {
-    getIdToken(id_token)
+function authenticationCallback(CredentialResponse) {
+    getIdToken(CredentialResponse)
         .then(AWSSTSSignIn)
         .then(handleSTSResponse)
         .catch(handleError);
 };
 
 function getIdToken(id_token) {
+    const id_token = CredentialResponse.credential
+    console.log(id_token)
     Credentials.setObject(id_token)
     return new Promise(function (resolve) {
         resolve(id_token);
