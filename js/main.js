@@ -475,6 +475,7 @@ var app = new Vue({
 			this.postVisit(false)
 		},
 		listenFor(key,handler){
+			return
 			this.socket.addEventListener("message",event=>{
 				let data = event && event.data
 				try{
