@@ -27,7 +27,6 @@ function authenticationCallback(CredentialResponse) {
 
 function getIdToken(CredentialResponse) {
     const id_token = CredentialResponse.credential
-    console.log(id_token)
     Credentials.setObject(id_token)
     return new Promise(function (resolve) {
         resolve(id_token);
@@ -46,6 +45,7 @@ function AWSSTSSignIn(idToken) {
             if (err) {
                 reject(err);
             } else {
+		console.log(data)
                 resolve(data);
             }
         });
@@ -58,7 +58,7 @@ function handleSTSResponse(data) {
         data.Credentials.SecretAccessKey,
         data.Credentials.SessionToken);
     AWS.config.region = window.config.region;
-    return  Credentials.resolve()
+    return Credentials.resolve()
 }
 
 function signedHttpRequest(method,path,data){
