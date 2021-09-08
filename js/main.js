@@ -417,7 +417,7 @@ var app = new Vue({
 		},
 		startAuthentication(){
 			if(this.profile.ready) return
-			else Authenticator.then(GoogleAuth=>GoogleAuth.signIn())
+			else Authenticator.then(_=>google.accounts.id.prompt())
 		},
 		newAttendee: _.debounce(function(){
 			if(this.attendee.name==this.loadedAttendeeName || ["","You"].includes(this.attendee.name)) return
