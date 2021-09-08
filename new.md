@@ -9,7 +9,7 @@ layout : dummy
      data-auto_prompt="false">
 </div>
 
-<div class="g_id_signin"
+<input class="g_id_signin"
      data-type="icon"
      data-shape="circle"
      data-theme="outline"
