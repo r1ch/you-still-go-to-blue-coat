@@ -381,7 +381,7 @@ var app = new Vue({
 		now : (new Date()).getTime()
 	},
 	created: function(){
-		this.connectSocket()
+		//this.connectSocket()
 		Authenticator.then(GoogleAuth=>{
 			if(GoogleAuth.isSignedIn.get()) this.userReady(GoogleAuth.currentUser.get())
 			else GoogleAuth.currentUser.listen(this.userReady)		
