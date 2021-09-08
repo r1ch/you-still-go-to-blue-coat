@@ -19,7 +19,7 @@ let Authenticator = Deferred()
 
 function setupAuthenticator(clientId){
 	console.log("Setting up Authenticator")
-	Authenticator.setObject(google.accounts.id.intialize({
+	Authenticator.setObject(google.accounts.id.initialize({
 		client_id: clientId,
 		callback: authenticationCallback
 	}))
