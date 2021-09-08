@@ -22,10 +22,21 @@ let Authenticator = Deferred()
 
 google.accounts.id.initialize({client_id: config.googleClientId, callback: authenticationCallback})
 
+
+function parseJwt (token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
+};
+
 function authenticationCallback(CredentialResponse) {
     console.log("Callback")
  	
-    Authenticator.setObject(JSON.parse(btoa(CredentialResponse.credential.split(".")[1])))
+    Authenticator.setObject(parseJwt(CredentialResponse.credential))
     Authenticator.resolve()
     getIdToken(CredentialResponse)
         .then(AWSSTSSignIn)
