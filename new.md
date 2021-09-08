@@ -5,7 +5,7 @@ layout : dummy
      data-client_id="953648658436-1bql4k0mhfaiqe8p141c4rs0sgsjbcut.apps.googleusercontent.com"
      data-context="signin"
      data-ux_mode="popup"
-     data-callback="console.log"
+     data-callback="goob"
      data-auto_prompt="false">
 </div>
 
