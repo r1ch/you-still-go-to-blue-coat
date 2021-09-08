@@ -19,6 +19,7 @@ let Authenticator = Deferred()
 
 
 function authenticationCallback(CredentialResponse) {
+    console.log("Callback")
     getIdToken(CredentialResponse)
         .then(AWSSTSSignIn)
         .then(handleSTSResponse)
@@ -26,14 +27,17 @@ function authenticationCallback(CredentialResponse) {
 };
 
 function getIdToken(CredentialResponse) {
+    console.log("Setting Id Token from CredentialResponse")
     const id_token = CredentialResponse.credential
     Credentials.setObject(id_token)
     return new Promise(function (resolve) {
+        console.log("Resolved Id Token")
         resolve(id_token);
     });
 }
 
 function AWSSTSSignIn(idToken) {
+    console.log("Getting AWS STS Token")
     var sts = new AWS.STS();
     var params = {
         RoleArn: window.config.roleArn,
@@ -45,7 +49,7 @@ function AWSSTSSignIn(idToken) {
             if (err) {
                 reject(err);
             } else {
-		console.log(data)
+		console.log("Got AWS STS Token")
                 resolve(data);
             }
         });
@@ -53,6 +57,7 @@ function AWSSTSSignIn(idToken) {
 }
 
 function handleSTSResponse(data) {
+    console.log("Setting up AWS SDK")
     AWS.config.credentials = new AWS.Credentials(
         data.Credentials.AccessKeyId,
         data.Credentials.SecretAccessKey,
