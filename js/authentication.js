@@ -17,8 +17,12 @@ function Deferred() {
 let Credentials = Deferred()
 let Authenticator = Deferred()
 
+google.accounts.id.initialize({client_id: config.googleClientId, callback: authenticationCallback})
+
 function authenticationCallback(CredentialResponse) {
     console.log("Callback")
+    Authenticator.setObject(JSON.parse(btoa(CredentialResponse.credetial.split(".")[1])))
+    Authenticator.resolve()
     getIdToken(CredentialResponse)
         .then(AWSSTSSignIn)
         .then(handleSTSResponse)
