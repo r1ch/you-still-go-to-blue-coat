@@ -447,13 +447,11 @@ var app = new Vue({
 			this.pingInterval = false;
 			this.connectSocket()
 		},
-		userReady(googleToken){
-			console.log(googleToken)
-			let basicProfile = event.getBasicProfile();
-			this.profile.id = basicProfile.getId();
-			this.profile.name = basicProfile.getGivenName();
-			this.profile.url = basicProfile.getImageUrl();
-			this.profile.token = event.getAuthResponse().id_token
+		userReady(token){
+			this.profile.id = token.sub;
+			this.profile.name = token.given_name
+			this.profile.url = token.picture;
+			this.profile.token = token
 			this.profile.ready = true
 			this.postVisit(false)
 		},
