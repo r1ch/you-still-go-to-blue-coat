@@ -7,6 +7,9 @@ function Deferred() {
 	promise.setObject = function(o){
 		object = o
 	};
+	promise.value = function(){
+		return object
+	};
 	promise.resolve = ()=>{
 		res(object);
 	};
@@ -21,6 +24,7 @@ google.accounts.id.initialize({client_id: config.googleClientId, callback: authe
 
 function authenticationCallback(CredentialResponse) {
     console.log("Callback")
+ 	
     Authenticator.setObject(JSON.parse(btoa(CredentialResponse.credential.split(".")[1])))
     Authenticator.resolve()
     getIdToken(CredentialResponse)
