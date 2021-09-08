@@ -2,12 +2,13 @@
 <html lang="en">
     <head>
         <title>{{site.data.latest.name}} still goes to Blue Coat</title>
+        <script>
+            const goob = function(x,y,z){return console.log(x,y,z)}
+        </script>
         <script src="https://accounts.google.com/gsi/client" async defer></script>
     </head>
     <body>
-        <script>
-            const goob = (x,y,z)=>console.log(x,y,z)
-        </script>
+
         {{content}}
     </body>
 </html>
