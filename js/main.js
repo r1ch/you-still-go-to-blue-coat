@@ -375,6 +375,7 @@ var app = new Vue({
 		this.listenFor("ATTENDEE",this.update)
 		this.listenFor("ATTENDANCE",this.update)
 		if(!window.config.QUIET) this.postVisit(true)
+		Authenticator.then(userReady)
 	},
 	computed: {
 		orderedAttendances: function(){
@@ -415,8 +416,7 @@ var app = new Vue({
 		startAuthentication(){
 			if(this.profile.ready) return
 			else {
-				setupAuthenticator(window.config.googleClientId)
-				Authenticator.then(_=>google.accounts.id.prompt())
+				google.accounts.id.prompt()
 			}
 		},
 		newAttendee: _.debounce(function(){
