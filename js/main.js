@@ -27,6 +27,7 @@ Vue.component('ysgtb-jumbotron',{
 		<div>
 			<div class="jumbotron" v-if = "attendee">
 				<div class="container">
+					<div id="buttonContainer" v-if = "!profile.ready"></div>
 					<input 
 						@keyup = "newAttendee"
 						class="form-control form-control-lg col-6 col-md-3 attendee-name"
@@ -34,7 +35,6 @@ Vue.component('ysgtb-jumbotron',{
 						@click = "startAuthentication"
 						:class = "{'btn-outline-success':!profile.ready}"
 					>
-					<div id="buttonContainer" v-if = "!profile.ready"></div>
 					<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
 					<br><br>
 					<p class="lead" v-if = "attendee.reporter"><i>according to {{attendee.reporter}}, <ysgtb-time :mode="'text'" :millis="now-attendee.identifier"></ysgtb-time></i></p>
