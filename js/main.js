@@ -38,21 +38,6 @@ Vue.component('ysgtb-jumbotron',{
 					<br><br>
 					<p class="lead" v-if = "attendee.reporter"><i>according to {{attendee.reporter}}, <ysgtb-time :mode="'text'" :millis="now-attendee.identifier"></ysgtb-time></i></p>
 				</div>
-				<div id="g_id_onload"
-				     data-client_id="953648658436-1bql4k0mhfaiqe8p141c4rs0sgsjbcut.apps.googleusercontent.com"
-				     data-context="signin"
-				     data-ux_mode="popup"
-				     data-callback="handleAuthentication"
-				     data-auto_select="true"
-				     data-close_on_tap_outside="false">
-				</div>
-				<div class="g_id_signin"
-				     data-type="icon"
-				     data-shape="circle"
-				     data-theme="outline"
-				     data-text="signin_with"
-				     data-size="small">
-				</div>
 			</div>
 			<div class = "container" v-if = "attendances.length > 0">
 				<ul class="list-group">
