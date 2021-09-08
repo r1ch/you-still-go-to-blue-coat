@@ -367,10 +367,9 @@ var app = new Vue({
 	},
 	created: function(){
 		//this.connectSocket()
-		Authenticator.then(GoogleAuth=>{
-			if(GoogleAuth.isSignedIn.get()) this.userReady(GoogleAuth.currentUser.get())
-			else GoogleAuth.currentUser.listen(this.userReady)		
-		})
+		Authenticator.then(
+			google.accounts.id.prompt();
+		)
 		this.timer && clearInterval(this.timer)
 		this.timer = setInterval(this.tick,1000)
 		this.update()
