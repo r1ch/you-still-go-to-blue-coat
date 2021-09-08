@@ -367,7 +367,7 @@ var app = new Vue({
 	},
 	created: function(){
 		//this.connectSocket()
-		Authenticator.then(_=>google.accounts.id.prompt())
+		setupAuthenticator(window.config.googleClientId)
 		this.timer && clearInterval(this.timer)
 		this.timer = setInterval(this.tick,1000)
 		this.update()
