@@ -447,7 +447,8 @@ var app = new Vue({
 			this.pingInterval = false;
 			this.connectSocket()
 		},
-		userReady(event){
+		userReady(googleToken){
+			console.log(googleToken)
 			let basicProfile = event.getBasicProfile();
 			this.profile.id = basicProfile.getId();
 			this.profile.name = basicProfile.getGivenName();
