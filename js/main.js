@@ -27,6 +27,12 @@ Vue.component('ysgtb-jumbotron',{
 		<div>
 			<div class="jumbotron" v-if = "attendee">
 				<div class="container">
+					<div
+						id="g_id_onload"
+         					data-client_id="953648658436-1bql4k0mhfaiqe8p141c4rs0sgsjbcut.apps.googleusercontent.com"
+         					data-callback="console.log"
+					>
+					</div>
 					<div class="g_id_signin" data-type="standard"></div>
 					<input
 						@keyup = "newAttendee"
@@ -35,9 +41,6 @@ Vue.component('ysgtb-jumbotron',{
 						v-model="attendee.name"
 						@click = "startAuthentication"
 						:class = "{'btn-outline-success':!profile.ready}"
-						id="g_id_onload"
-         					data-client_id="953648658436-1bql4k0mhfaiqe8p141c4rs0sgsjbcut.apps.googleusercontent.com"
-         					data-callback="console.log"
 					>
 					<span class = "display-4">&nbsp;still {{go}} to Blue Coat</span>
 					<br><br>
