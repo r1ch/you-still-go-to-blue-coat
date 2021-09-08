@@ -15,4 +15,4 @@ layout : dummy
      data-theme="outline"
      data-text="signin_with"
      data-size="large">
-</div>
+</input>
