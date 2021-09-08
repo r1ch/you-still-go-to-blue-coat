@@ -15,7 +15,7 @@ function Deferred() {
 }
 
 let Credentials = Deferred()
-google.accounts.id.initialize({client_id: clientId,callback: authenticationCallback})
+let Authenticator = Deferred()
 
 function authenticationCallback(CredentialResponse) {
     console.log("Callback")
