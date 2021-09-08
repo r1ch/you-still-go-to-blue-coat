@@ -17,31 +17,18 @@ function Deferred() {
 let Credentials = Deferred()
 let Authenticator = Deferred()
 
-function initGoogleAuthentication(){
-	gapi.load('auth2',()=>{
-		gapi.auth2.init({
-  			client_id: window.config.googleClientId
-		}).then(GoogleAuth=>{
-			if(GoogleAuth.isSignedIn.get()) authenticate(GoogleAuth.currentUser.get())
-			else GoogleAuth.currentUser.listen(authenticate)
-			Authenticator.setObject(GoogleAuth)
-			Authenticator.resolve()
-		})
-	})
-}
 
-function authenticate(googleUser) {
-    getIdToken(googleUser)
+function authenticationCallback(id_token) {
+    getIdToken(id_token)
         .then(AWSSTSSignIn)
         .then(handleSTSResponse)
         .catch(handleError);
 };
 
-function getIdToken(googleUser) {
-    Credentials.setObject(googleUser)
-    var idToken = googleUser.getAuthResponse().id_token;
+function getIdToken(id_token) {
+    Credentials.setObject(id_token)
     return new Promise(function (resolve) {
-        resolve(idToken);
+        resolve(id_token);
     });
 }
 
