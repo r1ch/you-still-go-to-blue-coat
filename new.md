@@ -9,10 +9,11 @@ layout : dummy
      data-auto_prompt="false">
 </div>
 
-<input class="g_id_signin"
-     data-type="icon"
-     data-shape="circle"
+<div class="g_id_signin"
+     data-type="standard"
+     data-shape="rectangular"
      data-theme="outline"
      data-text="signin_with"
-     data-size="large">
-</input>
+     data-size="large"
+     data-logo_alignment="left">
+</div>
