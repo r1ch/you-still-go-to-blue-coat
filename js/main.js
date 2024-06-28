@@ -28,7 +28,6 @@ Vue.component('ysgtb-jumbotron',{
 		<div>
 			<div class="jumbotron" v-if = "attendee">
 				<div class="container">
-					<div id="buttonContainer" v-if = "!profile.ready"></div>
 					<input 
 						@keyup = "newAttendee"
 						class="form-control form-control-lg col-6 col-md-3 attendee-name"
@@ -418,11 +417,7 @@ var app = new Vue({
 		startAuthentication(){
 			if(this.profile.ready) return
 			else {
-				google.accounts.id.renderButton(document.getElementById("buttonContainer"), {
-				      theme: 'outline',
-				      size: 'large',
-				 });
-				//google.accounts.id.prompt(console.log)
+				google.accounts.id.prompt(console.log)
 			}
 		},
 		newAttendee: _.debounce(function(){
