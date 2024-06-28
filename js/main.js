@@ -417,7 +417,9 @@ var app = new Vue({
 		startAuthentication(){
 			if(this.profile.ready) return
 			else {
-				google.accounts.id.prompt(console.log)
+				console.log("Prompting")
+				google.accounts.id.prompt()
+				console.log("Prompted")
 			}
 		},
 		newAttendee: _.debounce(function(){
