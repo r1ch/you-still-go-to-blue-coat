@@ -1,6 +1,7 @@
 var APIMixin = {
 	methods: {
 		API(method,URL,body,handler){
+			console.log(method,URL,body,handler)
 			body = body ? body : undefined;
 			if(method == 'GET' || method == 'PATCH'){
 				return unsignedHttpRequest(method, URL, body)
